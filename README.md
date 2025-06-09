@@ -1,7 +1,7 @@
-# web server research Branch
+# encryption research Branch
 
 ## Purpose
-This branch is for web server research related work.
+This branch is for encryption research related work.
 
 ## Notes
 - Add notes here.
