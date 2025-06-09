@@ -1,7 +1,7 @@
-# hello django Branch
+# hello drf Branch
 
 ## Purpose
-This branch is for hello django related work.
+This branch is for hello drf related work.
 
 ## Notes
 - Add notes here.
