@@ -1,7 +1,7 @@
-# hello drf Branch
+# web server research Branch
 
 ## Purpose
-This branch is for hello drf related work.
+This branch is for web server research related work.
 
 ## Notes
 - Add notes here.
