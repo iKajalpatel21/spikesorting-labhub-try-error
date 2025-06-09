@@ -1,7 +1,7 @@
-# hello django Branch
+# frontend uploader Branch
 
 ## Purpose
-This branch is for hello django related work.
+This branch is for frontend uploader related work.
 
 ## Notes
 - Add notes here.
