@@ -1,7 +1,7 @@
-# dockerize test env Branch
+# frontend uploader Branch
 
 ## Purpose
-This branch is for dockerize test env related work.
+This branch is for frontend uploader related work.
 
 ## Notes
 - Add notes here.
