@@ -1,7 +1,7 @@
-# schema design Branch
+# frontend uploader Branch
 
 ## Purpose
-This branch is for schema design related work.
+This branch is for frontend uploader related work.
 
 ## Notes
 - Add notes here.
