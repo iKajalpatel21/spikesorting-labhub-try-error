@@ -1,7 +1,7 @@
-# encryption research Branch
+# schema design Branch
 
 ## Purpose
-This branch is for encryption research related work.
+This branch is for schema design related work.
 
 ## Notes
 - Add notes here.
