@@ -33,6 +33,35 @@ Example : server {
 ```
 
 This is more secure and flexible, especially when deploying on servers or cloud platforms.
+# Encryption & Secure-API Best Practices  
+*(Phase 3 – Encryption Research)*
+
+## 1  Why SSL/TLS Is Critical for Django APIs
+| Risk with HTTP | How TLS Solves It |
+|---------------|-------------------|
+| Anyone on the network can **read** or **modify** requests (MITM). | TLS encrypts data in transit, so intercepted traffic is unreadable. |
+| Clients can be tricked into talking to a **fake server**. | Certificates prove your server’s identity. |
+| API tokens / passwords travel in **plain text**. | Tokens & credentials stay encrypted end-to-end. |
+
+Result: **HTTPS (TLS) is mandatory** for any production API that handles credentials, PII, or research data.
+
+---
+
+## 2  Adding SSL/TLS in Uvicorn
+
+### 2.1  Quick Local Test (Self-Signed Cert)
+
+```bash
+# generate a quick self-signed cert (valid for localhost only)
+openssl req -x509 -newkey rsa:2048 -nodes \
+  -keyout key.pem -out cert.pem -days 365 \
+  -subj "/CN=localhost"
+
+# run Uvicorn with TLS
+uvicorn labhub.asgi:application \
+  --host 0.0.0.0 --port 8443 \
+  --ssl-keyfile key.pem \
+  --ssl-certfile cert.pem
 
 
 ## Resources:
