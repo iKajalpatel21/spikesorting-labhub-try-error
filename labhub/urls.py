@@ -16,11 +16,13 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include  # ✅ include added here
+from django.urls import path, include
+from django.conf import settings
+from django.conf.urls.static import static
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path(
-        "api/", include("spikejobs.urls")
-    ),  # ✅ this line connects your app’s API routes
+    path("api/", include("spikejobs.urls")),  # ✅ This connects your API routes
 ]
+
+urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
