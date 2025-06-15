@@ -27,8 +27,14 @@ This branch includes a complete working setup for:
 
 ## 🚀 Run the App with HTTPS Locally
 
+
 Make sure your virtualenv is active and requirements are installed.
 
+### 0 Generate a self-signed cert (for local HTTPS)
+
+openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
+
+---
 ### 1. Install Uvicorn if needed:
 
 ```bash
