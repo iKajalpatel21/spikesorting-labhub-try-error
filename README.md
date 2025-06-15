@@ -30,30 +30,30 @@ This branch includes a complete working setup for:
 
 Make sure your virtualenv is activated.
 
-### 0. Generate a self-signed cert (for local HTTPS)
+### 1. Generate a self-signed cert (for local HTTPS)
 
 ```bash
 openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
+```
 
-
-###1. Install Uvicorn if needed
+### 2. Install Uvicorn if needed
 ```bash
 pip install uvicorn
+```
 
-
-2. Run the secure server
+### 3. Run the secure server
 ```bash
 uvicorn labhub.asgi:application \
   --host 127.0.0.1 --port 8443 \
   --ssl-keyfile=key.pem \
   --ssl-certfile=cert.pem
-
+```
 Then open in browser: https://127.0.0.1:8443/api/experiments/
 
 
 
 Directory Overview:
-
+```
 spikesorting-labhub-try-error/
 │
 ├── labhub/               # Django project folder
@@ -71,6 +71,7 @@ spikesorting-labhub-try-error/
 ├── cert.pem              # Self-signed certificate
 ├── key.pem               # Private key
 └── requirements.txt
+```
 
 🔖 Notes
 Browser may show Not Secure because it's a self-signed cert
