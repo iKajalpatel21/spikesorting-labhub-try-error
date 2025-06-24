@@ -111,5 +111,4 @@ python manage.py runserver
 
 Admin Login
 Go to http://127.0.0.1:8000/admin
-
 Login with your superuser credentials
