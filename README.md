@@ -50,7 +50,7 @@ uvicorn labhub.asgi:application \
 ```
 Then open in browser: https://127.0.0.1:8443/api/experiments/
 
-
+---
 
 Directory Overview:
 ```
@@ -71,7 +71,6 @@ spikesorting-labhub-try-error/
 ├── cert.pem              # Self-signed certificate
 ├── key.pem               # Private key
 └── requirements.txt
-```
 
 🔖 Notes
 Browser may show Not Secure because it's a self-signed cert
@@ -83,3 +82,34 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 Then collect with: python manage.py collectstatic
 
+
+# SpikeSorting LabHub
+
+A Django-based backend for managing spike sorting job submissions and tracking. Built using Django + DRF.
+
+## Features
+
+- Admin panel to view and manage jobs
+- SQLite database with `Experiment` model
+- Custom admin display with sorting and filtering
+- Django REST Framework installed for future API work
+
+## Setup Instructions
+
+```bash
+# Create DB
+python manage.py makemigrations spikejobs
+python manage.py migrate
+
+# Create superuser 
+python manage.py createsuperuser
+Kajal/User@123
+
+
+# Run server
+python manage.py runserver
+
+Admin Login
+Go to http://127.0.0.1:8000/admin
+
+Login with your superuser credentials

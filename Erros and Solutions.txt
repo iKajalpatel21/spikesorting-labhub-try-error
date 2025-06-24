@@ -1,0 +1,35 @@
+When you run these two :
+
+1. python manage.py makemigrations
+2. python manage.py migrate
+
+You should see this output :
+
+Migrations for 'spikejobs':
+  spikejobs/migrations/0001_initial.py
+    - Create model Experiment
+...
+Applying spikejobs.0001_initial... OK
+
+But instead I was getting "No changes detected"
+Reason : 
+
+What really happened:
+When you saw this error:
+
+django.db.utils.OperationalError: no such table: spikejobs_experiment
+…it meant Django was trying to access a table that hadn’t been created yet — likely due to missing migrations or skipped migration steps.
+
+Your fix:
+
+rm -rf spikejobs/migrations/
+rm db.sqlite3
+python manage.py makemigrations spikejobs
+python manage.py migrate
+
+Removed any old or broken migration files 🧹
+
+Reset the database 🧼
+
+Recreated a clean schema based on your current models 🧱
+
