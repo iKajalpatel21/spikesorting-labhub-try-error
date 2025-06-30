@@ -20,3 +20,4 @@ Standalone Python code, which uses the `requests` package to fetch jobs and repo
 
 ## Notes
 First, try to implement this queue without any encryption or authentication. When it works, add encryption and then try to work out how to authenticate the worker.
+So worker and server will be different and will run in a different terminal
