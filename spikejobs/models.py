@@ -12,7 +12,7 @@ class Experiment(models.Model):
     submitted_at = models.DateTimeField(auto_now_add=True)
     priority = models.IntegerField(default=1)
     result_path = models.CharField(max_length=255, blank=True)
-    log = models.TextField(blank=True)
+    log_path = models.CharField(max_length=255, blank=True, null=True)  # <== this line
 
     def __str__(self):
         return f"{self.job_type} - {self.status} ({self.submitted_at})"

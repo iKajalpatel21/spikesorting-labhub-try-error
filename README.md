@@ -112,3 +112,42 @@ python manage.py runserver
 Admin Login
 Go to http://127.0.0.1:8000/admin
 Login with your superuser credentials
+
+
+# Spike Sorting LabHub – Toy Demo
+
+This project is a toy example for managing and processing spike sorting jobs via a Django-based backend and an independent Python worker.
+
+---
+
+## 🚀 Project Structure
+
+- **Frontend (HTML):** Submits a `.json` job file.
+- **Backend (Django REST API):** Receives, stores, and updates job status.
+- **Worker (`worker.py`):** Polls the API for pending jobs, processes them, and updates their result and log.
+
+---
+
+## 🧠 How It Works
+
+1. Users submit JSON job files via the frontend form.
+2. Jobs are stored with `"pending"` status in the Django backend (Experiment model).
+3. The Python worker continuously polls the API:
+   - Fetches a pending job.
+   - Parses job parameters.
+   - Simulates processing with `time.sleep(a)`.
+   - Generates a result and a log file in the `/results/` directory.
+   - Updates the job status to `"finished"` and attaches file paths.
+
+---
+
+## 📂 JSON Job Format
+
+Example:
+```json
+{
+  "parameters": {
+    "a": 2,
+    "b": 3
+  }
+}

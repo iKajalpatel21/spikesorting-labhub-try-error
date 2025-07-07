@@ -33,3 +33,13 @@ Reset the database 🧼
 
 Recreated a clean schema based on your current models 🧱
 
+--------------------- Execute the sqlite3 ----------------------
+-> sqlite3 db.sqlite3
+-> .tables
+-> SELECT * FROM spikejobs_experiment;
+
+--------------------- To run the server ----------------------
+
+python manage.py runserver
+When you use python manage.py runserver, Django uses HTTP by default.
+
