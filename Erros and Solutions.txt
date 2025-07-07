@@ -43,3 +43,8 @@ Recreated a clean schema based on your current models 🧱
 python manage.py runserver
 When you use python manage.py runserver, Django uses HTTP by default.
 
+--------Push everything to git----------
+git status
+git add .
+git commit -m "Implement worker fetch logic and result updates + API cleanup"
+git push origin main
