@@ -2,12 +2,13 @@
 <html lang="en">
 
 <head>
+    {% load static %}
     <meta charset="UTF-8">
     <title>Spike Sorting Job Submission</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url("/static/brainwaves.jpg");
+            background-image: url("{% static 'brainwaves.jpg' %}");
             background-size: cover;
             background-repeat: no-repeat;
             background-attachment: fixed;

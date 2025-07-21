@@ -151,3 +151,69 @@ Example:
     "b": 3
   }
 }
+
+
+
+
+## ✅ Features Implemented (Based on GitHub Setup Guide)
+
+- [x] **Repo initialized** and structured with `backend/` and `worker.py`
+- [x] **Django project setup** with REST API (DRF)
+- [x] **Job model** with `status`, `result_path`, `log_path`, and submission timestamp
+- [x] **Job submission endpoint** (`/api/experiment`) that accepts `.json` files
+- [x] **Get-next-job endpoint** that returns the oldest `pending` job and marks it as `fetched`
+- [x] **Job update endpoint** (`/api/experiment/<id>/`) to mark job as `running`, `finished`, or `failed`
+- [x] **Frontend** with a form to upload `.json` jobs and see job list/status
+- [x] **Worker script**:
+  - Polls `/get-next`
+  - Marks job as `running`
+  - Sleeps for `a` seconds (from job JSON)
+  - Saves dummy result/log paths
+  - Marks job as `finished`
+- [x] **Security**: API only accepts `.json`; jobs are processed sequentially
+
+---
+
+## 🔧 How to Run the Backend
+
+```bash
+cd backend
+python manage.py makemigrations
+python manage.py migrate
+python manage.py runserver
+```
+
+---
+
+## 🛠️ How to Run the Worker
+
+```bash
+python worker.py
+```
+
+---
+
+## 📤 Sample Job JSON
+
+```json
+{
+  "job_id": "test_001",
+  "a": 5,
+  "description": "Test spike sorting job"
+}
+```
+
+---
+
+## 🧪 Next Steps
+
+- Add authentication (tokens) between backend and worker
+- Save uploaded `.json` files on NAS (Truenas Scale integration)
+- Run job using SpikeInterface instead of dummy sleep
+- Add job retry or error handling with retry counters
+
+---
+
+## 📚 Acknowledgements
+
+This project is developed in the Laboratory of Systems Neural Development at George Washington University. Inspired by the need for scalable, modular spike sorting infrastructure.

@@ -48,3 +48,10 @@ git status
 git add .
 git commit -m "Implement worker fetch logic and result updates + API cleanup"
 git push origin main
+
+
+
+------Server start ----
+uvicorn labhub.asgi:application \
+       --host 127.0.0.1 --port 8000 \
+       --ssl-keyfile key.pem --ssl-certfile cert.pem
