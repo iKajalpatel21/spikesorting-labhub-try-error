@@ -55,3 +55,8 @@ git push origin main
 uvicorn labhub.asgi:application \
        --host 127.0.0.1 --port 8000 \
        --ssl-keyfile key.pem --ssl-certfile cert.pem
+
+
+---Json url----
+https://127.0.0.1:8000/api/experiments/
+https://127.0.0.1:8000/submit-json/
