@@ -24,7 +24,8 @@ from spikejobs import views
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("api/", include("spikejobs.urls")),  # ✅ This connects your API routes
+    path("api/", include("spikejobs.urls")),
+    path("api/qmodel/", include("qmodel.urls")),  # ← add trailing slash
     path("submit-json/", views.submit_json_job, name="submit_json"),
 ]
 

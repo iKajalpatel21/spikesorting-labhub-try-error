@@ -44,10 +44,13 @@ INSTALLED_APPS = [
     "spikejobs",
     "rest_framework",
     "rest_framework.authtoken",
+    # "qmodel",  # ← ADD THIS
+    "qmodel.apps.QmodelConfig",  # ← ADD THIS
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",  # ← ADD THIS
+        "rest_framework.authentication.SessionAuthentication",
     ],
 }
 
@@ -84,10 +87,21 @@ WSGI_APPLICATION = "labhub.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "labhubdb",
+        "USER": "labhubuser",
+        "PASSWORD": "labhubpass",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
