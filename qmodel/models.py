@@ -1,7 +1,57 @@
+# import uuid
+# import hashlib
+# from django.db import models
+
+# # qmodel/models.py
+# from django.db import models
+
+# STATUS_CHOICES = [
+#     ("pending", "Pending"),
+#     ("fetched", "Fetched"),
+#     ("running", "Running"),
+#     ("finished", "Finished"),
+#     ("failed", "Failed"),
+# ]
+
+
+# class Job(models.Model):
+#     job_id = models.CharField(primary_key=True, max_length=64)  # From JSON
+#     job_env_config = models.JSONField()  # Stores job_evn
+#     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default="pending")
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+#     def __str__(self):
+#         return self.job_id
+
+
+# class JobStep(models.Model):
+#     identifier = models.CharField(primary_key=True, max_length=64)  # From JSON
+#     job_id = models.ForeignKey(Job, to_field="job_id", on_delete=models.CASCADE)
+#     function = models.CharField(max_length=64)
+#     depends_on = models.JSONField(null=True, blank=True)
+#     config_block_hash = models.ForeignKey(
+#         "JobConfig", to_field="identifier", on_delete=models.CASCADE
+#     )
+#     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default="pending")
+
+#     def __str__(self):
+#         return f"{self.identifier} ({self.function})"
+
+
+# class JobConfig(models.Model):
+#     identifier = models.CharField(primary_key=True, max_length=64)  # SHA-256 hash
+#     config_block = models.JSONField()
+#     created_at = models.DateTimeField(auto_now_add=True)
+
+
+#     def __str__(self):
+#         return self.identifier
+
 import uuid
 import hashlib
 from django.db import models
 
+# Choices for the 'status' field in Job and JobStep models
 STATUS_CHOICES = [
     ("pending", "Pending"),
     ("fetched", "Fetched"),
@@ -11,67 +61,86 @@ STATUS_CHOICES = [
 ]
 
 
-class JobConfig(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    fingerprint = models.CharField(max_length=64, unique=True)  # SHA256 hex length
-    raw_json = models.JSONField()
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    @staticmethod
-    def compute_fingerprint(json_obj):
-        raw_str = str(json_obj).encode("utf-8")
-        return hashlib.sha256(raw_str).hexdigest()
-
-
 class Job(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    config = models.ForeignKey(JobConfig, on_delete=models.CASCADE)
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="pending")
-    created_at = models.DateTimeField(auto_now_add=True)
+    """
+    Represents a main job with its overall environment configuration.
+    The 'job_id' from the uploaded JSON serves as the primary key, ensuring uniqueness.
+    """
+
+    job_id = models.CharField(
+        primary_key=True, max_length=64
+    )  # Unique ID for the job (e.g., "c7df2f67-b3f6-460b")
+    job_env_config = models.JSONField()  # Stores the 'job_evn' dictionary from the JSON
+    status = models.CharField(
+        max_length=32, choices=STATUS_CHOICES, default="pending"
+    )  # Current status of the job
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Automatically sets the timestamp when the job is created
+
+    def __str__(self):
+        """String representation for a Job object."""
+        return self.job_id
+
+
+class StepConfig(models.Model):
+    """
+    Stores unique configuration blocks for individual job steps.
+    The SHA-256 hash of the configuration JSON serves as its primary key,
+    enabling efficient deduplication and lookup.
+    """
+
+    # This field holds the SHA-256 hash (fingerprint) of the config_block JSON
+    config_block_hash = models.CharField(primary_key=True, max_length=64)
+    config_block = models.JSONField()  # The actual JSON configuration data for a step
+
+    def __str__(self):
+        """String representation for a StepConfig object."""
+        return self.config_block_hash
 
 
 class JobStep(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="steps")
-    function = models.CharField(max_length=100)
-    identifier = models.CharField(max_length=100)  # ← Add this line
-    depends_on = models.JSONField(default=list)  # list of JobStep IDs
-    config = models.JSONField()
-    status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="pending")
-    created_at = models.DateTimeField(auto_now_add=True)
+    """
+    Represents an individual step within a larger job.
+    It links to its parent Job and to a specific, unique StepConfig.
+    """
 
+    # 'identifier' is the step's unique ID within its job (e.g., "7ea0910ccea1")
+    identifier = models.CharField(max_length=64)
 
-# # qmodel/models.py
+    # ForeignKey to the Job model, linking this step to its parent job.
+    # 'to_field="job_id"' specifies that the foreign key links to the 'job_id' field of the Job model.
+    # 'on_delete=models.CASCADE' means if the parent Job is deleted, this JobStep will also be deleted.
+    job = models.ForeignKey(Job, to_field="job_id", on_delete=models.CASCADE)
 
-# from django.db import models
+    function = models.CharField(
+        max_length=64
+    )  # The name of the function for this step (e.g., "recording")
 
+    # 'depends_on' stores a list of identifiers of other steps this step depends on.
+    # 'null=True, blank=True' allows this field to be empty in the database and in forms.
+    depends_on = models.JSONField(null=True, blank=True)
 
-# class JobConfig(models.Model):
-#     fingerprint = models.TextField()
-#     raw_json = models.JSONField()
+    # ForeignKey to the StepConfig model, linking this step to its specific configuration.
+    # 'to_field="config_block_hash"' specifies that it links to the SHA-256 hash in StepConfig.
+    config_block_hash = models.ForeignKey(
+        "StepConfig", to_field="config_block_hash", on_delete=models.CASCADE
+    )
+    status = models.CharField(
+        max_length=32, choices=STATUS_CHOICES, default="pending"
+    )  # Current status of this specific step
 
+    class Meta:
+        """
+        Meta options for the JobStep model.
+        'unique_together' ensures that the combination of 'job' and 'identifier' is unique.
+        This is crucial because 'identifier' alone might not be unique across different jobs.
+        For example, 'rec-001' can exist in multiple jobs, but 'rec-001' within 'job-alpha' is unique.
+        """
 
-# class Job(models.Model):
-#     job_id = models.CharField(
-#         primary_key=True, max_length=64
-#     )  # used from JSON (e.g., "c7df2f67-b3f6-460b")
-#     config = models.ForeignKey(JobConfig, on_delete=models.CASCADE)
-#     status = models.CharField(max_length=20, default="pending")
-#     created_at = models.DateTimeField(auto_now_add=True)
+        unique_together = ("job", "identifier")
 
-#     def __str__(self):
-#         return self.job_id
-
-
-# class JobStep(models.Model):
-#     id = models.CharField(
-#         primary_key=True, max_length=64
-#     )  # step id like "754fed717d11"
-#     job = models.ForeignKey(Job, on_delete=models.CASCADE, related_name="steps")
-#     function = models.CharField(max_length=100)
-#     depends_on = models.JSONField()  # list of ids
-#     config = models.JSONField()  # raw config block
-#     status = models.CharField(max_length=20, default="pending")
-
-#     def __str__(self):
-#         return f"{self.id} ({self.function})"
+    def __str__(self):
+        """String representation for a JobStep object."""
+        # Displays the job ID, step identifier, and function for easy identification
+        return f"{self.job.job_id} - {self.identifier} ({self.function})"

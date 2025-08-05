@@ -42,3 +42,7 @@ SELECT * FROM qmodel_jobstep;
 Truncate  table qmodel_job;
 Truncate  table qmodel_jobstep;
 Truncate  table  qmodel_jobconfig;
+
+DROP TABLE IF EXISTS qmodel_jobstep CASCADE;
+DROP TABLE IF EXISTS qmodel_job CASCADE;
+DROP TABLE IF EXISTS qmodel_stepconfig CASCADE;
