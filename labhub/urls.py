@@ -25,7 +25,7 @@ from spikejobs import views
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("api/", include("spikejobs.urls")),
-    path("qmodel/", include("qmodel.urls")),
+    path("qmodel/", include(("qmodel.urls", "qmodel"), namespace="qmodel")),
     path("submit-json/", views.submit_json_job, name="submit_json"),
 ]
 

@@ -19,7 +19,7 @@ labhubdb=#
 \dt -- tbl list
 SELECT * FROM qmodel_job;
 SELECT * FROM qmodel_jobstep;
-SELECT * FROM qmodel_jobconfig;
+SELECT * FROM qmodel_stepconfig;
 
 ----------Token key-------
  print(token.key)
@@ -34,14 +34,14 @@ curl -H "Authorization: Token $AUTH_TOKEN" http://127.0.0.1:8000/api/jobs/
 
 
 python manage.py dbshell
-SELECT * FROM qmodel_jobconfig;
+SELECT * FROM qmodel_stepconfig;
 SELECT * FROM qmodel_job;
 SELECT * FROM qmodel_jobstep;
 
 
-Truncate  table qmodel_job;
-Truncate  table qmodel_jobstep;
-Truncate  table  qmodel_jobconfig;
+Truncate  table qmodel_job CASCADE;
+Truncate  table qmodel_jobstep CASCADE;
+Truncate  table  qmodel_stepconfig CASCADE;
 
 DROP TABLE IF EXISTS qmodel_jobstep CASCADE;
 DROP TABLE IF EXISTS qmodel_job CASCADE;

@@ -1,70 +1,6 @@
-# from rest_framework import viewsets
-# from .serializers import JobSerializer
-# from rest_framework.permissions import IsAuthenticated
-# import json
-# import hashlib
-# from django.shortcuts import render, redirect
-# from .models import Job, JobStep, JobConfig
-
-
-# class JobViewSet(viewsets.ModelViewSet):
-#     queryset = Job.objects.all()  # .order_by("id")
-#     serializer_class = JobSerializer
-#     permission_classes = [IsAuthenticated]
-
-
-# def submit_nested_json_job(request):
-#     message = ""
-#     if request.method == "POST" and request.FILES.get("json_file"):
-#         json_file = request.FILES["json_file"]
-#         try:
-#             data = json.load(json_file)
-
-#             # STEP 1: Create JobConfig from full raw JSON
-#             fingerprint = JobConfig.compute_fingerprint(data)
-#             job_config, created = JobConfig.objects.get_or_create(
-#                 fingerprint=fingerprint,
-#                 defaults={"raw_json": data},
-#             )
-
-#             # STEP 2: Create Job linked to JobConfig
-#             job = Job.objects.create(config=job_config)
-
-#             # STEP 3: Loop through job_steps and store each JobStep
-#             job_steps = data.get("job_steps", [])
-#             for step in job_steps:
-#                 identifier = step.get("identifier")
-#                 function = step.get("function")
-#                 depends = step.get("depends", [])
-
-#                 # Find the config block matching the identifier
-#                 config_block = data.get(identifier, {})
-
-#                 # Save JobStep
-#                 JobStep.objects.create(
-#                     job=job,
-#                     function=function,
-#                     identifier=identifier,
-#                     depends_on=depends,
-#                     config=config_block,
-#                 )
-
-#             message = "Job successfully submitted!"
-
-#         except Exception as e:
-#             message = f"Error processing file: {str(e)}"
-
-#     # Show all jobs to frontend
-#     jobs = Job.objects.all()
-#     return render(
-#         request,
-#         "qmodel_submit_json.html",  # Template to render the job submission form
-#         {"jobs": jobs, "message": message},
-#     )
-
-
 import json
 import hashlib
+import uuid
 from django.shortcuts import render, redirect
 from django.contrib import messages  # Import Django's messaging framework
 from .models import Job, JobStep, StepConfig  # Import updated model names
@@ -73,12 +9,18 @@ from .serializers import JobSerializer
 from rest_framework.permissions import IsAuthenticated
 
 
+# ------------------------------
+# API ViewSet for Jobs
+# ------------------------------
 class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all()  # .order_by("id")
     serializer_class = JobSerializer
     permission_classes = [IsAuthenticated]
 
 
+# ------------------------------
+# Utility function: compute_fingerprint
+# ------------------------------
 def compute_fingerprint(config_block):
     """
     Generates a SHA-256 hash (fingerprint) for a given configuration block.
@@ -92,6 +34,9 @@ def compute_fingerprint(config_block):
     return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
 
 
+# ------------------------------
+# View: submit_nested_json_job
+# ------------------------------
 def submit_nested_json_job(request):
     """
     Handles the submission of a nested JSON job configuration file.
@@ -107,7 +52,8 @@ def submit_nested_json_job(request):
             data = json.load(json_file)
 
             # --- Extract top-level job details from the JSON ---
-            job_id = data.get("job_id")
+            # job_id = data.get("job_id")
+            job_id = str(uuid.uuid4())  # Generate a UUID if not provided
             job_env_config = data.get(
                 "job_evn", {}
             )  # Get job environment config, default to empty dict
@@ -144,6 +90,14 @@ def submit_nested_json_job(request):
                         "config_block": config_block
                     },  # The actual JSON data to store if new
                 )
+                # DB>>
+                # conf_fromdb = StepConfig.objects.get("config_block")
+                print(
+                    f"config:\n. {step}\n {identifier}\n {fingerprint}\n {config_block}"
+                )
+
+                # print(f"config_block:{config_block}")
+                # <<DB
 
             # --- Step 2: Create or retrieve the main Job record ---
             # We use get_or_create to prevent re-submitting an identical job.
@@ -206,4 +160,41 @@ def submit_nested_json_job(request):
     # Retrieve all existing jobs from the database, ordered by creation date (newest first)
     jobs = Job.objects.all().order_by("-created_at")
     # Render the HTML template, passing the list of jobs and any messages
-    return render(request, "qmodel/submit_nested_json_job.html", {"jobs": jobs})
+    return render(request, "qmodel/qmodel_submit_json.html", {"jobs": jobs})
+
+
+# ------------------------------
+# View: job_list
+# ------------------------------
+def job_list(request):
+    """
+    Renders a page listing all jobs, ordered by creation date (newest first).
+    This view is required for redirects after job submission.
+    """
+    # Fetch all jobs, ordered by creation date (newest first).
+    jobs = Job.objects.all().order_by("-created_at")
+
+    # Fetch all job steps, and pre-fetch related Job and StepConfig objects
+    job_steps = (
+        JobStep.objects.all()
+        .select_related("job", "config_block_hash")
+        .order_by("job__created_at", "id")
+    )
+
+    # Add print statements to display the retrieved data in the terminal
+    print("\n--- Job Steps retrieved from the database ---")
+    for step in job_steps:
+        # Access the related StepConfig object via the foreign key
+        config = step.config_block_hash
+
+        print(f"JobStep Identifier: {step.identifier}")
+        print(f"Function: {step.function}")
+        print(f"Config Hash: {config.config_block_hash}")
+        print(f"Config Block: {config.config_block}")
+        print("-" * 20)  # Separator for readability
+
+    print("----------------------------------------\n")
+
+    context = {"jobs": jobs, "job_steps": job_steps}
+
+    return render(request, "qmodel/job_list.html", {"jobs": jobs})
