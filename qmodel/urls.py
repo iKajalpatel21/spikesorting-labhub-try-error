@@ -11,6 +11,9 @@ router.register(r"jobs", JobViewSet, basename="job")
 # urlpatterns = [path("", include(router.urls))]
 urlpatterns = [
     path("job_list/", views.job_list, name="job_list"),
+    # Existing URL for submitting a job
     path("submit-json/", views.submit_nested_json_job, name="submit_json"),
-    path("", include(router.urls)),
+    # This URL now handles both GET (fetch job) and POST (update status)
+    path("getthenextjob/", views.get_next_job, name="get_next_job"),
+    path("", include(router.urls)),  # Existing router URLs]
 ]

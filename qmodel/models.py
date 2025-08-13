@@ -1,52 +1,3 @@
-# import uuid
-# import hashlib
-# from django.db import models
-
-# # qmodel/models.py
-# from django.db import models
-
-# STATUS_CHOICES = [
-#     ("pending", "Pending"),
-#     ("fetched", "Fetched"),
-#     ("running", "Running"),
-#     ("finished", "Finished"),
-#     ("failed", "Failed"),
-# ]
-
-
-# class Job(models.Model):
-#     job_id = models.CharField(primary_key=True, max_length=64)  # From JSON
-#     job_env_config = models.JSONField()  # Stores job_evn
-#     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default="pending")
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-#     def __str__(self):
-#         return self.job_id
-
-
-# class JobStep(models.Model):
-#     identifier = models.CharField(primary_key=True, max_length=64)  # From JSON
-#     job_id = models.ForeignKey(Job, to_field="job_id", on_delete=models.CASCADE)
-#     function = models.CharField(max_length=64)
-#     depends_on = models.JSONField(null=True, blank=True)
-#     config_block_hash = models.ForeignKey(
-#         "JobConfig", to_field="identifier", on_delete=models.CASCADE
-#     )
-#     status = models.CharField(max_length=32, choices=STATUS_CHOICES, default="pending")
-
-#     def __str__(self):
-#         return f"{self.identifier} ({self.function})"
-
-
-# class JobConfig(models.Model):
-#     identifier = models.CharField(primary_key=True, max_length=64)  # SHA-256 hash
-#     config_block = models.JSONField()
-#     created_at = models.DateTimeField(auto_now_add=True)
-
-
-#     def __str__(self):
-#         return self.identifier
-
 import uuid
 import hashlib
 from django.db import models
@@ -67,9 +18,8 @@ class Job(models.Model):
     The 'job_id' from the uploaded JSON serves as the primary key, ensuring uniqueness.
     """
 
-    job_id = models.CharField(
-        primary_key=True, max_length=64
-    )  # Unique ID for the job (e.g., "c7df2f67-b3f6-460b")
+    job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    # Unique ID for the job (e.g., "c7df2f67-b3f6-460b")
     job_env_config = models.JSONField()  # Stores the 'job_evn' dictionary from the JSON
     status = models.CharField(
         max_length=32, choices=STATUS_CHOICES, default="pending"
@@ -80,7 +30,7 @@ class Job(models.Model):
 
     def __str__(self):
         """String representation for a Job object."""
-        return self.job_id
+        return str(self.job_id)  # Ensure this is a string
 
 
 class StepConfig(models.Model):

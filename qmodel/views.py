@@ -1,19 +1,26 @@
 import json
 import hashlib
-import uuid
-from django.shortcuts import render, redirect
-from django.contrib import messages  # Import Django's messaging framework
-from .models import Job, JobStep, StepConfig  # Import updated model names
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib import messages
+from django.db import transaction
+from django.http import JsonResponse, HttpRequest
+from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
-from .serializers import JobSerializer
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
+from .models import Job, JobStep, StepConfig
+from .serializers import JobSerializer
+from datetime import datetime
+from django.contrib import messages
 
 
 # ------------------------------
 # API ViewSet for Jobs
 # ------------------------------
 class JobViewSet(viewsets.ModelViewSet):
-    queryset = Job.objects.all()  # .order_by("id")
+    # This queryset now uses the UUID as the unique identifier
+    queryset = Job.objects.all().order_by("-created_at")
     serializer_class = JobSerializer
     permission_classes = [IsAuthenticated]
 
@@ -24,13 +31,9 @@ class JobViewSet(viewsets.ModelViewSet):
 def compute_fingerprint(config_block):
     """
     Generates a SHA-256 hash (fingerprint) for a given configuration block.
-    Uses json.dumps with sorted keys to ensure a consistent hash for identical content,
-    regardless of dictionary key order.
+    Uses json.dumps with sorted keys to ensure a consistent hash for identical content.
     """
-    # Convert the Python dictionary config_block into a JSON string with sorted keys
     json_str = json.dumps(config_block, sort_keys=True)
-    # Encode the string to bytes (UTF-8 is standard) and then compute the SHA-256 hash
-    # .hexdigest() converts the hash into a readable hexadecimal string
     return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
 
 
@@ -40,127 +43,161 @@ def compute_fingerprint(config_block):
 def submit_nested_json_job(request):
     """
     Handles the submission of a nested JSON job configuration file.
-    It parses the JSON, creates/updates Job, StepConfig, and JobStep records
-    in the database, and provides feedback to the user.
+    Always creates a new Job with a unique UUID, but reuses existing StepConfig
+    data if the configuration block has been seen before.
     """
-    # Check if the request is a POST request and if a file named 'json_file' was uploaded
     if request.method == "POST" and request.FILES.get("json_file"):
         json_file = request.FILES["json_file"]
 
         try:
-            # Load the JSON data from the uploaded file
             data = json.load(json_file)
 
             # --- Extract top-level job details from the JSON ---
-            # job_id = data.get("job_id")
-            job_id = str(uuid.uuid4())  # Generate a UUID if not provided
-            job_env_config = data.get(
-                "job_evn", {}
-            )  # Get job environment config, default to empty dict
-            job_steps_list = data.get(
-                "job_steps", []
-            )  # Get list of job steps, default to empty list
+            job_env_config = data.get("job_evn", {})
+            job_steps_list = data.get("job_steps", [])
 
             # Basic validation: ensure essential fields are present
-            if not job_id:
-                raise ValueError("JSON file is missing 'job_id'.")
             if not job_steps_list:
                 raise ValueError("JSON file is missing 'job_steps'.")
 
-            # --- Step 1: Process each job step's configuration block ---
-            # This phase ensures all unique configuration blocks are stored in StepConfig
-            # before JobSteps attempt to link to them.
-            step_configs = (
-                {}
-            )  # Dictionary to store {step_identifier: config_hash} mappings
-            for step in job_steps_list:
-                identifier = step.get("identifier")
-                # Get the specific configuration block for this step from the main JSON data
-                config_block = data.get(identifier, {})
+            with transaction.atomic():
+                # --- Step 1: Process each job step's configuration block ---
+                step_configs = {}
+                for step in job_steps_list:
+                    identifier = step.get("identifier")
+                    config_block = data.get(identifier, {})
+                    fingerprint = compute_fingerprint(config_block)
+                    step_configs[identifier] = fingerprint
 
-                # Compute the unique SHA-256 fingerprint for this config block
-                fingerprint = compute_fingerprint(config_block)
-                step_configs[identifier] = fingerprint  # Store the hash for later use
+                    StepConfig.objects.get_or_create(
+                        config_block_hash=fingerprint,
+                        defaults={"config_block": config_block},
+                    )
 
-                # Use get_or_create to add the config block to StepConfig if it's new,
-                # or retrieve it if it already exists. This prevents duplicates.
-                StepConfig.objects.get_or_create(
-                    config_block_hash=fingerprint,  # Use the hash as the primary key for lookup/creation
-                    defaults={
-                        "config_block": config_block
-                    },  # The actual JSON data to store if new
-                )
-                # DB>>
-                # conf_fromdb = StepConfig.objects.get("config_block")
-                print(
-                    f"config:\n. {step}\n {identifier}\n {fingerprint}\n {config_block}"
+                # --- Step 2: Create a brand new Job record
+                job = Job.objects.create(
+                    job_env_config=job_env_config, status="pending"
                 )
 
-                # print(f"config_block:{config_block}")
-                # <<DB
-
-            # --- Step 2: Create or retrieve the main Job record ---
-            # We use get_or_create to prevent re-submitting an identical job.
-            # 'created' will be True if a new Job was made, False if it already existed.
-            job, created = Job.objects.get_or_create(
-                job_id=job_id,
-                defaults={"job_env_config": job_env_config, "status": "pending"},
-            )
-
-            # --- Step 3: Create JobStep records, but only if the main Job is new ---
-            if created:
-                # Loop through each step definition from the JSON
+                # --- Step 3: Create JobStep records linked to the new Job ---
                 for step in job_steps_list:
                     identifier = step.get("identifier")
                     function = step.get("function")
                     depends_on = step.get("depends", [])
-
-                    # Retrieve the config hash (fingerprint) that we stored earlier
                     config_hash = step_configs[identifier]
 
-                    # Create a new JobStep record.
-                    # 'job=job' links this step to the Job object we just created/retrieved.
-                    # 'config_block_hash_id=config_hash' links this step to the StepConfig
-                    # using the hash as the foreign key value, avoiding an extra DB query.
                     JobStep.objects.create(
                         identifier=identifier,
-                        job=job,  # Link to the Job instance
+                        job=job,
                         function=function,
                         depends_on=depends_on,
-                        config_block_hash_id=config_hash,  # Link to the StepConfig by its hash
+                        config_block_hash_id=config_hash,
                         status="pending",
                     )
-                # Add a success message to be displayed on the next page
-                messages.success(request, f"✅ Job '{job_id}' successfully submitted!")
-            else:
-                # Add an info message if the job already existed
-                messages.info(
-                    request,
-                    f"ℹ️ Job with ID '{job_id}' already exists. No new steps were created.",
-                )
 
-            # Redirect the user to the job list page after processing the POST request.
-            # This prevents accidental re-submission if the user refreshes.
-            return redirect("qmodel:job_list")
+            messages.success(
+                request, f"✅ Job submitted successfully! ID: {job.job_id}"
+            )
+            return redirect("qmodel:job-list")
 
         except json.JSONDecodeError:
-            # Handle cases where the uploaded file is not valid JSON
             messages.error(request, "❌ Error: Invalid JSON file format.")
-            return redirect("qmodel:job_list")
         except ValueError as e:
-            # Handle custom validation errors (e.g., missing job_id)
             messages.error(request, f"❌ Error: {str(e)}")
-            return redirect("qmodel:job_list")
         except Exception as e:
-            # Catch any other unexpected errors during processing
             messages.error(request, f"❌ An unexpected error occurred: {str(e)}")
-            return redirect("qmodel:job_list")
 
-    # --- Handle GET requests (or if POST request failed before redirect) ---
-    # Retrieve all existing jobs from the database, ordered by creation date (newest first)
+        return redirect("qmodel:submit_json")
+
     jobs = Job.objects.all().order_by("-created_at")
-    # Render the HTML template, passing the list of jobs and any messages
     return render(request, "qmodel/qmodel_submit_json.html", {"jobs": jobs})
+
+
+# ------------------------------
+# View: get_next_job (Updated to handle both GET and POST)
+# ------------------------------
+@api_view(["GET", "POST"])
+@permission_classes([IsAuthenticated])
+def get_next_job(request: HttpRequest):
+    """
+    API endpoint for a worker to get the next available job (GET) or to update
+    the status of a job/job step (POST).
+    """
+    if request.method == "GET":
+        try:
+            with transaction.atomic():
+                job_to_process = (
+                    Job.objects.select_for_update()
+                    .filter(status="pending")
+                    .order_by("created_at")
+                    .first()
+                )
+
+                if job_to_process:
+                    job_to_process.status = "fetched"
+                    job_to_process.save()
+
+                    job_steps = job_to_process.jobstep_set.all()
+
+                    print(
+                        f"[{datetime.now()}] Job {job_to_process.job_id} fetched by a worker. Status updated to 'fetched'."
+                    )
+
+                    job_data = {
+                        "job_id": str(job_to_process.job_id),
+                        "job_env_config": job_to_process.job_env_config,
+                        "steps": [
+                            {
+                                "step_id": str(step.id),
+                                "identifier": step.identifier,
+                                "function": step.function,
+                                "depends_on": step.depends_on,
+                                "config_block": step.config_block_hash.config_block,
+                            }
+                            for step in job_steps
+                        ],
+                    }
+                    return JsonResponse({"job": job_data}, status=200)
+
+            return JsonResponse({"message": "No pending jobs found."}, status=404)
+
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
+
+    elif request.method == "POST":
+        # This is the logic that was in the 'update_status' view
+        try:
+            data = json.loads(request.body)
+            job_id = data.get("job_id")
+            step_id = data.get("step_id")
+            status = data.get("status")
+
+            if not job_id or not status:
+                return JsonResponse(
+                    {"error": "Job ID and status are required."}, status=400
+                )
+
+            if step_id:
+                # Update a specific job step
+                job_step = get_object_or_404(JobStep, id=step_id, job__job_id=job_id)
+                job_step.status = status
+                job_step.save()
+                return JsonResponse(
+                    {"message": f"Job step {step_id} status updated to {status}."}
+                )
+            else:
+                # Update the main job
+                job = get_object_or_404(Job, job_id=job_id)
+                job.status = status
+                job.save()
+                return JsonResponse(
+                    {"message": f"Job {job_id} status updated to {status}."}
+                )
+
+        except json.JSONDecodeError:
+            return JsonResponse({"error": "Invalid JSON format."}, status=400)
+        except Exception as e:
+            return JsonResponse({"error": str(e)}, status=500)
 
 
 # ------------------------------
@@ -169,32 +206,12 @@ def submit_nested_json_job(request):
 def job_list(request):
     """
     Renders a page listing all jobs, ordered by creation date (newest first).
-    This view is required for redirects after job submission.
     """
-    # Fetch all jobs, ordered by creation date (newest first).
     jobs = Job.objects.all().order_by("-created_at")
-
-    # Fetch all job steps, and pre-fetch related Job and StepConfig objects
     job_steps = (
         JobStep.objects.all()
         .select_related("job", "config_block_hash")
         .order_by("job__created_at", "id")
     )
-
-    # Add print statements to display the retrieved data in the terminal
-    print("\n--- Job Steps retrieved from the database ---")
-    for step in job_steps:
-        # Access the related StepConfig object via the foreign key
-        config = step.config_block_hash
-
-        print(f"JobStep Identifier: {step.identifier}")
-        print(f"Function: {step.function}")
-        print(f"Config Hash: {config.config_block_hash}")
-        print(f"Config Block: {config.config_block}")
-        print("-" * 20)  # Separator for readability
-
-    print("----------------------------------------\n")
-
     context = {"jobs": jobs, "job_steps": job_steps}
-
-    return render(request, "qmodel/job_list.html", {"jobs": jobs})
+    return render(request, "qmodel/job_list.html", context)
