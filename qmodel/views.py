@@ -1,5 +1,6 @@
 import json
 import hashlib
+from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
@@ -95,10 +96,17 @@ def submit_nested_json_job(request):
                         status="pending",
                     )
 
+            # messages.success(
+            #     request, f"✅ Job submitted successfully! ID: {job.job_id}"
+            # )
+            # return redirect("qmodel:job-list")
+
+            # ... (inside the try block)
             messages.success(
                 request, f"✅ Job submitted successfully! ID: {job.job_id}"
             )
-            return redirect("qmodel:job-list")
+            # We're no longer redirecting. Instead, we'll re-render the same page.
+            return redirect("qmodel:submit_json")
 
         except json.JSONDecodeError:
             messages.error(request, "❌ Error: Invalid JSON file format.")

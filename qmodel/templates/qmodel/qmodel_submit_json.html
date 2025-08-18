@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -125,6 +125,173 @@
         </tbody>
     </table>
 
+    <script>
+        document.getElementById("jsonForm").addEventListener("submit", function (e) {
+            const fileInput = document.getElementById("jsonFileInput");
+            const file = fileInput.files[0];
+            if (file && !file.name.endsWith(".json")) {
+                e.preventDefault();
+                alert("Error: Only .json files are allowed!");
+            }
+        });
+    </script>
+</body>
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li class="{{ message.tags }} message">{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+</html> -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>QModel Job Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'brainwaves.jpg' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+            padding-top: 120px;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            margin: auto;
+            width: 40%;
+            border-radius: 12px;
+        }
+
+        input[type="file"] {
+            margin-top: 20px;
+        }
+
+        button[type="submit"] {
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+
+        .message {
+            padding: 10px;
+            margin-top: 15px;
+            font-weight: bold;
+            border-radius: 5px;
+        }
+
+        .success {
+            background-color: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+            border: 1px solid #4CAF50;
+        }
+
+        .error {
+            background-color: rgba(255, 99, 71, 0.2);
+            color: #FF6347;
+            border: 1px solid #FF6347;
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            margin: 40px auto;
+            width: 80%;
+            border-collapse: collapse;
+            background-color: white;
+            color: black;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: left;
+        }
+
+        thead {
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>QModel Job Submission</h1>
+        <h2>Upload Nested JSON Job</h2>
+
+        <!-- This is the correct location for the messages display block -->
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+            <li class="{{ message.tags }} message">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+
+        <form method="post" enctype="multipart/form-data" id="jsonForm">
+            {% csrf_token %}
+            <input type="file" name="json_file" id="jsonFileInput" accept=".json" required>
+            <button type="submit">Submit</button>
+        </form>
+    </div>
+
+    <hr>
+
+    <h2>Submitted Jobs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Job ID</th>
+                <th>Status</th>
+                <th>Created</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td>{{ job.job_id }}</td>
+                <td>{{ job.status }}</td>
+                <td>{{ job.created_at }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="3">No jobs submitted yet.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     <script>
         document.getElementById("jsonForm").addEventListener("submit", function (e) {
             const fileInput = document.getElementById("jsonFileInput");
