@@ -17,6 +17,8 @@ import os
 BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [BASE_DIR / "static"]
+
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
@@ -41,7 +43,16 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "spikejobs",
     "rest_framework",
+    "rest_framework.authtoken",
+    # "qmodel",  # ← ADD THIS
+    "qmodel.apps.QmodelConfig",  # ← ADD THIS
 ]
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",  # ← ADD THIS
+        "rest_framework.authentication.SessionAuthentication",
+    ],
+}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -76,10 +87,21 @@ WSGI_APPLICATION = "labhub.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.sqlite3",
+#         "NAME": BASE_DIR / "db.sqlite3",
+#     }
+# }
+
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": "labhubdb",
+        "USER": "labhubuser",
+        "PASSWORD": "labhubpass",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 

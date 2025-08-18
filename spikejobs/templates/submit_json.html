@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="UTF-8">
+    <title>Spike Sorting Job Submission</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url("{% static 'brainwaves.jpg' %}");
+            background-size: cover;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            color: white;
+            text-align: center;
+            padding-top: 120px;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.6);
+            padding: 30px;
+            margin: auto;
+            width: 40%;
+            border-radius: 12px;
+        }
+
+        input[type="file"] {
+            margin-top: 20px;
+        }
+
+        input[type="submit"],
+        button[type="submit"] {
+            margin-top: 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        input[type="submit"]:hover,
+        button[type="submit"]:hover {
+            background-color: #45a049;
+        }
+
+        .message {
+            margin-top: 15px;
+            font-weight: bold;
+        }
+
+        .success {
+            color: #4CAF50;
+        }
+
+        .error {
+            color: #FF6347;
+        }
+
+        h1,
+        h2 {
+            margin-bottom: 10px;
+        }
+
+        table {
+            margin: 40px auto;
+            width: 80%;
+            border-collapse: collapse;
+            background-color: white;
+            color: black;
+        }
+
+        th,
+        td {
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+
+        thead {
+            background-color: #333;
+            color: white;
+        }
+
+        .scroll-table-container {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 2px solid #ccc;
+            margin: auto;
+            width: 80%;
+            background-color: white;
+        }
+
+        .scroll-table-container table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .scroll-table-container th,
+        .scroll-table-container td {
+            padding: 10px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+
+        .scroll-table-container thead {
+            background-color: #333;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Welcome to Spike Sorting LabHub</h1>
+        <h2>Submit your spike sorting job below</h2>
+
+        <form method="post" enctype="multipart/form-data" id="jsonForm">
+            {% csrf_token %}
+            <input type="file" name="json_file" id="jsonFileInput" accept=".json" required>
+            <button type="submit">Submit</button>
+        </form>
+
+        {% if message %}
+        <p class="message success">{{ message }}</p>
+        {% endif %}
+        {% if error %}
+        <p class="message error">{{ error }}</p>
+        {% endif %}
+    </div>
+
+    <hr>
+
+    <h2>Submitted Jobs</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Job ID</th>
+                <th>Status</th>
+                <th>a</th>
+                <th>b</th>
+                <th>Priority</th>
+            </tr>
+        </thead>
+        <tbody id="jobTableBody">
+            <tr>
+                <td colspan="5" style="text-align: center;">No jobs submitted yet.</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        // Validate .json file upload
+        document.getElementById("jsonForm").addEventListener("submit", function (e) {
+            const fileInput = document.getElementById("jsonFileInput");
+            const file = fileInput.files[0];
+            if (file && !file.name.endsWith(".json")) {
+                e.preventDefault();
+                alert("Error: Only .json files are allowed!");
+            }
+        });
+
+        // Get color based on status
+        function getStatusColor(status) {
+            switch (status) {
+                case "pending": return "orange";
+                case "fetched": return "gold";
+                case "running": return "dodgerblue";
+                case "finished": return "limegreen";
+                default: return "gray";
+            }
+        }
+
+        // Fetch and update job table
+        async function refreshJobTable() {
+            try {
+                const response = await fetch("/api/experiments/");
+                const jobs = await response.json();
+                const tbody = document.getElementById("jobTableBody");
+                tbody.innerHTML = "";
+
+                if (!jobs || jobs.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="5" style="text-align: center;">No jobs submitted yet.</td></tr>`;
+                    return;
+                }
+
+                jobs.reverse().forEach(job => {
+                    const params = JSON.parse(job.parameters || "{}");
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${job.id}</td>
+                        <td style="color: ${getStatusColor(job.status)}; font-weight: bold;">${job.status}</td>
+                        <td>${params.a ?? "-"}</td>
+                        <td>${params.b ?? "-"}</td>
+                        <td>${job.priority ?? "-"}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+            } catch (err) {
+                console.error("Failed to load jobs:", err);
+            }
+        }
+
+        // Auto-refresh every 10 seconds
+        setInterval(refreshJobTable, 10000);
+        refreshJobTable(); // Initial load
+    </script>
+</body>
+
+</html>
