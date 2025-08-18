@@ -41,11 +41,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "spikejobs",
     "rest_framework",
     "rest_framework.authtoken",
-    # "qmodel",  # ← ADD THIS
-    "qmodel.apps.QmodelConfig",  # ← ADD THIS
+    "qmodel.apps.QmodelConfig",
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

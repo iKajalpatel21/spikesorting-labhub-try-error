@@ -1,9 +1,0 @@
-{
-    "job_type": "Patel",
-    "parameters": {
-        "jobid": "456",
-        "input_file": "path/to/file",
-        "threshold": 0.4
-    },
-    "priority": 2
-}
