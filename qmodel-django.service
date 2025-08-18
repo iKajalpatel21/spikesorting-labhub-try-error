@@ -1,0 +1,24 @@
+[Unit]
+Description=QModel Django Application (Gunicorn)
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=notify
+User=www-data
+Group=www-data
+RuntimeDirectory=qmodel
+WorkingDirectory=/path/to/your/spikesorting-labhub-try-error
+Environment=DJANGO_SETTINGS_MODULE=labhub.settings_production
+Environment=PATH=/path/to/your/venv/bin
+EnvironmentFile=/path/to/your/spikesorting-labhub-try-error/.env
+ExecStart=/path/to/your/venv/bin/gunicorn --config gunicorn.conf.py labhub.wsgi:application
+ExecReload=/bin/kill -s HUP $MAINPID
+KillMode=mixed
+TimeoutStopSec=5
+PrivateTmp=true
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target

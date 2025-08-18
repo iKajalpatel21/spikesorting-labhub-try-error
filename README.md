@@ -1,238 +1,18 @@
-<!-- # 🧪 hello-drf Branch – Django REST API with HTTPS
+# � QModel Spike Sorting Job Queue System
 
-_Last updated: June 13, 2025_
-
----
-
-## 📌 What This Branch Does
-
-This branch includes a complete working setup for:
-
-- ✅ A Django REST Framework API to submit and list "Experiment" jobs
-- ✅ HTTPS using self-signed SSL/TLS certs (via Uvicorn)
-- ✅ Static files support via `collectstatic`
-
----
-
-## ⚙️ Key Features Implemented
-
-- Django project and app structure: `labhub/`, `spikejobs/`
-- `Experiment` model with fields `name` and `created_at`
-- DRF ViewSet + Router to handle API routes
-- API endpoint:  
-  `https://127.0.0.1:8443/api/experiments/`
-- Self-signed certs: `cert.pem`, `key.pem`
-- Static files collected and served
-
----
-
-## 🚀 Run the App with HTTPS Locally
-
-Make sure your virtualenv is activated.
-
-### 1. Generate a self-signed cert (for local HTTPS)
-
-```bash
-openssl req -x509 -newkey rsa:2048 -keyout key.pem -out cert.pem -days 365 -nodes -subj "/CN=localhost"
-```
-
-### 2. Install Uvicorn if needed
-```bash
-pip install uvicorn
-```
-
-### 3. Run the secure server
-```bash
-uvicorn labhub.asgi:application \
-  --host 127.0.0.1 --port 8000 \
-  --ssl-keyfile=key.pem \
-  --ssl-certfile=cert.pem
-```
-Then open in browser: https://127.0.0.1:8000/api/experiments/
-
----
-
-Directory Overview:
-```
-spikesorting-labhub-try-error/
-│
-├── labhub/               # Django project folder
-│   ├── settings.py       # Includes STATIC_ROOT config
-│   └── urls.py           # Includes route to `spikejobs`
-│
-├── spikejobs/            # Django app for experiment jobs
-│   ├── models.py         # Experiment model
-│   ├── views.py          # DRF ViewSet
-│   ├── urls.py           # API route definitions
-│   └── serializers.py    # DRF serializer
-│
-├── staticfiles/          # Static files collected with `collectstatic`
-│
-├── cert.pem              # Self-signed certificate
-├── key.pem               # Private key
-└── requirements.txt
-
-🔖 Notes
-Browser may show Not Secure because it's a self-signed cert
-
-Static files required:
-
-STATIC_ROOT = BASE_DIR / "staticfiles"
-
-
-Then collect with: python manage.py collectstatic
-
-
-# SpikeSorting LabHub
-
-A Django-based backend for managing spike sorting job submissions and tracking. Built using Django + DRF.
-
-## Features
-
-- Admin panel to view and manage jobs
-- SQLite database with `Experiment` model
-- Custom admin display with sorting and filtering
-- Django REST Framework installed for future API work
-
-## Setup Instructions
-
-```bash
-# Create DB
-python manage.py makemigrations spikejobs
-python manage.py migrate
-
-# Create superuser 
-python manage.py createsuperuser
-Kajal/User@123
-
-
-# Run server
-python manage.py runserver
-
-Admin Login
-Go to http://127.0.0.1:8000/admin
-Login with your superuser credentials
-
-
-# Spike Sorting LabHub – Toy Demo
-
-This project is a toy example for managing and processing spike sorting jobs via a Django-based backend and an independent Python worker.
-
----
-
-## 🚀 Project Structure
-
-- **Frontend (HTML):** Submits a `.json` job file.
-- **Backend (Django REST API):** Receives, stores, and updates job status.
-- **Worker (`worker.py`):** Polls the API for pending jobs, processes them, and updates their result and log.
-
----
-
-## 🧠 How It Works
-
-1. Users submit JSON job files via the frontend form.
-2. Jobs are stored with `"pending"` status in the Django backend (Experiment model).
-3. The Python worker continuously polls the API:
-   - Fetches a pending job.
-   - Parses job parameters.
-   - Simulates processing with `time.sleep(a)`.
-   - Generates a result and a log file in the `/results/` directory.
-   - Updates the job status to `"finished"` and attaches file paths.
-
----
-
-## 📂 JSON Job Format
-
-Example:
-```json
-{
-  "parameters": {
-    "a": 2,
-    "b": 3
-  }
-}
-
-
-
-
-## ✅ Features Implemented (Based on GitHub Setup Guide)
-
-- [x] **Repo initialized** and structured with `backend/` and `worker.py`
-- [x] **Django project setup** with REST API (DRF)
-- [x] **Job model** with `status`, `result_path`, `log_path`, and submission timestamp
-- [x] **Job submission endpoint** (`/api/experiment`) that accepts `.json` files
-- [x] **Get-next-job endpoint** that returns the oldest `pending` job and marks it as `fetched`
-- [x] **Job update endpoint** (`/api/experiment/<id>/`) to mark job as `running`, `finished`, or `failed`
-- [x] **Frontend** with a form to upload `.json` jobs and see job list/status
-- [x] **Worker script**:
-  - Polls `/get-next`
-  - Marks job as `running`
-  - Sleeps for `a` seconds (from job JSON)
-  - Saves dummy result/log paths
-  - Marks job as `finished`
-- [x] **Security**: API only accepts `.json`; jobs are processed sequentially
-
----
-
-## 🔧 How to Run the Backend
-
-```bash
-cd backend
-python manage.py makemigrations
-python manage.py migrate
-python manage.py runserver
-```
-
----
-
-## 🛠️ How to Run the Worker
-
-```bash
-python worker.py
-```
-
----
-
-## 📤 Sample Job JSON
-
-```json
-{
-  "job_id": "test_001",
-  "a": 5,
-  "description": "Test spike sorting job"
-}
-```
-
----
-
-## 🧪 Next Steps
-
-- Add authentication (tokens) between backend and worker
-- Save uploaded `.json` files on NAS (Truenas Scale integration)
-- Run job using SpikeInterface instead of dummy sleep
-- Add job retry or error handling with retry counters
-
----
-
-## 📚 Acknowledgements
-
-This project is developed in the Laboratory of Systems Neural Development at George Washington University. Inspired by the need for scalable, modular spike sorting infrastructure. -->
-
-
-# 🧠 Spike Sorting LabHub – Toy Job Queue System (hello-drf Branch)
-
-*Last updated: July 21, 2025*
+*Last updated: August 18, 2025*
 
 ---
 
 ## 📌 Overview
 
-A secure, minimal job queue demo system built with Django + Django REST Framework (DRF) to simulate spike sorting submissions and processing. This toy system includes:
+A production-ready, secure job queue system built with Django + Django REST Framework (DRF) for spike sorting job submissions and processing. This system includes:
 
-* ✅ Django REST API with secure endpoints for job submission, fetching, and updating.
-* ✅ Independent Python `worker.py` that polls for jobs and simulates processing.
-* ✅ HTTPS support using self-signed certificates via Uvicorn.
-* ✅ Static file handling and basic frontend for `.json` upload.
+* ✅ **Django REST API** with secure endpoints for job submission, fetching, and updating
+* ✅ **Independent Python worker** that polls for jobs and processes them step-by-step
+* ✅ **Production HTTPS** with Nginx reverse proxy and SSL/TLS termination
+* ✅ **Gunicorn WSGI server** for high-performance Django deployment
+* ✅ **Complete security stack** with HSTS, CSP, and modern TLS protocols
 
 ---
 
@@ -240,146 +20,243 @@ A secure, minimal job queue demo system built with Django + Django REST Framewor
 
 ```
 spikesorting-labhub-try-error/
-├── labhub/                 # Django project config
-│   ├── settings.py         # Includes STATIC_ROOT
-│   └── urls.py             # Routes requests to app
+├── labhub/                     # Django project config
+│   ├── settings_production.py  # Production settings with SSL security
+│   ├── settings.py             # Development settings
+│   └── urls.py                 # Routes requests to qmodel app
 │
-├── spikejobs/              # Core app for experiments
-│   ├── models.py           # Experiment model (status, params, result_path)
-│   ├── views.py            # API logic (submit, fetch, update)
-│   ├── serializers.py      # DRF serializers
-│   └── urls.py             # API routes
+├── qmodel/                     # Core app for job processing
+│   ├── models.py               # Job, JobStep, StepConfig models
+│   ├── views.py                # API logic (submit, fetch, update jobs)
+│   ├── serializers.py          # DRF serializers
+│   └── urls.py                 # API routes
 │
-├── templates/              # HTML form for .json submission
-│   └── submit_json.html
+├── ssl/                        # SSL/TLS certificates
+│   ├── certificate.crt         # SSL certificate
+│   ├── private.key             # Private key
+│   └── dhparam.pem             # Diffie-Hellman parameters
 │
-├── static/                 # Background image & assets
-├── staticfiles/            # Collected static files
-├── results/                # Output results & logs from worker
-├── cert.pem / key.pem      # Self-signed HTTPS certificate + key
-├── db.sqlite3              # SQLite database
-├── worker.py               # Polling and job processing logic
-├── README.md               # This file
-└── requirements.txt
+├── logs/                       # Application logs
+├── staticfiles/                # Collected static files
+├── qmodel_worker_production.py # Production worker with SSL support
+├── nginx_qmodel.conf           # Nginx configuration
+├── gunicorn.conf.py            # Gunicorn production configuration
+├── .env                        # Environment configuration
+└── requirements_production.txt
 ```
 
 ---
 
-## ⚙️ Features Implemented
+## ⚙️ Production Features
 
-* ✅ Token-authenticated endpoints using DRF TokenAuthentication
-* ✅ `Experiment` model with:
-
-  * `status`: pending / fetched / running / finished / failed
-  * `a`, `b`: optional job params
-  * `result_path`, `logs`
-* ✅ Secure GET `/api/experiments/get-next/` – returns the next pending job
-* ✅ Secure POST `/api/experiments/<id>/` – updates job status and results
-* ✅ HTML form at `/submit/` to upload `.json` job files
-* ✅ Static background image served using `{% static %}`
-* ✅ Worker polls API, updates job status, saves result/logs
+* ✅ **Token-authenticated API** using DRF TokenAuthentication
+* ✅ **SSL/TLS encryption** with TLS 1.3 and HTTP/2 support
+* ✅ **Security headers** (HSTS, CSP, XSS protection, etc.)
+* ✅ **Job processing pipeline** with configurable steps
+* ✅ **Production logging** and monitoring
+* ✅ **Process management** with systemd services
+* ✅ **Nginx reverse proxy** with SSL termination
 
 ---
 
-## 🔐 Authentication & HTTPS
+## � Authentication & Security
 
-* HTTPS enabled using:
+* **HTTPS/TLS 1.3** with strong cipher suites
+* **HTTP/2** for improved performance
+* **HSTS** (HTTP Strict Transport Security) with 1-year max-age
+* **Security headers** for XSS, clickjacking, and content type protection
+* **Token-based API authentication**
+
+---
+
+## � Job Processing Pipeline
+
+```
+Job Submission → Status: pending
+  ⇩
+Worker fetches → Status: fetched  
+  ⇩
+Processing starts → Status: running
+  ⇩
+Step completion → Status: completed (per step)
+  ⇩
+All steps done → Status: finished
+```
+
+---
+
+## � Production Deployment
+
+### Prerequisites
+- Python 3.8+
+- Nginx (installed via Homebrew)
+- SSL certificates (self-signed for development)
+
+### Quick Start
 
 ```bash
-uvicorn labhub.asgi:application --host 127.0.0.1 --port 8000 \
-    --ssl-keyfile=key.pem --ssl-certfile=cert.pem
+# 1. Run the automated deployment script
+./deploy_production.sh
+
+# 2. Configure environment variables
+cp .env.example .env
+# Edit .env with your settings
+
+# 3. Install dependencies
+pip install -r requirements_production.txt
+
+# 4. Setup database
+python manage.py migrate --settings=labhub.settings_production
+
+# 5. Collect static files
+python manage.py collectstatic --noinput --settings=labhub.settings_production
 ```
 
-* Worker uses:
+### Service Management
 
-```python
-TOKEN = "<your-token>"
-HEADERS = {"Authorization": f"Token {TOKEN}"}
-requests.get(..., headers=HEADERS, verify="cert.pem")
-```
-
----
-
-## 🧪 Job Lifecycle
-
-```
-Frontend uploads job.json --> status: pending
-  ⇩
-Worker polls /get-next   --> status: fetched
-  ⇩
-Worker starts job        --> status: running
-  ⇩
-Worker saves result/log  --> status: finished
-```
-
----
-
-## 🚀 Quickstart Guide
-
-### Setup and Run Backend (HTTPS)
+Use the provided service management script for easy control:
 
 ```bash
-# 1. Create DB
-python manage.py makemigrations
-python manage.py migrate
+# Check service status
+./qmodel_services.sh status
 
-# 2. Create superuser (for admin)
-python manage.py createsuperuser
+# Start all services
+./qmodel_services.sh start
 
-# 3. Collect static files
-python manage.py collectstatic
+# Stop all services  
+./qmodel_services.sh stop
 
-# 4. Run secure backend
-uvicorn labhub.asgi:application --host 127.0.0.1 --port 8000 \
-    --ssl-keyfile=key.pem --ssl-certfile=cert.pem
+# Restart services
+./qmodel_services.sh restart
+
+# Start worker
+./qmodel_services.sh worker
 ```
 
-Then open in browser: [https://127.0.0.1:8000/submit-json/]
-
----
-
-### Run the Worker
+### Manual Service Management
 
 ```bash
-python worker.py runserver
+# Start services (production)
+nginx
+DJANGO_SETTINGS_MODULE=labhub.settings_production \
+  .venv/bin/python -m gunicorn --bind 127.0.0.1:8000 labhub.wsgi:application --daemon
 
+# Start worker
+.venv/bin/python qmodel_worker_production.py
+
+# Stop services
+nginx -s quit
+pkill -f gunicorn
+pkill -f qmodel_worker_production
+```
+
+### Health Checks
+
+```bash
+# Test HTTPS stack
+curl -k https://localhost/health/
+# Returns: healthy
+
+# Test API endpoint
+curl -k https://localhost/qmodel/getthenextjob/ \
+  -H "Authorization: Token e1997396f5c992a1cc89ea5c8a518ab22bbab65f"
+
+# Check SSL certificate
+echo | openssl s_client -connect localhost:443 -servername localhost
 ```
 
 ---
 
-## 📝 JSON Job Format (Toy Example)
+## � API Endpoints
 
-```json
-{
-  "a": 3,
-  "b": 2
-}
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/qmodel/getthenextjob/` | GET/POST | Fetch next job or update job status |
+| `/health/` | GET | Health check endpoint |
+| `/admin/` | GET | Django admin interface |
+
+---
+
+## 🔧 Configuration Files
+
+| File | Purpose |
+|------|---------|
+| `.env` | Environment variables (API URLs, tokens, SSL settings) |
+| `labhub/settings_production.py` | Production Django settings with security |
+| `gunicorn.conf.py` | Gunicorn WSGI server configuration |
+| `nginx_qmodel.conf` | Nginx reverse proxy with SSL/TLS |
+| `qmodel-django.service` | Systemd service for Django app |
+| `qmodel-worker.service` | Systemd service for background worker |
+
+---
+
+## � Environment Configuration
+
+Example `.env` file:
+```bash
+# Django Configuration
+SECRET_KEY=your-secret-key
+DEBUG=False
+ALLOWED_HOSTS=localhost,127.0.0.1,yourdomain.com
+
+# API Configuration  
+API_URL=https://localhost/qmodel/getthenextjob/
+AUTH_TOKEN=e1997396f5c992a1cc89ea5c8a518ab22bbab65f
+
+# SSL/TLS Configuration
+SSL_VERIFY=false  # Set to true with real certificates
+
+# Logging
+LOG_LEVEL=INFO
+LOG_FILE=qmodel_worker.log
 ```
 
-If fields `a` and `b` are missing, defaults are used: `a=1`, `b=0`
+---
+
+## 🛠️ Troubleshooting
+
+### Port Already in Use
+```bash
+# Stop existing nginx
+nginx -s quit
+
+# Check for processes using ports
+lsof -i :80
+lsof -i :443
+
+# Kill specific processes if needed
+pkill -f nginx
+```
+
+### SSL Certificate Issues
+```bash
+# Regenerate certificates
+./generate_ssl_certs.sh
+
+# Test certificate validity
+openssl x509 -in ssl/certificate.crt -text -noout
+```
+
+### Worker Connection Issues
+```bash
+# Check worker logs
+tail -f qmodel_worker.log
+
+# Test API connectivity
+curl -k https://localhost/qmodel/getthenextjob/ \
+  -H "Authorization: Token your-token"
+```
 
 ---
 
-## ⚠️ Known Limitations
+## � Documentation
 
-* Current backend **ignores complex JSON job structures** (e.g., nested `job_steps`).
-* No JSON schema validation yet.
-* Worker simulates job processing via `sleep(a)` instead of real spike sorting.
-
----
-
-## 📌 Future Improvements
-
-* Parse `a` dynamically from nested JSON fields
-* Add JSON schema validation using `jsonschema`
-* Support DAG-style job execution (based on `job_steps` and dependencies)
-* NAS integration for file persistence
-* Real spike sorting using SpikeInterface
+- **[Production Deployment Guide](PRODUCTION_DEPLOYMENT.md)** - Complete setup instructions
+- **[SSL/TLS Test Results](SSL_TEST_RESULTS.md)** - Security testing documentation  
+- **[HTTPS Stack Test Results](HTTPS_STACK_TEST_RESULTS.md)** - Complete stack testing
 
 ---
 
 ## 📚 Acknowledgements
 
-Built in the Laboratory of Systems Neural Development at George Washington University. This toy system is designed to explore secure job queuing, API-driven worker orchestration, and spike sorting pipeline foundations.
-
----
+Built in the Laboratory of Systems Neural Development at George Washington University. This production-ready system demonstrates secure job queuing, API-driven worker orchestration, and spike sorting pipeline foundations with enterprise-grade security and deployment practices.

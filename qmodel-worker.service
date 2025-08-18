@@ -1,0 +1,20 @@
+[Unit]
+Description=QModel Job Worker
+After=network.target qmodel-django.service
+Requires=qmodel-django.service
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/path/to/your/spikesorting-labhub-try-error
+Environment=PATH=/path/to/your/venv/bin
+EnvironmentFile=/path/to/your/spikesorting-labhub-try-error/.env
+ExecStart=/path/to/your/venv/bin/python qmodel_worker.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

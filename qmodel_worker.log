@@ -1,0 +1,4 @@
+2025-08-18 16:18:44,855 - qmodel_worker_production - WARNING - [16750] SSL verification disabled - not recommended for production!
+2025-08-18 16:18:44,855 - qmodel_worker_production - INFO - [16750] QModel Worker initialized - API: https://localhost/qmodel/getthenextjob/, SSL Verify: False
+2025-08-18 16:34:19,235 - qmodel_worker_production - WARNING - [22508] SSL verification disabled - not recommended for production!
+2025-08-18 16:34:19,235 - qmodel_worker_production - INFO - [22508] QModel Worker initialized - API: https://localhost/qmodel/getthenextjob/, SSL Verify: False

@@ -1,0 +1,23 @@
+# Production requirements for QModel Django application
+Django==5.2.1
+djangorestframework==3.15.2
+psycopg2-binary==2.9.9
+
+# Production server
+gunicorn==21.2.0
+
+# Environment and configuration
+python-dotenv==1.0.0
+
+# HTTP/SSL handling
+requests==2.31.0
+urllib3==2.2.2
+certifi==2023.7.22
+
+# Optional: Advanced logging and monitoring
+django-extensions==3.2.3
+django-cors-headers==4.3.1
+
+# Development tools (optional, can be in separate requirements-dev.txt)
+# pytest==7.4.2
+# pytest-django==4.5.2

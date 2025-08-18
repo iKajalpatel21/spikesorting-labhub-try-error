@@ -1,0 +1,557 @@
+[2025-08-18 20:13:00 +0000] [14432] [INFO] Starting gunicorn 21.2.0
+[2025-08-18 20:13:00 +0000] [14432] [INFO] Listening at: http://127.0.0.1:8000 (14432)
+[2025-08-18 20:13:00 +0000] [14432] [INFO] Using worker: sync
+[2025-08-18 20:13:00 +0000] [14432] [INFO] QModel server is ready. Spawning workers
+[2025-08-18 20:13:00 +0000] [14433] [INFO] Booting worker with pid: 14433
+[2025-08-18 20:13:00 +0000] [14433] [INFO] Worker spawned (pid: 14433)
+[2025-08-18 20:13:00 +0000] [14433] [INFO] Worker initialized (pid: 14433)
+[2025-08-18 20:13:00 +0000] [14435] [INFO] Booting worker with pid: 14435
+[2025-08-18 20:13:00 +0000] [14435] [INFO] Worker spawned (pid: 14435)
+[2025-08-18 20:13:00 +0000] [14435] [INFO] Worker initialized (pid: 14435)
+[2025-08-18 20:13:00 +0000] [14436] [INFO] Booting worker with pid: 14436
+[2025-08-18 20:13:00 +0000] [14436] [INFO] Worker spawned (pid: 14436)
+[2025-08-18 20:13:00 +0000] [14436] [INFO] Worker initialized (pid: 14436)
+[2025-08-18 20:13:00 +0000] [14437] [INFO] Booting worker with pid: 14437
+[2025-08-18 20:13:00 +0000] [14437] [INFO] Worker spawned (pid: 14437)
+[2025-08-18 20:13:00 +0000] [14437] [INFO] Worker initialized (pid: 14437)
+[2025-08-18 20:13:00 +0000] [14438] [INFO] Booting worker with pid: 14438
+[2025-08-18 20:13:00 +0000] [14438] [INFO] Worker spawned (pid: 14438)
+[2025-08-18 20:13:00 +0000] [14438] [INFO] Worker initialized (pid: 14438)
+[2025-08-18 20:13:00 +0000] [14439] [INFO] Booting worker with pid: 14439
+[2025-08-18 20:13:00 +0000] [14439] [INFO] Worker spawned (pid: 14439)
+[2025-08-18 20:13:00 +0000] [14439] [INFO] Worker initialized (pid: 14439)
+[2025-08-18 20:13:00 +0000] [14440] [INFO] Booting worker with pid: 14440
+[2025-08-18 20:13:00 +0000] [14440] [INFO] Worker spawned (pid: 14440)
+[2025-08-18 20:13:00 +0000] [14440] [INFO] Worker initialized (pid: 14440)
+[2025-08-18 20:13:00 +0000] [14441] [INFO] Booting worker with pid: 14441
+[2025-08-18 20:13:00 +0000] [14441] [INFO] Worker spawned (pid: 14441)
+[2025-08-18 20:13:00 +0000] [14441] [INFO] Worker initialized (pid: 14441)
+[2025-08-18 20:13:00 +0000] [14442] [INFO] Booting worker with pid: 14442
+[2025-08-18 20:13:00 +0000] [14442] [INFO] Worker spawned (pid: 14442)
+[2025-08-18 20:13:00 +0000] [14442] [INFO] Worker initialized (pid: 14442)
+[2025-08-18 20:13:00 +0000] [14443] [INFO] Booting worker with pid: 14443
+[2025-08-18 20:13:00 +0000] [14443] [INFO] Worker spawned (pid: 14443)
+[2025-08-18 20:13:00 +0000] [14443] [INFO] Worker initialized (pid: 14443)
+[2025-08-18 20:13:00 +0000] [14444] [INFO] Booting worker with pid: 14444
+[2025-08-18 20:13:00 +0000] [14444] [INFO] Worker spawned (pid: 14444)
+[2025-08-18 20:13:00 +0000] [14444] [INFO] Worker initialized (pid: 14444)
+[2025-08-18 20:13:00 +0000] [14446] [INFO] Booting worker with pid: 14446
+[2025-08-18 20:13:00 +0000] [14446] [INFO] Worker spawned (pid: 14446)
+[2025-08-18 20:13:00 +0000] [14446] [INFO] Worker initialized (pid: 14446)
+[2025-08-18 20:13:00 +0000] [14447] [INFO] Booting worker with pid: 14447
+[2025-08-18 20:13:00 +0000] [14447] [INFO] Worker spawned (pid: 14447)
+[2025-08-18 20:13:00 +0000] [14447] [INFO] Worker initialized (pid: 14447)
+[2025-08-18 20:13:00 +0000] [14448] [INFO] Booting worker with pid: 14448
+[2025-08-18 20:13:00 +0000] [14448] [INFO] Worker spawned (pid: 14448)
+[2025-08-18 20:13:00 +0000] [14448] [INFO] Worker initialized (pid: 14448)
+[2025-08-18 20:13:00 +0000] [14449] [INFO] Booting worker with pid: 14449
+[2025-08-18 20:13:00 +0000] [14449] [INFO] Worker spawned (pid: 14449)
+[2025-08-18 20:13:00 +0000] [14449] [INFO] Worker initialized (pid: 14449)
+[2025-08-18 20:13:01 +0000] [14450] [INFO] Booting worker with pid: 14450
+[2025-08-18 20:13:01 +0000] [14450] [INFO] Worker spawned (pid: 14450)
+[2025-08-18 20:13:01 +0000] [14450] [INFO] Worker initialized (pid: 14450)
+[2025-08-18 20:13:01 +0000] [14452] [INFO] Booting worker with pid: 14452
+[2025-08-18 20:13:01 +0000] [14452] [INFO] Worker spawned (pid: 14452)
+[2025-08-18 20:13:01 +0000] [14452] [INFO] Worker initialized (pid: 14452)
+[2025-08-18 20:19:33 +0000] [14433] [INFO] Worker exiting (pid: 14433)
+[2025-08-18 20:19:33 +0000] [14440] [INFO] Worker exiting (pid: 14440)
+[2025-08-18 20:19:33 +0000] [14436] [INFO] Worker exiting (pid: 14436)
+[2025-08-18 20:19:33 +0000] [14437] [INFO] Worker exiting (pid: 14437)
+[2025-08-18 20:19:33 +0000] [14441] [INFO] Worker exiting (pid: 14441)
+[2025-08-18 20:19:33 +0000] [14439] [INFO] Worker exiting (pid: 14439)
+[2025-08-18 20:19:33 +0000] [14450] [INFO] Worker exiting (pid: 14450)
+[2025-08-18 20:19:33 +0000] [14449] [INFO] Worker exiting (pid: 14449)
+[2025-08-18 20:19:33 +0000] [14442] [INFO] Worker exiting (pid: 14442)
+[2025-08-18 20:19:33 +0000] [14452] [INFO] Worker exiting (pid: 14452)
+[2025-08-18 20:19:33 +0000] [14448] [INFO] Worker exiting (pid: 14448)
+[2025-08-18 20:19:33 +0000] [14444] [INFO] Worker exiting (pid: 14444)
+[2025-08-18 20:19:33 +0000] [14438] [INFO] Worker exiting (pid: 14438)
+[2025-08-18 20:19:33 +0000] [14443] [INFO] Worker exiting (pid: 14443)
+[2025-08-18 20:19:33 +0000] [14432] [INFO] Handling signal: term
+[2025-08-18 20:19:33 +0000] [14446] [INFO] Worker exiting (pid: 14446)
+[2025-08-18 20:19:33 +0000] [14435] [INFO] Worker exiting (pid: 14435)
+[2025-08-18 20:19:33 +0000] [14447] [INFO] Worker exiting (pid: 14447)
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14449) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14433) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14450) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14439) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14436) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14440) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14441) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [ERROR] Worker (pid:14437) was sent SIGTERM!
+[2025-08-18 20:19:33 +0000] [14432] [INFO] Shutting down: Master
+[2025-08-18 20:25:30 +0000] [20645] [INFO] Starting gunicorn 21.2.0
+[2025-08-18 20:25:30 +0000] [20645] [INFO] Listening at: http://127.0.0.1:8000 (20645)
+[2025-08-18 20:25:30 +0000] [20645] [INFO] Using worker: sync
+[2025-08-18 20:25:30 +0000] [20645] [INFO] QModel server is ready. Spawning workers
+[2025-08-18 20:25:30 +0000] [20697] [INFO] Booting worker with pid: 20697
+[2025-08-18 20:25:30 +0000] [20697] [INFO] Worker spawned (pid: 20697)
+[2025-08-18 20:25:30 +0000] [20697] [INFO] Worker initialized (pid: 20697)
+[2025-08-18 20:25:30 +0000] [20698] [INFO] Booting worker with pid: 20698
+[2025-08-18 20:25:30 +0000] [20698] [INFO] Worker spawned (pid: 20698)
+[2025-08-18 20:25:30 +0000] [20698] [INFO] Worker initialized (pid: 20698)
+[2025-08-18 20:25:30 +0000] [20699] [INFO] Booting worker with pid: 20699
+[2025-08-18 20:25:30 +0000] [20699] [INFO] Worker spawned (pid: 20699)
+[2025-08-18 20:25:30 +0000] [20699] [INFO] Worker initialized (pid: 20699)
+[2025-08-18 20:25:30 +0000] [20700] [INFO] Booting worker with pid: 20700
+[2025-08-18 20:25:30 +0000] [20700] [INFO] Worker spawned (pid: 20700)
+[2025-08-18 20:25:30 +0000] [20700] [INFO] Worker initialized (pid: 20700)
+[2025-08-18 20:25:30 +0000] [20701] [INFO] Booting worker with pid: 20701
+[2025-08-18 20:25:30 +0000] [20701] [INFO] Worker spawned (pid: 20701)
+[2025-08-18 20:25:30 +0000] [20701] [INFO] Worker initialized (pid: 20701)
+[2025-08-18 20:25:30 +0000] [20702] [INFO] Booting worker with pid: 20702
+[2025-08-18 20:25:30 +0000] [20702] [INFO] Worker spawned (pid: 20702)
+[2025-08-18 20:25:30 +0000] [20702] [INFO] Worker initialized (pid: 20702)
+[2025-08-18 20:25:30 +0000] [20703] [INFO] Booting worker with pid: 20703
+[2025-08-18 20:25:30 +0000] [20703] [INFO] Worker spawned (pid: 20703)
+[2025-08-18 20:25:30 +0000] [20703] [INFO] Worker initialized (pid: 20703)
+[2025-08-18 20:25:30 +0000] [20704] [INFO] Booting worker with pid: 20704
+[2025-08-18 20:25:30 +0000] [20704] [INFO] Worker spawned (pid: 20704)
+[2025-08-18 20:25:30 +0000] [20704] [INFO] Worker initialized (pid: 20704)
+[2025-08-18 20:25:31 +0000] [20705] [INFO] Booting worker with pid: 20705
+[2025-08-18 20:25:31 +0000] [20705] [INFO] Worker spawned (pid: 20705)
+[2025-08-18 20:25:31 +0000] [20705] [INFO] Worker initialized (pid: 20705)
+[2025-08-18 20:25:31 +0000] [20706] [INFO] Booting worker with pid: 20706
+[2025-08-18 20:25:31 +0000] [20706] [INFO] Worker spawned (pid: 20706)
+[2025-08-18 20:25:31 +0000] [20706] [INFO] Worker initialized (pid: 20706)
+[2025-08-18 20:25:31 +0000] [20709] [INFO] Booting worker with pid: 20709
+[2025-08-18 20:25:31 +0000] [20709] [INFO] Worker spawned (pid: 20709)
+[2025-08-18 20:25:31 +0000] [20709] [INFO] Worker initialized (pid: 20709)
+[2025-08-18 20:25:31 +0000] [20710] [INFO] Booting worker with pid: 20710
+[2025-08-18 20:25:31 +0000] [20710] [INFO] Worker spawned (pid: 20710)
+[2025-08-18 20:25:31 +0000] [20710] [INFO] Worker initialized (pid: 20710)
+[2025-08-18 20:25:31 +0000] [20711] [INFO] Booting worker with pid: 20711
+[2025-08-18 20:25:31 +0000] [20711] [INFO] Worker spawned (pid: 20711)
+[2025-08-18 20:25:31 +0000] [20711] [INFO] Worker initialized (pid: 20711)
+[2025-08-18 20:25:31 +0000] [20712] [INFO] Booting worker with pid: 20712
+[2025-08-18 20:25:31 +0000] [20712] [INFO] Worker spawned (pid: 20712)
+[2025-08-18 20:25:31 +0000] [20712] [INFO] Worker initialized (pid: 20712)
+[2025-08-18 20:25:31 +0000] [20713] [INFO] Booting worker with pid: 20713
+[2025-08-18 20:25:31 +0000] [20713] [INFO] Worker spawned (pid: 20713)
+[2025-08-18 20:25:31 +0000] [20713] [INFO] Worker initialized (pid: 20713)
+[2025-08-18 20:25:31 +0000] [20714] [INFO] Booting worker with pid: 20714
+[2025-08-18 20:25:31 +0000] [20714] [INFO] Worker spawned (pid: 20714)
+[2025-08-18 20:25:31 +0000] [20714] [INFO] Worker initialized (pid: 20714)
+[2025-08-18 20:25:31 +0000] [20715] [INFO] Booting worker with pid: 20715
+[2025-08-18 20:25:31 +0000] [20715] [INFO] Worker spawned (pid: 20715)
+[2025-08-18 20:25:31 +0000] [20715] [INFO] Worker initialized (pid: 20715)
+[2025-08-18 20:26:49 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20702)
+[2025-08-18 20:26:49 +0000] [20702] [INFO] Worker aborted (pid: 20702)
+[2025-08-18 20:26:49 +0000] [20702] [INFO] Worker exiting (pid: 20702)
+[2025-08-18 20:26:49 +0000] [20645] [ERROR] Worker (pid:20702) exited with code 1
+[2025-08-18 20:26:49 +0000] [20645] [ERROR] Worker (pid:20702) exited with code 1.
+[2025-08-18 20:26:49 +0000] [20900] [INFO] Booting worker with pid: 20900
+[2025-08-18 20:26:49 +0000] [20900] [INFO] Worker spawned (pid: 20900)
+[2025-08-18 20:26:49 +0000] [20900] [INFO] Worker initialized (pid: 20900)
+[2025-08-18 20:26:56 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20701)
+[2025-08-18 20:26:56 +0000] [20701] [INFO] Worker aborted (pid: 20701)
+[2025-08-18 20:26:56 +0000] [20701] [INFO] Worker exiting (pid: 20701)
+[2025-08-18 20:26:56 +0000] [20645] [ERROR] Worker (pid:20701) exited with code 1
+[2025-08-18 20:26:56 +0000] [20645] [ERROR] Worker (pid:20701) exited with code 1.
+[2025-08-18 20:26:56 +0000] [20958] [INFO] Booting worker with pid: 20958
+[2025-08-18 20:26:56 +0000] [20958] [INFO] Worker spawned (pid: 20958)
+[2025-08-18 20:26:56 +0000] [20958] [INFO] Worker initialized (pid: 20958)
+[2025-08-18 20:26:58 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20703)
+[2025-08-18 20:26:58 +0000] [20703] [INFO] Worker aborted (pid: 20703)
+[2025-08-18 20:26:58 +0000] [20703] [INFO] Worker exiting (pid: 20703)
+[2025-08-18 20:26:58 +0000] [20645] [ERROR] Worker (pid:20703) exited with code 1
+[2025-08-18 20:26:58 +0000] [20645] [ERROR] Worker (pid:20703) exited with code 1.
+[2025-08-18 20:26:58 +0000] [20959] [INFO] Booting worker with pid: 20959
+[2025-08-18 20:26:58 +0000] [20959] [INFO] Worker spawned (pid: 20959)
+[2025-08-18 20:26:58 +0000] [20959] [INFO] Worker initialized (pid: 20959)
+[2025-08-18 20:27:19 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20697)
+[2025-08-18 20:27:19 +0000] [20697] [INFO] Worker aborted (pid: 20697)
+[2025-08-18 20:27:19 +0000] [20697] [INFO] Worker exiting (pid: 20697)
+[2025-08-18 20:27:19 +0000] [20645] [ERROR] Worker (pid:20697) exited with code 1
+[2025-08-18 20:27:19 +0000] [20645] [ERROR] Worker (pid:20697) exited with code 1.
+[2025-08-18 20:27:19 +0000] [21107] [INFO] Booting worker with pid: 21107
+[2025-08-18 20:27:19 +0000] [21107] [INFO] Worker spawned (pid: 21107)
+[2025-08-18 20:27:19 +0000] [21107] [INFO] Worker initialized (pid: 21107)
+[2025-08-18 20:27:27 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20710)
+[2025-08-18 20:27:27 +0000] [20710] [INFO] Worker aborted (pid: 20710)
+[2025-08-18 20:27:27 +0000] [20710] [INFO] Worker exiting (pid: 20710)
+[2025-08-18 20:27:27 +0000] [20645] [ERROR] Worker (pid:20710) exited with code 1
+[2025-08-18 20:27:27 +0000] [20645] [ERROR] Worker (pid:20710) exited with code 1.
+[2025-08-18 20:27:27 +0000] [21196] [INFO] Booting worker with pid: 21196
+[2025-08-18 20:27:27 +0000] [21196] [INFO] Worker spawned (pid: 21196)
+[2025-08-18 20:27:27 +0000] [21196] [INFO] Worker initialized (pid: 21196)
+[2025-08-18 20:27:29 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20713)
+[2025-08-18 20:27:29 +0000] [20713] [INFO] Worker aborted (pid: 20713)
+[2025-08-18 20:27:29 +0000] [20713] [INFO] Worker exiting (pid: 20713)
+[2025-08-18 20:27:29 +0000] [20645] [ERROR] Worker (pid:20713) exited with code 1
+[2025-08-18 20:27:29 +0000] [20645] [ERROR] Worker (pid:20713) exited with code 1.
+[2025-08-18 20:27:29 +0000] [21204] [INFO] Booting worker with pid: 21204
+[2025-08-18 20:27:29 +0000] [21204] [INFO] Worker spawned (pid: 21204)
+[2025-08-18 20:27:29 +0000] [21204] [INFO] Worker initialized (pid: 21204)
+[2025-08-18 20:27:50 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20958)
+[2025-08-18 20:27:50 +0000] [20958] [INFO] Worker aborted (pid: 20958)
+[2025-08-18 20:27:50 +0000] [20958] [INFO] Worker exiting (pid: 20958)
+[2025-08-18 20:27:50 +0000] [20645] [ERROR] Worker (pid:20958) exited with code 1
+[2025-08-18 20:27:50 +0000] [20645] [ERROR] Worker (pid:20958) exited with code 1.
+[2025-08-18 20:27:50 +0000] [21212] [INFO] Booting worker with pid: 21212
+[2025-08-18 20:27:50 +0000] [21212] [INFO] Worker spawned (pid: 21212)
+[2025-08-18 20:27:50 +0000] [21212] [INFO] Worker initialized (pid: 21212)
+[2025-08-18 20:27:57 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20712)
+[2025-08-18 20:27:57 +0000] [20712] [INFO] Worker aborted (pid: 20712)
+[2025-08-18 20:27:57 +0000] [20712] [INFO] Worker exiting (pid: 20712)
+[2025-08-18 20:27:57 +0000] [20645] [ERROR] Worker (pid:20712) exited with code 1
+[2025-08-18 20:27:57 +0000] [20645] [ERROR] Worker (pid:20712) exited with code 1.
+[2025-08-18 20:27:57 +0000] [21213] [INFO] Booting worker with pid: 21213
+[2025-08-18 20:27:57 +0000] [21213] [INFO] Worker spawned (pid: 21213)
+[2025-08-18 20:27:57 +0000] [21213] [INFO] Worker initialized (pid: 21213)
+[2025-08-18 20:27:59 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20698)
+[2025-08-18 20:27:59 +0000] [20698] [INFO] Worker aborted (pid: 20698)
+[2025-08-18 20:27:59 +0000] [20698] [INFO] Worker exiting (pid: 20698)
+[2025-08-18 20:27:59 +0000] [20645] [ERROR] Worker (pid:20698) exited with code 1
+[2025-08-18 20:27:59 +0000] [20645] [ERROR] Worker (pid:20698) exited with code 1.
+[2025-08-18 20:27:59 +0000] [21214] [INFO] Booting worker with pid: 21214
+[2025-08-18 20:27:59 +0000] [21214] [INFO] Worker spawned (pid: 21214)
+[2025-08-18 20:27:59 +0000] [21214] [INFO] Worker initialized (pid: 21214)
+[2025-08-18 20:28:20 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20699)
+[2025-08-18 20:28:20 +0000] [20699] [INFO] Worker aborted (pid: 20699)
+[2025-08-18 20:28:20 +0000] [20699] [INFO] Worker exiting (pid: 20699)
+[2025-08-18 20:28:20 +0000] [20645] [ERROR] Worker (pid:20699) exited with code 1
+[2025-08-18 20:28:20 +0000] [20645] [ERROR] Worker (pid:20699) exited with code 1.
+[2025-08-18 20:28:20 +0000] [21310] [INFO] Booting worker with pid: 21310
+[2025-08-18 20:28:20 +0000] [21310] [INFO] Worker spawned (pid: 21310)
+[2025-08-18 20:28:20 +0000] [21310] [INFO] Worker initialized (pid: 21310)
+[2025-08-18 20:28:27 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20900)
+[2025-08-18 20:28:27 +0000] [20900] [INFO] Worker aborted (pid: 20900)
+[2025-08-18 20:28:27 +0000] [20900] [INFO] Worker exiting (pid: 20900)
+[2025-08-18 20:28:27 +0000] [20645] [ERROR] Worker (pid:20900) exited with code 1
+[2025-08-18 20:28:27 +0000] [20645] [ERROR] Worker (pid:20900) exited with code 1.
+[2025-08-18 20:28:27 +0000] [21313] [INFO] Booting worker with pid: 21313
+[2025-08-18 20:28:27 +0000] [21313] [INFO] Worker spawned (pid: 21313)
+[2025-08-18 20:28:27 +0000] [21313] [INFO] Worker initialized (pid: 21313)
+[2025-08-18 20:28:29 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20704)
+[2025-08-18 20:28:29 +0000] [20704] [INFO] Worker aborted (pid: 20704)
+[2025-08-18 20:28:29 +0000] [20704] [INFO] Worker exiting (pid: 20704)
+[2025-08-18 20:28:30 +0000] [20645] [ERROR] Worker (pid:20704) exited with code 1
+[2025-08-18 20:28:30 +0000] [20645] [ERROR] Worker (pid:20704) exited with code 1.
+[2025-08-18 20:28:30 +0000] [21318] [INFO] Booting worker with pid: 21318
+[2025-08-18 20:28:30 +0000] [21318] [INFO] Worker spawned (pid: 21318)
+[2025-08-18 20:28:30 +0000] [21318] [INFO] Worker initialized (pid: 21318)
+[2025-08-18 20:28:51 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:21212)
+[2025-08-18 20:28:51 +0000] [21212] [INFO] Worker aborted (pid: 21212)
+[2025-08-18 20:28:51 +0000] [21212] [INFO] Worker exiting (pid: 21212)
+[2025-08-18 20:28:51 +0000] [20645] [ERROR] Worker (pid:21212) exited with code 1
+[2025-08-18 20:28:51 +0000] [20645] [ERROR] Worker (pid:21212) exited with code 1.
+[2025-08-18 20:28:51 +0000] [21502] [INFO] Booting worker with pid: 21502
+[2025-08-18 20:28:51 +0000] [21502] [INFO] Worker spawned (pid: 21502)
+[2025-08-18 20:28:51 +0000] [21502] [INFO] Worker initialized (pid: 21502)
+[2025-08-18 20:29:21 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20700)
+[2025-08-18 20:29:21 +0000] [20700] [INFO] Worker aborted (pid: 20700)
+[2025-08-18 20:29:21 +0000] [20700] [INFO] Worker exiting (pid: 20700)
+[2025-08-18 20:29:21 +0000] [20645] [ERROR] Worker (pid:20700) exited with code 1
+[2025-08-18 20:29:21 +0000] [20645] [ERROR] Worker (pid:20700) exited with code 1.
+[2025-08-18 20:29:21 +0000] [21519] [INFO] Booting worker with pid: 21519
+[2025-08-18 20:29:21 +0000] [21519] [INFO] Worker spawned (pid: 21519)
+[2025-08-18 20:29:21 +0000] [21519] [INFO] Worker initialized (pid: 21519)
+[2025-08-18 20:29:51 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:21310)
+[2025-08-18 20:29:51 +0000] [21310] [INFO] Worker aborted (pid: 21310)
+[2025-08-18 20:29:51 +0000] [21310] [INFO] Worker exiting (pid: 21310)
+[2025-08-18 20:29:51 +0000] [20645] [ERROR] Worker (pid:21310) exited with code 1
+[2025-08-18 20:29:51 +0000] [20645] [ERROR] Worker (pid:21310) exited with code 1.
+[2025-08-18 20:29:51 +0000] [21533] [INFO] Booting worker with pid: 21533
+[2025-08-18 20:29:51 +0000] [21533] [INFO] Worker spawned (pid: 21533)
+[2025-08-18 20:29:51 +0000] [21533] [INFO] Worker initialized (pid: 21533)
+[2025-08-18 20:30:21 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:21519)
+[2025-08-18 20:30:21 +0000] [21519] [INFO] Worker aborted (pid: 21519)
+[2025-08-18 20:30:21 +0000] [21519] [INFO] Worker exiting (pid: 21519)
+[2025-08-18 20:30:21 +0000] [20645] [ERROR] Worker (pid:21519) exited with code 1
+[2025-08-18 20:30:21 +0000] [20645] [ERROR] Worker (pid:21519) exited with code 1.
+[2025-08-18 20:30:21 +0000] [21541] [INFO] Booting worker with pid: 21541
+[2025-08-18 20:30:21 +0000] [21541] [INFO] Worker spawned (pid: 21541)
+[2025-08-18 20:30:21 +0000] [21541] [INFO] Worker initialized (pid: 21541)
+[2025-08-18 20:37:39 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20705)
+[2025-08-18 20:37:39 +0000] [20705] [INFO] Worker aborted (pid: 20705)
+[2025-08-18 20:37:39 +0000] [20705] [INFO] Worker exiting (pid: 20705)
+[2025-08-18 20:37:39 +0000] [20645] [ERROR] Worker (pid:20705) exited with code 1
+[2025-08-18 20:37:39 +0000] [20645] [ERROR] Worker (pid:20705) exited with code 1.
+[2025-08-18 20:37:39 +0000] [22804] [INFO] Booting worker with pid: 22804
+[2025-08-18 20:37:39 +0000] [22804] [INFO] Worker spawned (pid: 22804)
+[2025-08-18 20:37:39 +0000] [22804] [INFO] Worker initialized (pid: 22804)
+[2025-08-18 20:37:49 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20715)
+[2025-08-18 20:37:49 +0000] [20715] [INFO] Worker aborted (pid: 20715)
+[2025-08-18 20:37:49 +0000] [20715] [INFO] Worker exiting (pid: 20715)
+[2025-08-18 20:37:49 +0000] [20645] [ERROR] Worker (pid:20715) exited with code 1
+[2025-08-18 20:37:49 +0000] [20645] [ERROR] Worker (pid:20715) exited with code 1.
+[2025-08-18 20:37:49 +0000] [22810] [INFO] Booting worker with pid: 22810
+[2025-08-18 20:37:49 +0000] [22810] [INFO] Worker spawned (pid: 22810)
+[2025-08-18 20:37:49 +0000] [22810] [INFO] Worker initialized (pid: 22810)
+[2025-08-18 20:38:09 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20714)
+[2025-08-18 20:38:09 +0000] [20714] [INFO] Worker aborted (pid: 20714)
+[2025-08-18 20:38:09 +0000] [20714] [INFO] Worker exiting (pid: 20714)
+[2025-08-18 20:38:09 +0000] [20645] [ERROR] Worker (pid:20714) exited with code 1
+[2025-08-18 20:38:09 +0000] [20645] [ERROR] Worker (pid:20714) exited with code 1.
+[2025-08-18 20:38:09 +0000] [22897] [INFO] Booting worker with pid: 22897
+[2025-08-18 20:38:09 +0000] [22897] [INFO] Worker spawned (pid: 22897)
+[2025-08-18 20:38:09 +0000] [22897] [INFO] Worker initialized (pid: 22897)
+[2025-08-18 20:38:19 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20711)
+[2025-08-18 20:38:19 +0000] [20711] [INFO] Worker aborted (pid: 20711)
+[2025-08-18 20:38:19 +0000] [20711] [INFO] Worker exiting (pid: 20711)
+[2025-08-18 20:38:19 +0000] [20645] [ERROR] Worker (pid:20711) exited with code 1
+[2025-08-18 20:38:19 +0000] [20645] [ERROR] Worker (pid:20711) exited with code 1.
+[2025-08-18 20:38:19 +0000] [22902] [INFO] Booting worker with pid: 22902
+[2025-08-18 20:38:19 +0000] [22902] [INFO] Worker spawned (pid: 22902)
+[2025-08-18 20:38:19 +0000] [22902] [INFO] Worker initialized (pid: 22902)
+[2025-08-18 20:38:24 +0000] [23057] [INFO] Starting gunicorn 21.2.0
+[2025-08-18 20:38:24 +0000] [23057] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2025-08-18 20:38:24 +0000] [23057] [ERROR] Retrying in 1 second.
+[2025-08-18 20:38:25 +0000] [23057] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2025-08-18 20:38:25 +0000] [23057] [ERROR] Retrying in 1 second.
+[2025-08-18 20:38:26 +0000] [23057] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2025-08-18 20:38:26 +0000] [23057] [ERROR] Retrying in 1 second.
+[2025-08-18 20:38:27 +0000] [23057] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2025-08-18 20:38:27 +0000] [23057] [ERROR] Retrying in 1 second.
+[2025-08-18 20:38:28 +0000] [23057] [ERROR] Connection in use: ('127.0.0.1', 8000)
+[2025-08-18 20:38:28 +0000] [23057] [ERROR] Retrying in 1 second.
+[2025-08-18 20:38:29 +0000] [23057] [ERROR] Can't connect to ('127.0.0.1', 8000)
+[2025-08-18 20:38:39 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:22810)
+[2025-08-18 20:38:39 +0000] [22810] [INFO] Worker aborted (pid: 22810)
+[2025-08-18 20:38:39 +0000] [22810] [INFO] Worker exiting (pid: 22810)
+[2025-08-18 20:38:39 +0000] [20645] [ERROR] Worker (pid:22810) exited with code 1
+[2025-08-18 20:38:39 +0000] [20645] [ERROR] Worker (pid:22810) exited with code 1.
+[2025-08-18 20:38:39 +0000] [23124] [INFO] Booting worker with pid: 23124
+[2025-08-18 20:38:39 +0000] [23124] [INFO] Worker spawned (pid: 23124)
+[2025-08-18 20:38:39 +0000] [23124] [INFO] Worker initialized (pid: 23124)
+[2025-08-18 20:39:09 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:21107)
+[2025-08-18 20:39:09 +0000] [21107] [INFO] Worker aborted (pid: 21107)
+[2025-08-18 20:39:09 +0000] [21107] [INFO] Worker exiting (pid: 21107)
+[2025-08-18 20:39:09 +0000] [20645] [ERROR] Worker (pid:21107) exited with code 1
+[2025-08-18 20:39:09 +0000] [20645] [ERROR] Worker (pid:21107) exited with code 1.
+[2025-08-18 20:39:09 +0000] [23137] [INFO] Booting worker with pid: 23137
+[2025-08-18 20:39:09 +0000] [23137] [INFO] Worker spawned (pid: 23137)
+[2025-08-18 20:39:09 +0000] [23137] [INFO] Worker initialized (pid: 23137)
+[2025-08-18 20:39:15 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:22902)
+[2025-08-18 20:39:15 +0000] [22902] [INFO] Worker aborted (pid: 22902)
+[2025-08-18 20:39:15 +0000] [22902] [INFO] Worker exiting (pid: 22902)
+[2025-08-18 20:39:15 +0000] [20645] [ERROR] Worker (pid:22902) exited with code 1
+[2025-08-18 20:39:15 +0000] [20645] [ERROR] Worker (pid:22902) exited with code 1.
+[2025-08-18 20:39:15 +0000] [23138] [INFO] Booting worker with pid: 23138
+[2025-08-18 20:39:15 +0000] [23138] [INFO] Worker spawned (pid: 23138)
+[2025-08-18 20:39:15 +0000] [23138] [INFO] Worker initialized (pid: 23138)
+[2025-08-18 20:39:25 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:20709)
+[2025-08-18 20:39:25 +0000] [20709] [INFO] Worker aborted (pid: 20709)
+[2025-08-18 20:39:25 +0000] [20709] [INFO] Worker exiting (pid: 20709)
+[2025-08-18 20:39:25 +0000] [20645] [ERROR] Worker (pid:20709) exited with code 1
+[2025-08-18 20:39:25 +0000] [20645] [ERROR] Worker (pid:20709) exited with code 1.
+[2025-08-18 20:39:25 +0000] [23139] [INFO] Booting worker with pid: 23139
+[2025-08-18 20:39:25 +0000] [23139] [INFO] Worker spawned (pid: 23139)
+[2025-08-18 20:39:25 +0000] [23139] [INFO] Worker initialized (pid: 23139)
+[2025-08-18 20:39:45 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:21541)
+[2025-08-18 20:39:45 +0000] [21541] [INFO] Worker aborted (pid: 21541)
+[2025-08-18 20:39:45 +0000] [21541] [INFO] Worker exiting (pid: 21541)
+[2025-08-18 20:39:45 +0000] [20645] [ERROR] Worker (pid:21541) exited with code 1
+[2025-08-18 20:39:45 +0000] [20645] [ERROR] Worker (pid:21541) exited with code 1.
+[2025-08-18 20:39:45 +0000] [23218] [INFO] Booting worker with pid: 23218
+[2025-08-18 20:39:45 +0000] [23218] [INFO] Worker spawned (pid: 23218)
+[2025-08-18 20:39:45 +0000] [23218] [INFO] Worker initialized (pid: 23218)
+[2025-08-18 20:39:55 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:21318)
+[2025-08-18 20:39:55 +0000] [21318] [INFO] Worker aborted (pid: 21318)
+[2025-08-18 20:39:55 +0000] [21318] [INFO] Worker exiting (pid: 21318)
+[2025-08-18 20:39:55 +0000] [20645] [ERROR] Worker (pid:21318) exited with code 1
+[2025-08-18 20:39:55 +0000] [20645] [ERROR] Worker (pid:21318) exited with code 1.
+[2025-08-18 20:39:55 +0000] [23291] [INFO] Booting worker with pid: 23291
+[2025-08-18 20:39:55 +0000] [23291] [INFO] Worker spawned (pid: 23291)
+[2025-08-18 20:39:55 +0000] [23291] [INFO] Worker initialized (pid: 23291)
+[2025-08-18 20:40:15 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:23124)
+[2025-08-18 20:40:15 +0000] [23124] [INFO] Worker aborted (pid: 23124)
+[2025-08-18 20:40:15 +0000] [23124] [INFO] Worker exiting (pid: 23124)
+[2025-08-18 20:40:15 +0000] [20645] [ERROR] Worker (pid:23124) exited with code 1
+[2025-08-18 20:40:15 +0000] [20645] [ERROR] Worker (pid:23124) exited with code 1.
+[2025-08-18 20:40:15 +0000] [23442] [INFO] Booting worker with pid: 23442
+[2025-08-18 20:40:15 +0000] [23442] [INFO] Worker spawned (pid: 23442)
+[2025-08-18 20:40:15 +0000] [23442] [INFO] Worker initialized (pid: 23442)
+[2025-08-18 20:40:25 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:22897)
+[2025-08-18 20:40:25 +0000] [22897] [INFO] Worker aborted (pid: 22897)
+[2025-08-18 20:40:25 +0000] [22897] [INFO] Worker exiting (pid: 22897)
+[2025-08-18 20:40:25 +0000] [20645] [ERROR] Worker (pid:22897) exited with code 1
+[2025-08-18 20:40:25 +0000] [20645] [ERROR] Worker (pid:22897) exited with code 1.
+[2025-08-18 20:40:25 +0000] [23514] [INFO] Booting worker with pid: 23514
+[2025-08-18 20:40:25 +0000] [23514] [INFO] Worker spawned (pid: 23514)
+[2025-08-18 20:40:25 +0000] [23514] [INFO] Worker initialized (pid: 23514)
+[2025-08-18 20:40:45 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:21533)
+[2025-08-18 20:40:45 +0000] [21533] [INFO] Worker aborted (pid: 21533)
+[2025-08-18 20:40:45 +0000] [21533] [INFO] Worker exiting (pid: 21533)
+[2025-08-18 20:40:45 +0000] [20645] [ERROR] Worker (pid:21533) exited with code 1
+[2025-08-18 20:40:45 +0000] [20645] [ERROR] Worker (pid:21533) exited with code 1.
+[2025-08-18 20:40:45 +0000] [23718] [INFO] Booting worker with pid: 23718
+[2025-08-18 20:40:45 +0000] [23718] [INFO] Worker spawned (pid: 23718)
+[2025-08-18 20:40:45 +0000] [23718] [INFO] Worker initialized (pid: 23718)
+[2025-08-18 20:40:55 +0000] [20645] [CRITICAL] WORKER TIMEOUT (pid:23139)
+[2025-08-18 20:40:55 +0000] [23139] [INFO] Worker aborted (pid: 23139)
+[2025-08-18 20:40:55 +0000] [23139] [INFO] Worker exiting (pid: 23139)
+[2025-08-18 20:40:55 +0000] [20645] [ERROR] Worker (pid:23139) exited with code 1
+[2025-08-18 20:40:55 +0000] [20645] [ERROR] Worker (pid:23139) exited with code 1.
+[2025-08-18 20:40:55 +0000] [23799] [INFO] Booting worker with pid: 23799
+[2025-08-18 20:40:55 +0000] [23799] [INFO] Worker spawned (pid: 23799)
+[2025-08-18 20:40:55 +0000] [23799] [INFO] Worker initialized (pid: 23799)
+[2025-08-18 20:41:03 +0000] [24016] [INFO] Starting gunicorn 21.2.0
+[2025-08-18 20:55:51 +0000] [20645] [INFO] Handling signal: term
+[2025-08-18 20:55:51 +0000] [21196] [INFO] Worker exiting (pid: 21196)
+[2025-08-18 20:55:51 +0000] [21204] [INFO] Worker exiting (pid: 21204)
+[2025-08-18 20:55:51 +0000] [20706] [INFO] Worker exiting (pid: 20706)
+[2025-08-18 20:55:51 +0000] [20959] [INFO] Worker exiting (pid: 20959)
+[2025-08-18 20:55:51 +0000] [21213] [INFO] Worker exiting (pid: 21213)
+[2025-08-18 20:55:51 +0000] [23799] [INFO] Worker exiting (pid: 23799)
+[2025-08-18 20:55:51 +0000] [23718] [INFO] Worker exiting (pid: 23718)
+[2025-08-18 20:55:51 +0000] [23442] [INFO] Worker exiting (pid: 23442)
+[2025-08-18 20:55:51 +0000] [21313] [INFO] Worker exiting (pid: 21313)
+[2025-08-18 20:55:51 +0000] [22804] [INFO] Worker exiting (pid: 22804)
+[2025-08-18 20:55:51 +0000] [21502] [INFO] Worker exiting (pid: 21502)
+[2025-08-18 20:55:51 +0000] [21214] [INFO] Worker exiting (pid: 21214)
+[2025-08-18 20:55:51 +0000] [23514] [INFO] Worker exiting (pid: 23514)
+[2025-08-18 20:55:51 +0000] [23137] [INFO] Worker exiting (pid: 23137)
+[2025-08-18 20:55:51 +0000] [23218] [INFO] Worker exiting (pid: 23218)
+[2025-08-18 20:55:51 +0000] [23291] [INFO] Worker exiting (pid: 23291)
+[2025-08-18 20:55:51 +0000] [23138] [INFO] Worker exiting (pid: 23138)
+[2025-08-18 20:55:52 +0000] [20645] [INFO] Shutting down: Master
+[2025-08-18 20:56:33 +0000] [25156] [INFO] Starting gunicorn 21.2.0
+[2025-08-18 20:56:33 +0000] [25156] [INFO] Listening at: http://127.0.0.1:8000 (25156)
+[2025-08-18 20:56:33 +0000] [25156] [INFO] Using worker: sync
+[2025-08-18 20:56:33 +0000] [25156] [INFO] QModel server is ready. Spawning workers
+[2025-08-18 20:56:33 +0000] [25163] [INFO] Booting worker with pid: 25163
+[2025-08-18 20:56:33 +0000] [25163] [INFO] Worker spawned (pid: 25163)
+[2025-08-18 20:56:33 +0000] [25163] [INFO] Worker initialized (pid: 25163)
+[2025-08-18 20:56:33 +0000] [25164] [INFO] Booting worker with pid: 25164
+[2025-08-18 20:56:33 +0000] [25164] [INFO] Worker spawned (pid: 25164)
+[2025-08-18 20:56:33 +0000] [25164] [INFO] Worker initialized (pid: 25164)
+[2025-08-18 20:56:33 +0000] [25165] [INFO] Booting worker with pid: 25165
+[2025-08-18 20:56:33 +0000] [25165] [INFO] Worker spawned (pid: 25165)
+[2025-08-18 20:56:33 +0000] [25165] [INFO] Worker initialized (pid: 25165)
+[2025-08-18 20:56:33 +0000] [25166] [INFO] Booting worker with pid: 25166
+[2025-08-18 20:56:33 +0000] [25166] [INFO] Worker spawned (pid: 25166)
+[2025-08-18 20:56:33 +0000] [25166] [INFO] Worker initialized (pid: 25166)
+[2025-08-18 20:56:33 +0000] [25169] [INFO] Booting worker with pid: 25169
+[2025-08-18 20:56:33 +0000] [25169] [INFO] Worker spawned (pid: 25169)
+[2025-08-18 20:56:33 +0000] [25169] [INFO] Worker initialized (pid: 25169)
+[2025-08-18 20:56:33 +0000] [25170] [INFO] Booting worker with pid: 25170
+[2025-08-18 20:56:33 +0000] [25170] [INFO] Worker spawned (pid: 25170)
+[2025-08-18 20:56:33 +0000] [25170] [INFO] Worker initialized (pid: 25170)
+[2025-08-18 20:56:33 +0000] [25172] [INFO] Booting worker with pid: 25172
+[2025-08-18 20:56:33 +0000] [25172] [INFO] Worker spawned (pid: 25172)
+[2025-08-18 20:56:33 +0000] [25172] [INFO] Worker initialized (pid: 25172)
+[2025-08-18 20:56:33 +0000] [25173] [INFO] Booting worker with pid: 25173
+[2025-08-18 20:56:33 +0000] [25173] [INFO] Worker spawned (pid: 25173)
+[2025-08-18 20:56:33 +0000] [25173] [INFO] Worker initialized (pid: 25173)
+[2025-08-18 20:56:33 +0000] [25174] [INFO] Booting worker with pid: 25174
+[2025-08-18 20:56:33 +0000] [25174] [INFO] Worker spawned (pid: 25174)
+[2025-08-18 20:56:33 +0000] [25174] [INFO] Worker initialized (pid: 25174)
+[2025-08-18 20:56:34 +0000] [25175] [INFO] Booting worker with pid: 25175
+[2025-08-18 20:56:34 +0000] [25175] [INFO] Worker spawned (pid: 25175)
+[2025-08-18 20:56:34 +0000] [25175] [INFO] Worker initialized (pid: 25175)
+[2025-08-18 20:56:34 +0000] [25177] [INFO] Booting worker with pid: 25177
+[2025-08-18 20:56:34 +0000] [25177] [INFO] Worker spawned (pid: 25177)
+[2025-08-18 20:56:34 +0000] [25177] [INFO] Worker initialized (pid: 25177)
+[2025-08-18 20:56:34 +0000] [25178] [INFO] Booting worker with pid: 25178
+[2025-08-18 20:56:34 +0000] [25178] [INFO] Worker spawned (pid: 25178)
+[2025-08-18 20:56:34 +0000] [25178] [INFO] Worker initialized (pid: 25178)
+[2025-08-18 20:56:34 +0000] [25179] [INFO] Booting worker with pid: 25179
+[2025-08-18 20:56:34 +0000] [25179] [INFO] Worker spawned (pid: 25179)
+[2025-08-18 20:56:34 +0000] [25179] [INFO] Worker initialized (pid: 25179)
+[2025-08-18 20:56:34 +0000] [25181] [INFO] Booting worker with pid: 25181
+[2025-08-18 20:56:34 +0000] [25181] [INFO] Worker spawned (pid: 25181)
+[2025-08-18 20:56:34 +0000] [25181] [INFO] Worker initialized (pid: 25181)
+[2025-08-18 20:56:34 +0000] [25184] [INFO] Booting worker with pid: 25184
+[2025-08-18 20:56:34 +0000] [25184] [INFO] Worker spawned (pid: 25184)
+[2025-08-18 20:56:34 +0000] [25184] [INFO] Worker initialized (pid: 25184)
+[2025-08-18 20:56:34 +0000] [25185] [INFO] Booting worker with pid: 25185
+[2025-08-18 20:56:34 +0000] [25185] [INFO] Worker spawned (pid: 25185)
+[2025-08-18 20:56:34 +0000] [25185] [INFO] Worker initialized (pid: 25185)
+[2025-08-18 20:56:34 +0000] [25186] [INFO] Booting worker with pid: 25186
+[2025-08-18 20:56:34 +0000] [25186] [INFO] Worker spawned (pid: 25186)
+[2025-08-18 20:56:34 +0000] [25186] [INFO] Worker initialized (pid: 25186)
+[2025-08-18 21:00:24 +0000] [25156] [INFO] Handling signal: term
+[2025-08-18 21:00:24 +0000] [25165] [INFO] Worker exiting (pid: 25165)
+[2025-08-18 21:00:24 +0000] [25170] [INFO] Worker exiting (pid: 25170)
+[2025-08-18 21:00:24 +0000] [25181] [INFO] Worker exiting (pid: 25181)
+[2025-08-18 21:00:24 +0000] [25177] [INFO] Worker exiting (pid: 25177)
+[2025-08-18 21:00:24 +0000] [25163] [INFO] Worker exiting (pid: 25163)
+[2025-08-18 21:00:24 +0000] [25175] [INFO] Worker exiting (pid: 25175)
+[2025-08-18 21:00:24 +0000] [25172] [INFO] Worker exiting (pid: 25172)
+[2025-08-18 21:00:24 +0000] [25166] [INFO] Worker exiting (pid: 25166)
+[2025-08-18 21:00:24 +0000] [25164] [INFO] Worker exiting (pid: 25164)
+[2025-08-18 21:00:24 +0000] [25179] [INFO] Worker exiting (pid: 25179)
+[2025-08-18 21:00:24 +0000] [25174] [INFO] Worker exiting (pid: 25174)
+[2025-08-18 21:00:24 +0000] [25186] [INFO] Worker exiting (pid: 25186)
+[2025-08-18 21:00:24 +0000] [25184] [INFO] Worker exiting (pid: 25184)
+[2025-08-18 21:00:24 +0000] [25173] [INFO] Worker exiting (pid: 25173)
+[2025-08-18 21:00:24 +0000] [25169] [INFO] Worker exiting (pid: 25169)
+[2025-08-18 21:00:24 +0000] [25185] [INFO] Worker exiting (pid: 25185)
+[2025-08-18 21:00:24 +0000] [25178] [INFO] Worker exiting (pid: 25178)
+[2025-08-18 21:00:24 +0000] [25156] [INFO] Shutting down: Master
+[2025-08-18 21:00:31 +0000] [25578] [INFO] Starting gunicorn 21.2.0
+[2025-08-18 21:00:31 +0000] [25578] [INFO] Listening at: http://127.0.0.1:8000 (25578)
+[2025-08-18 21:00:31 +0000] [25578] [INFO] Using worker: sync
+[2025-08-18 21:00:31 +0000] [25578] [INFO] QModel server is ready. Spawning workers
+[2025-08-18 21:00:31 +0000] [25582] [INFO] Booting worker with pid: 25582
+[2025-08-18 21:00:31 +0000] [25582] [INFO] Worker spawned (pid: 25582)
+[2025-08-18 21:00:31 +0000] [25582] [INFO] Worker initialized (pid: 25582)
+[2025-08-18 21:00:31 +0000] [25583] [INFO] Booting worker with pid: 25583
+[2025-08-18 21:00:31 +0000] [25583] [INFO] Worker spawned (pid: 25583)
+[2025-08-18 21:00:31 +0000] [25583] [INFO] Worker initialized (pid: 25583)
+[2025-08-18 21:00:31 +0000] [25584] [INFO] Booting worker with pid: 25584
+[2025-08-18 21:00:31 +0000] [25584] [INFO] Worker spawned (pid: 25584)
+[2025-08-18 21:00:31 +0000] [25584] [INFO] Worker initialized (pid: 25584)
+[2025-08-18 21:00:32 +0000] [25585] [INFO] Booting worker with pid: 25585
+[2025-08-18 21:00:32 +0000] [25585] [INFO] Worker spawned (pid: 25585)
+[2025-08-18 21:00:32 +0000] [25585] [INFO] Worker initialized (pid: 25585)
+[2025-08-18 21:00:32 +0000] [25586] [INFO] Booting worker with pid: 25586
+[2025-08-18 21:00:32 +0000] [25586] [INFO] Worker spawned (pid: 25586)
+[2025-08-18 21:00:32 +0000] [25586] [INFO] Worker initialized (pid: 25586)
+[2025-08-18 21:00:32 +0000] [25587] [INFO] Booting worker with pid: 25587
+[2025-08-18 21:00:32 +0000] [25587] [INFO] Worker spawned (pid: 25587)
+[2025-08-18 21:00:32 +0000] [25587] [INFO] Worker initialized (pid: 25587)
+[2025-08-18 21:00:32 +0000] [25588] [INFO] Booting worker with pid: 25588
+[2025-08-18 21:00:32 +0000] [25588] [INFO] Worker spawned (pid: 25588)
+[2025-08-18 21:00:32 +0000] [25588] [INFO] Worker initialized (pid: 25588)
+[2025-08-18 21:00:32 +0000] [25589] [INFO] Booting worker with pid: 25589
+[2025-08-18 21:00:32 +0000] [25589] [INFO] Worker spawned (pid: 25589)
+[2025-08-18 21:00:32 +0000] [25589] [INFO] Worker initialized (pid: 25589)
+[2025-08-18 21:00:32 +0000] [25590] [INFO] Booting worker with pid: 25590
+[2025-08-18 21:00:32 +0000] [25590] [INFO] Worker spawned (pid: 25590)
+[2025-08-18 21:00:32 +0000] [25590] [INFO] Worker initialized (pid: 25590)
+[2025-08-18 21:00:32 +0000] [25591] [INFO] Booting worker with pid: 25591
+[2025-08-18 21:00:32 +0000] [25591] [INFO] Worker spawned (pid: 25591)
+[2025-08-18 21:00:32 +0000] [25591] [INFO] Worker initialized (pid: 25591)
+[2025-08-18 21:00:32 +0000] [25592] [INFO] Booting worker with pid: 25592
+[2025-08-18 21:00:32 +0000] [25592] [INFO] Worker spawned (pid: 25592)
+[2025-08-18 21:00:32 +0000] [25592] [INFO] Worker initialized (pid: 25592)
+[2025-08-18 21:00:32 +0000] [25593] [INFO] Booting worker with pid: 25593
+[2025-08-18 21:00:32 +0000] [25593] [INFO] Worker spawned (pid: 25593)
+[2025-08-18 21:00:32 +0000] [25593] [INFO] Worker initialized (pid: 25593)
+[2025-08-18 21:00:32 +0000] [25594] [INFO] Booting worker with pid: 25594
+[2025-08-18 21:00:32 +0000] [25594] [INFO] Worker spawned (pid: 25594)
+[2025-08-18 21:00:32 +0000] [25594] [INFO] Worker initialized (pid: 25594)
+[2025-08-18 21:00:32 +0000] [25595] [INFO] Booting worker with pid: 25595
+[2025-08-18 21:00:32 +0000] [25595] [INFO] Worker spawned (pid: 25595)
+[2025-08-18 21:00:32 +0000] [25595] [INFO] Worker initialized (pid: 25595)
+[2025-08-18 21:00:32 +0000] [25596] [INFO] Booting worker with pid: 25596
+[2025-08-18 21:00:32 +0000] [25596] [INFO] Worker spawned (pid: 25596)
+[2025-08-18 21:00:32 +0000] [25596] [INFO] Worker initialized (pid: 25596)
+[2025-08-18 21:00:32 +0000] [25597] [INFO] Booting worker with pid: 25597
+[2025-08-18 21:00:32 +0000] [25597] [INFO] Worker spawned (pid: 25597)
+[2025-08-18 21:00:32 +0000] [25597] [INFO] Worker initialized (pid: 25597)
+[2025-08-18 21:00:32 +0000] [25598] [INFO] Booting worker with pid: 25598
+[2025-08-18 21:00:32 +0000] [25598] [INFO] Worker spawned (pid: 25598)
+[2025-08-18 21:00:32 +0000] [25598] [INFO] Worker initialized (pid: 25598)
+[2025-08-18 22:10:26 +0000] [25578] [INFO] Handling signal: term
+[2025-08-18 22:10:26 +0000] [25582] [INFO] Worker exiting (pid: 25582)
+[2025-08-18 22:10:26 +0000] [25590] [INFO] Worker exiting (pid: 25590)
+[2025-08-18 22:10:26 +0000] [25583] [INFO] Worker exiting (pid: 25583)
+[2025-08-18 22:10:26 +0000] [25588] [INFO] Worker exiting (pid: 25588)
+[2025-08-18 22:10:26 +0000] [25598] [INFO] Worker exiting (pid: 25598)
+[2025-08-18 22:10:26 +0000] [25593] [INFO] Worker exiting (pid: 25593)
+[2025-08-18 22:10:26 +0000] [25595] [INFO] Worker exiting (pid: 25595)
+[2025-08-18 22:10:26 +0000] [25586] [INFO] Worker exiting (pid: 25586)
+[2025-08-18 22:10:26 +0000] [25584] [INFO] Worker exiting (pid: 25584)
+[2025-08-18 22:10:26 +0000] [25591] [INFO] Worker exiting (pid: 25591)
+[2025-08-18 22:10:26 +0000] [25592] [INFO] Worker exiting (pid: 25592)
+[2025-08-18 22:10:26 +0000] [25596] [INFO] Worker exiting (pid: 25596)
+[2025-08-18 22:10:26 +0000] [25589] [INFO] Worker exiting (pid: 25589)
+[2025-08-18 22:10:26 +0000] [25594] [INFO] Worker exiting (pid: 25594)
+[2025-08-18 22:10:26 +0000] [25585] [INFO] Worker exiting (pid: 25585)
+[2025-08-18 22:10:26 +0000] [25587] [INFO] Worker exiting (pid: 25587)
+[2025-08-18 22:10:26 +0000] [25597] [INFO] Worker exiting (pid: 25597)
+[2025-08-18 22:10:26 +0000] [25578] [INFO] Shutting down: Master

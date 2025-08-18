@@ -1,0 +1,1504 @@
+WARNING 2025-08-18 20:27:21,778 log 20959 8453988544 Not Found: /
+WARNING 2025-08-18 20:27:21,778 log 20959 8453988544 Not Found: /
+WARNING 2025-08-18 20:27:56,434 log 21107 8453988544 Not Found: /
+WARNING 2025-08-18 20:27:56,434 log 21107 8453988544 Not Found: /
+WARNING 2025-08-18 20:27:56,534 log 20900 8453988544 Not Found: /favicon.ico
+WARNING 2025-08-18 20:27:56,534 log 20900 8453988544 Not Found: /favicon.ico
+WARNING 2025-08-18 20:28:36,437 log 21204 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 20:28:36,437 log 21204 8453988544 Unauthorized: /qmodel/getthenextjob/
+ERROR 2025-08-18 20:28:41,137 log 20715 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:28:41,137 log 20715 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+WARNING 2025-08-18 20:28:59,987 log 20714 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 20:28:59,987 log 20714 8453988544 Unauthorized: /qmodel/getthenextjob/
+ERROR 2025-08-18 20:34:19,308 log 20706 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:34:19,308 log 20706 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:34:19,330 log 20959 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:34:19,330 log 20959 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:34:21,408 log 21313 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:34:21,408 log 21313 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:34:25,488 log 21502 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:34:25,488 log 21502 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+WARNING 2025-08-18 20:36:29,066 log 20715 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 20:36:29,066 log 20715 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 20:36:59,021 log 21313 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 20:36:59,021 log 21313 8453988544 Unauthorized: /qmodel/getthenextjob/
+ERROR 2025-08-18 20:44:31,433 log 23514 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+ERROR 2025-08-18 20:44:31,433 log 23514 8453988544 Internal Server Error: /qmodel/getthenextjob/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+psycopg2.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/decorators/csrf.py", line 65, in _view_wrapper
+    return view_func(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/views/generic/base.py", line 104, in view
+    return self.dispatch(request, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 509, in dispatch
+    response = self.handle_exception(exc)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 469, in handle_exception
+    self.raise_uncaught_exception(exc)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 480, in raise_uncaught_exception
+    raise exc
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 497, in dispatch
+    self.initial(request, *args, **kwargs)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 414, in initial
+    self.perform_authentication(request)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/views.py", line 324, in perform_authentication
+    request.user
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 231, in user
+    self._authenticate()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/request.py", line 384, in _authenticate
+    user_auth_tuple = authenticator.authenticate(self)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 196, in authenticate
+    return self.authenticate_credentials(token)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/rest_framework/authentication.py", line 201, in authenticate_credentials
+    token = model.objects.select_related('user').get(key=key)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 629, in get
+    num = len(clone)
+          ^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1621, in execute_sql
+    cursor = self.connection.cursor()
+             ^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 320, in cursor
+    return self._cursor()
+           ^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 296, in _cursor
+    self.ensure_connection()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 278, in ensure_connection
+    with self.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 279, in ensure_connection
+    self.connect()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/base/base.py", line 256, in connect
+    self.connection = self.get_new_connection(conn_params)
+                      ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/utils/asyncio.py", line 26, in inner
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/postgresql/base.py", line 332, in get_new_connection
+    connection = self.Database.connect(**conn_params)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/psycopg2/__init__.py", line 122, in connect
+    conn = _connect(dsn, connection_factory=connection_factory, **kwasync)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: connection to server at "localhost" (::1), port 5432 failed: server does not support SSL, but SSL was required
+
+WARNING 2025-08-18 20:56:36,667 log 25175 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 20:56:36,667 log 25175 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:00:34,869 log 25591 8453988544 Bad Request: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:00:34,869 log 25591 8453988544 Bad Request: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:17:03,253 log 25598 8453988544 Not Found: /qmodel/submit_json/
+WARNING 2025-08-18 21:17:03,253 log 25598 8453988544 Not Found: /qmodel/submit_json/
+WARNING 2025-08-18 21:17:09,264 log 25582 8453988544 Not Found: /qmodel/submit_json/
+WARNING 2025-08-18 21:17:09,264 log 25582 8453988544 Not Found: /qmodel/submit_json/
+ERROR 2025-08-18 21:17:48,665 log 25584 8453988544 Internal Server Error: /qmodel/submit-json/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: qmodel_job.job_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/qmodel/views.py", line 334, in submit_nested_json_job
+    return render(request, "qmodel/qmodel_submit_json.html", {"jobs": jobs})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/defaulttags.py", line 199, in render
+    len_values = len(values)
+                 ^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: qmodel_job.job_id
+ERROR 2025-08-18 21:17:48,665 log 25584 8453988544 Internal Server Error: /qmodel/submit-json/
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+sqlite3.OperationalError: no such column: qmodel_job.job_id
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/exception.py", line 55, in inner
+    response = get_response(request)
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/core/handlers/base.py", line 197, in _get_response
+    response = wrapped_callback(request, *callback_args, **callback_kwargs)
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/qmodel/views.py", line 334, in submit_nested_json_job
+    return render(request, "qmodel/qmodel_submit_json.html", {"jobs": jobs})
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/shortcuts.py", line 25, in render
+    content = loader.render_to_string(template_name, context, request, using=using)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/loader.py", line 62, in render_to_string
+    return template.render(context, request)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/backends/django.py", line 107, in render
+    return self.template.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 171, in render
+    return self._render(context)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 163, in _render
+    return self.nodelist.render(context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 1016, in render
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 1016, in <listcomp>
+    return SafeString("".join([node.render_annotated(context) for node in self]))
+                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/base.py", line 977, in render_annotated
+    return self.render(context)
+           ^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/template/defaulttags.py", line 199, in render
+    len_values = len(values)
+                 ^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 366, in __len__
+    self._fetch_all()
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 1945, in _fetch_all
+    self._result_cache = list(self._iterable_class(self))
+                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/query.py", line 91, in __iter__
+    results = compiler.execute_sql(
+              ^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/models/sql/compiler.py", line 1623, in execute_sql
+    cursor.execute(sql, params)
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 79, in execute
+    return self._execute_with_wrappers(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 92, in _execute_with_wrappers
+    return executor(sql, params, many, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 100, in _execute
+    with self.db.wrap_database_errors:
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/utils.py", line 91, in __exit__
+    raise dj_exc_value.with_traceback(traceback) from exc_value
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/utils.py", line 105, in _execute
+    return self.cursor.execute(sql, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/kajalpatel/spikesorting-labhub-try-error/.venv/lib/python3.11/site-packages/django/db/backends/sqlite3/base.py", line 360, in execute
+    return super().execute(query, params)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+django.db.utils.OperationalError: no such column: qmodel_job.job_id
+WARNING 2025-08-18 21:18:25,089 log 25598 8453988544 Not Found: /api/jobs/get_next_job/
+WARNING 2025-08-18 21:18:25,089 log 25598 8453988544 Not Found: /api/jobs/get_next_job/
+WARNING 2025-08-18 21:19:41,347 log 25588 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:19:41,347 log 25588 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:19:41,844 log 25596 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:19:41,844 log 25596 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:05,593 log 25596 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:05,593 log 25596 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:05,604 log 25584 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:05,604 log 25584 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:27,783 log 25587 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:27,783 log 25587 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:28,113 log 25594 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 21:36:28,113 log 25594 8453988544 Unauthorized: /qmodel/getthenextjob/
+ERROR 2025-08-18 21:43:42,365 log 25598 8453988544 Internal Server Error: /qmodel/getthenextjob/
+ERROR 2025-08-18 21:43:42,365 log 25598 8453988544 Internal Server Error: /qmodel/getthenextjob/
+ERROR 2025-08-18 21:55:40,045 log 25589 8453988544 Internal Server Error: /qmodel/getthenextjob/
+ERROR 2025-08-18 21:55:40,045 log 25589 8453988544 Internal Server Error: /qmodel/getthenextjob/
+ERROR 2025-08-18 21:55:41,146 log 25592 8453988544 Internal Server Error: /qmodel/getthenextjob/
+ERROR 2025-08-18 21:55:41,146 log 25592 8453988544 Internal Server Error: /qmodel/getthenextjob/
+WARNING 2025-08-18 22:10:00,145 log 25584 8453988544 Unauthorized: /qmodel/getthenextjob/
+WARNING 2025-08-18 22:10:00,145 log 25584 8453988544 Unauthorized: /qmodel/getthenextjob/

@@ -19,18 +19,28 @@ class Job(models.Model):
     """
 
     job_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    identifier = models.CharField(
+        max_length=64, null=True, blank=True
+    )  # Human-readable identifier
     # Unique ID for the job (e.g., "c7df2f67-b3f6-460b")
-    job_env_config = models.JSONField()  # Stores the 'job_evn' dictionary from the JSON
+    job_env_config = models.JSONField(
+        default=dict
+    )  # Stores the 'job_evn' dictionary from the JSON
     status = models.CharField(
         max_length=32, choices=STATUS_CHOICES, default="pending"
     )  # Current status of the job
     created_at = models.DateTimeField(
         auto_now_add=True
     )  # Automatically sets the timestamp when the job is created
+    updated_at = models.DateTimeField(
+        auto_now=True
+    )  # Automatically updates when the job is modified
 
     def __str__(self):
         """String representation for a Job object."""
-        return str(self.job_id)  # Ensure this is a string
+        return self.identifier or str(
+            self.job_id
+        )  # Use identifier if available, otherwise UUID
 
 
 class StepConfig(models.Model):

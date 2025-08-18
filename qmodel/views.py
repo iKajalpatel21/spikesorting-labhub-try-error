@@ -292,8 +292,14 @@ def submit_nested_json_job(request):
                     )
 
                 # --- Step 2: Create a brand new Job record
+                # Extract identifier from job_env if available
+                job_identifier = job_env_config.get(
+                    "identifier", f"job_{str(uuid.uuid4())[:8]}"
+                )
                 job = Job.objects.create(
-                    job_env_config=job_env_config, status="pending"
+                    identifier=job_identifier,
+                    job_env_config=job_env_config,
+                    status="pending",
                 )
 
                 # --- Step 3: Create JobStep records linked to the new Job ---
@@ -350,7 +356,7 @@ def get_next_job(request: HttpRequest):
                     .order_by("created_at")
                     .first()
                 )
-                
+
                 # If no pending jobs, look for fetched jobs that were never processed
                 if not job_to_process:
                     job_to_process = (
