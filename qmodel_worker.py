@@ -137,10 +137,14 @@
 import os
 import time
 import requests
+import urllib3
 from datetime import datetime
 import json
 import logging
 import random
+
+# Disable SSL warnings for self-signed certificates
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 # Configure logging
 logging.basicConfig(
@@ -151,7 +155,7 @@ logging.basicConfig(
 # 1. Worker Configuration
 # -----------------------------------------------------------------------------
 # Single API endpoint for both fetching a job and updating its status
-API_URL = "http://localhost:8000/qmodel/getthenextjob/"
+API_URL = "https://localhost:8443/qmodel/getthenextjob/"
 POLLING_INTERVAL_SECONDS = 5
 
 # Security token from the user for API authentication
@@ -183,7 +187,7 @@ def update_the_status(job_id, status, step_id=None):
 
     try:
         # Use the same API_URL for POST requests
-        response = requests.post(API_URL, json=payload, headers=HEADERS)
+        response = requests.post(API_URL, json=payload, headers=HEADERS, verify=False)
         response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
 
         # Log the appropriate success message based on whether we're updating a job or step
@@ -212,7 +216,7 @@ def run_worker():
     while True:
         try:
             # Send a GET request to the API to fetch a pending job
-            response = requests.get(API_URL, headers=HEADERS)
+            response = requests.get(API_URL, headers=HEADERS, verify=False)
 
             # Check if the response was successful
             if response.status_code == 200:
