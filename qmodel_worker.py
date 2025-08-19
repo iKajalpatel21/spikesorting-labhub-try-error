@@ -155,7 +155,7 @@ API_URL = "http://localhost:8000/qmodel/getthenextjob/"
 POLLING_INTERVAL_SECONDS = 5
 
 # Security token from the user for API authentication
-TOKEN = "e1997396f5c992a1cc89ea5c8a518ab22bbab65f"
+TOKEN = "df21421c859d47f3f712b1eb6d41813eab0afea4"
 HEADERS = {"Authorization": f"Token {TOKEN}"}
 
 print(
