@@ -62,6 +62,9 @@ case $REPLY in
     3)
         gunicorn --bind 127.0.0.1:8443 --certfile=cert.pem --keyfile=key.pem labhub.wsgi:application || exit 1
         ;;
+    4)
+        gunicorn --bind 0.0.0.0:8443 --certfile=cert.pem --keyfile=key.pem labhub.wsgi:application || exit 1
+        ;;
     *)
         echo "Invalid choice. Run manually:"
         echo "  python manage.py runserver"

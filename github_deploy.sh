@@ -34,17 +34,17 @@ fi
 echo "✅ Repository updated from GitHub qmodel branch"
 
 # Create environment and activate it
-echo "🐍 Setting up Python environment..."
+echo "Setting up Python environment..."
 [ -d .djangovenv ] || python3 -m venv .djangovenv
 source .djangovenv/bin/activate || exit 1
 
 # Update or install all packages
-echo "📦 Installing dependencies..."
+echo "Installing dependencies..."
 pip install -U pip || exit 1
 pip install -U -r requirements.txt || exit 1
 
 # Ask about database reset
-read -p "🗄️  Reset database? This will clear all data (y/N): " -n 1 -r
+read -p "Reset database? This will clear all data (y/N): " -n 1 -r
 echo
 if [[ $REPLY =~ ^[Yy]$ ]]; then
     echo "🧹 Clearing database..."
@@ -57,12 +57,12 @@ python manage.py makemigrations || exit 1
 python manage.py migrate || exit 1
 
 # Create superuser
-echo "👤 Creating superuser..."
+echo "Creating superuser..."
 python manage.py createsuperuser --username admin || exit 1
 
 # Generate SSL certificates if needed
 if [ ! -f cert.pem ] || [ ! -f key.pem ]; then
-    echo "🔐 Generating SSL certificates..."
+    echo "Generating SSL certificates..."
     openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes \
         -subj "/C=US/ST=CA/L=San Francisco/O=Development/CN=localhost" || exit 1
 fi
