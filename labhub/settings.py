@@ -18,6 +18,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 STATICFILES_DIRS = [BASE_DIR / "static"]
+ALLOWED_HOSTS = ["128.164.33.148", "localhost", "127.0.0.1"]
 
 
 # Quick-start development settings - unsuitable for production
