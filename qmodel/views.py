@@ -165,6 +165,8 @@ def get_next_job(request: HttpRequest):
 
                     # Build the response to match the original JSON specification format
                     job_data = {
+                        "version": "0.4.1",  # Added version aug27
+                        "si": "0.101.0",  # Added si aug27
                         "job_id": str(job_to_process.job_id),
                         "job_evn": job_to_process.job_env_config,  # Use "job_evn" to match spec
                         "job_steps": [
@@ -176,11 +178,11 @@ def get_next_job(request: HttpRequest):
                             for step in job_steps
                         ],
                     }
-                    
+
                     # Add individual step configuration blocks as top-level keys
                     for step in job_steps:
                         job_data[step.identifier] = step.config_block_hash.config_block
-                    
+
                     return JsonResponse(job_data, status=200)
 
             # Return an empty dictionary with a 200 OK status when no jobs are found
