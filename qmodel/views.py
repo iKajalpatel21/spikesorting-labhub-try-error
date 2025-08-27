@@ -163,20 +163,24 @@ def get_next_job(request: HttpRequest):
 
                     job_steps = job_to_process.jobstep_set.all()
 
+                    # Build the response to match the original JSON specification format
                     job_data = {
                         "job_id": str(job_to_process.job_id),
-                        "job_env_config": job_to_process.job_env_config,
+                        "job_evn": job_to_process.job_env_config,  # Use "job_evn" to match spec
                         "job_steps": [
                             {
-                                "step_id": step.identifier,  # Use identifier as step_id for lookups
-                                "identifier": step.identifier,
                                 "function": step.function,
-                                "depends_on": step.depends_on,
-                                "config_block": step.config_block_hash.config_block,
+                                "identifier": step.identifier,
+                                "depends": step.depends_on,  # Use "depends" to match spec
                             }
                             for step in job_steps
                         ],
                     }
+                    
+                    # Add individual step configuration blocks as top-level keys
+                    for step in job_steps:
+                        job_data[step.identifier] = step.config_block_hash.config_block
+                    
                     return JsonResponse(job_data, status=200)
 
             # Return an empty dictionary with a 200 OK status when no jobs are found
