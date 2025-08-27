@@ -192,9 +192,7 @@ def update_the_status(job_id, status, step_id=None):
 
     try:
         # Use the same API_URL for POST requests
-        response = requests.post(
-            API_URL, json=payload, headers=HEADERS, verify=False
-        )
+        response = requests.post(API_URL, json=payload, headers=HEADERS, verify=False)
         response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
 
         # Log the appropriate success message based on whether we're updating a job or step

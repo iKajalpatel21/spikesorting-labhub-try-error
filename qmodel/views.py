@@ -166,7 +166,7 @@ def get_next_job(request: HttpRequest):
                     job_data = {
                         "job_id": str(job_to_process.job_id),
                         "job_env_config": job_to_process.job_env_config,
-                        "steps": [
+                        "job_steps": [
                             {
                                 "step_id": step.identifier,  # Use identifier as step_id for lookups
                                 "identifier": step.identifier,
@@ -200,7 +200,9 @@ def get_next_job(request: HttpRequest):
 
             if step_id:
                 # Update a specific job step - use identifier field, not id field
-                job_step = get_object_or_404(JobStep, identifier=step_id, job__job_id=job_id)
+                job_step = get_object_or_404(
+                    JobStep, identifier=step_id, job__job_id=job_id
+                )
                 job_step.status = status
                 job_step.save()
                 return JsonResponse(

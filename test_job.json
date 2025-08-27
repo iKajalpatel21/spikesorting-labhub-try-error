@@ -1,0 +1,35 @@
+{
+    "version": "1.0",
+    "si": "sample_input",
+    "job_evn": {
+        "timeout": 3600,
+        "memory_limit": "4GB"
+    },
+    "job_steps": [
+        {
+            "identifier": "preprocess",
+            "function": "preprocess_data",
+            "depends": []
+        },
+        {
+            "identifier": "analysis",
+            "function": "analyze_data",
+            "depends": [
+                "preprocess"
+            ]
+        }
+    ],
+    "preprocess": {
+        "filter_type": "bandpass",
+        "frequency_range": [
+            300,
+            6000
+        ]
+    },
+    "analysis": {
+        "method": "kilosort",
+        "parameters": {
+            "threshold": 0.8
+        }
+    }
+}
