@@ -165,8 +165,8 @@ def get_next_job(request: HttpRequest):
 
                     # Build the response to match the original JSON specification format
                     job_data = {
-                        "version": "0.4.1",  # Added version aug27
-                        "si": "0.101.0",  # Added si aug27
+                        "version": "0.4.1",  # Added version aug27 manually
+                        "si": "0.101.0",  # Added si aug27 manually
                         "job_id": str(job_to_process.job_id),
                         "job_evn": job_to_process.job_env_config,  # Use "job_evn" to match spec
                         "job_steps": [
