@@ -4,9 +4,14 @@
 # Usage: ./deploy_worker.sh [local|staging|production] [api_token]
 
 set -e  # Exit on any error
+#if token is set then it will not touch this variables
+[ -z ${ENVIRONMENT} ] && ENVIRONMENT=${1:-local}
+#if token is set then it will not touch this variables
+[ -z ${API_TOKEN} ] && API_TOKEN=${2}
+#If variable still {} then need an error msg and exit with the error msg
+[ -z ${ENVIRONMENT} ] && { echo "Environment Variable not set"; exit 1; }
+[ -z ${API_TOKEN} ] && { echo "API_TOKEN Variable not set"; exit 1; }
 
-ENVIRONMENT=${1:-local}
-API_TOKEN=${2}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
 
