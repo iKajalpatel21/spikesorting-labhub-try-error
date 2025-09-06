@@ -1,6 +1,6 @@
 import json
 import hashlib
-from urllib import request
+import uuid
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from django.db import transaction
@@ -13,7 +13,6 @@ from rest_framework.authentication import TokenAuthentication
 from .models import Job, JobStep, StepConfig
 from .serializers import JobSerializer
 from datetime import datetime
-from django.contrib import messages
 
 
 # ------------------------------
@@ -41,21 +40,34 @@ def compute_fingerprint(config_block):
 # ------------------------------
 # View: submit_nested_json_job
 # ------------------------------
+@csrf_exempt
 def submit_nested_json_job(request):
     """
     Handles the submission of a nested JSON job configuration file.
     Always creates a new Job with a unique UUID, but reuses existing StepConfig
     data if the configuration block has been seen before.
     """
+    # Added Debugging Statements
+    print(f"\n--- DEBUG: POST Request to submit-json ---")
+    print(f"Request Method: {request.method}")
+    print(f"Request FILES keys: {list(request.FILES.keys())}")
+    print(f"Request POST data keys: {list(request.POST.keys())}")
+    print(f"-----------------------------------------\n")
+
     if request.method == "POST" and request.FILES.get("json_file"):
         json_file = request.FILES["json_file"]
 
         try:
             data = json.load(json_file)
+            print(f"\n--- DEBUG: JSON Data Loaded Successfully ---")
+            print(json.dumps(data, indent=2))
+            print("\n------------------------------------------\n")
 
             # --- Extract top-level job details from the JSON ---
             job_env_config = data.get("job_evn", {})
             job_steps_list = data.get("job_steps", [])
+            version = data.get("version")
+            si = data.get("si")
 
             # Basic validation: ensure essential fields are present
             if not job_steps_list:
@@ -64,11 +76,19 @@ def submit_nested_json_job(request):
             with transaction.atomic():
                 # --- Step 1: Process each job step's configuration block ---
                 step_configs = {}
+                rebuilt_data = {
+                    "version": version,
+                    "si": si,
+                    "job_evn": job_env_config,
+                    "job_steps": job_steps_list,
+                }
+
                 for step in job_steps_list:
                     identifier = step.get("identifier")
                     config_block = data.get(identifier, {})
                     fingerprint = compute_fingerprint(config_block)
                     step_configs[identifier] = fingerprint
+                    rebuilt_data[identifier] = config_block
 
                     StepConfig.objects.get_or_create(
                         config_block_hash=fingerprint,
@@ -79,6 +99,8 @@ def submit_nested_json_job(request):
                 job = Job.objects.create(
                     job_env_config=job_env_config, status="pending"
                 )
+                rebuilt_data["job_id"] = str(job.job_id)
+                print(f"Job created with ID: {job.job_id}")
 
                 # --- Step 3: Create JobStep records linked to the new Job ---
                 for step in job_steps_list:
@@ -105,7 +127,6 @@ def submit_nested_json_job(request):
             messages.success(
                 request, f"✅ Job submitted successfully! ID: {job.job_id}"
             )
-            # We're no longer redirecting. Instead, we'll re-render the same page.
             return redirect("qmodel:submit_json")
 
         except json.JSONDecodeError:
@@ -117,6 +138,7 @@ def submit_nested_json_job(request):
 
         return redirect("qmodel:submit_json")
 
+    # For a GET request, we still want to render the HTML form.
     jobs = Job.objects.all().order_by("-created_at")
     return render(request, "qmodel/qmodel_submit_json.html", {"jobs": jobs})
 
@@ -147,27 +169,30 @@ def get_next_job(request: HttpRequest):
 
                     job_steps = job_to_process.jobstep_set.all()
 
-                    print(
-                        f"[{datetime.now()}] Job {job_to_process.job_id} fetched by a worker. Status updated to 'fetched'."
-                    )
-
+                    # Build the response to match the original JSON specification format
                     job_data = {
+                        "version": "0.4.1",  # Added version aug27 manually
+                        "si": "0.101.0",  # Added si aug27 manually
                         "job_id": str(job_to_process.job_id),
-                        "job_env_config": job_to_process.job_env_config,
-                        "steps": [
+                        "job_evn": job_to_process.job_env_config,  # Use "job_evn" to match spec
+                        "job_steps": [
                             {
-                                "step_id": str(step.id),
-                                "identifier": step.identifier,
                                 "function": step.function,
-                                "depends_on": step.depends_on,
-                                "config_block": step.config_block_hash.config_block,
+                                "identifier": step.identifier,
+                                "depends": step.depends_on,  # Use "depends" to match spec
                             }
                             for step in job_steps
                         ],
                     }
-                    return JsonResponse({"job": job_data}, status=200)
 
-            return JsonResponse({"message": "No pending jobs found."}, status=404)
+                    # Add individual step configuration blocks as top-level keys
+                    for step in job_steps:
+                        job_data[step.identifier] = step.config_block_hash.config_block
+
+                    return JsonResponse(job_data, status=200)
+
+            # Return an empty dictionary with a 200 OK status when no jobs are found
+            return JsonResponse({}, status=200)
 
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
@@ -186,8 +211,10 @@ def get_next_job(request: HttpRequest):
                 )
 
             if step_id:
-                # Update a specific job step
-                job_step = get_object_or_404(JobStep, id=step_id, job__job_id=job_id)
+                # Update a specific job step - use identifier field, not id field
+                job_step = get_object_or_404(
+                    JobStep, identifier=step_id, job__job_id=job_id
+                )
                 job_step.status = status
                 job_step.save()
                 return JsonResponse(
@@ -206,6 +233,115 @@ def get_next_job(request: HttpRequest):
             return JsonResponse({"error": "Invalid JSON format."}, status=400)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
+
+
+# ------------------------------
+# Official Dummy Worker API Endpoints
+# ------------------------------
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_next_job_official(request: HttpRequest):
+    """
+    Official dummy worker endpoint for fetching the next available job.
+    Returns:
+    - 200 with job data if available
+    - 204 if no jobs pending (as expected by official dummy worker)
+    """
+    try:
+        with transaction.atomic():
+            job_to_process = (
+                Job.objects.select_for_update()
+                .filter(status="pending")
+                .order_by("created_at")
+                .first()
+            )
+
+            if job_to_process:
+                job_to_process.status = "fetched"
+                job_to_process.save()
+
+                job_steps = job_to_process.jobstep_set.all()
+
+                # Build the response to match the original JSON specification format
+                job_data = {
+                    "version": "0.4.1",
+                    "si": "0.101.0",
+                    "job_id": str(job_to_process.job_id),
+                    "job_evn": job_to_process.job_env_config,
+                    "job_steps": [
+                        {
+                            "function": step.function,
+                            "identifier": step.identifier,
+                            "depends": step.depends_on,
+                        }
+                        for step in job_steps
+                    ],
+                }
+
+                # Add individual step configuration blocks as top-level keys
+                for step in job_steps:
+                    job_data[step.identifier] = step.config_block_hash.config_block
+
+                return JsonResponse(job_data, status=200)
+
+        # Return 204 No Content when no jobs are found (official dummy worker expects this)
+        return JsonResponse({}, status=204)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+@csrf_exempt
+def update_job_status_official(request):
+    """
+    Official dummy worker endpoint for updating job and job step status.
+    Expects POST requests with JSON payload:
+    {
+        "job_id": "job_id_here",
+        "step_id": "step_identifier_here" (optional),
+        "status": "running|completed|failed"
+    }
+    """
+    if request.method != "POST":
+        return JsonResponse({"error": "Only POST method allowed"}, status=405)
+
+    try:
+        data = json.loads(request.body)
+        job_id = data.get("job_id")
+        step_id = data.get("step_id")
+        status = data.get("status")
+
+        if not job_id or not status:
+            return JsonResponse(
+                {"error": "Job ID and status are required."}, status=400
+            )
+
+        if step_id:
+            # Update a specific job step
+            job_step = get_object_or_404(
+                JobStep, identifier=step_id, job__job_id=job_id
+            )
+            job_step.status = status
+            job_step.save()
+            return JsonResponse(
+                {"message": f"Job step {step_id} status updated to {status}."},
+                status=200,
+            )
+        else:
+            # Update the main job
+            job = get_object_or_404(Job, job_id=job_id)
+            job.status = status
+            job.save()
+            return JsonResponse(
+                {"message": f"Job {job_id} status updated to {status}."}, status=200
+            )
+
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON format."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
 
 
 # ------------------------------

@@ -1,0 +1,10 @@
+{
+    "SERVER": "http://127.0.0.1:8000/qmodel",
+    "SSH_KEY": "",
+    "NAS": "/tmp/sslh-worker/data",
+    "LOCAL": "/tmp/local-workspace",
+    "TIMEOUT": 10,
+    "API_TOKEN": "a363e3b7d5e2d1c3b4c5041f31b8fb0ad8365ad1",
+    "VERIFY_SSL": false,
+    "JOB_SAVE": false
+}

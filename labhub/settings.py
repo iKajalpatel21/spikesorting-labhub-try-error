@@ -29,8 +29,7 @@ SECRET_KEY = "django-insecure-w7ub%5ia5q0bk%(gdht0wn1zmu6e92_*4wsrs3i%9@90u!u=a4
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
-
+ALLOWED_HOSTS = ["*", "localhost"]
 
 # Application definition
 
@@ -41,11 +40,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "spikejobs",
     "rest_framework",
     "rest_framework.authtoken",
-    # "qmodel",  # ← ADD THIS
-    "qmodel.apps.QmodelConfig",  # ← ADD THIS
+    "qmodel.apps.QmodelConfig",
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
@@ -87,23 +84,23 @@ WSGI_APPLICATION = "labhub.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
-
 DATABASES = {
     "default": {
-        "ENGINE": "django.db.backends.postgresql",
-        "NAME": "labhubdb",
-        "USER": "labhubuser",
-        "PASSWORD": "labhubpass",
-        "HOST": "localhost",
-        "PORT": "5432",
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql",
+#         "NAME": "labhubdb",
+#         "USER": "labhubuser",
+#         "PASSWORD": "labhubpass",
+#         "HOST": "localhost",
+#         "PORT": "5432",
+#     }
+# }
 
 
 # Password validation

@@ -13,7 +13,10 @@ urlpatterns = [
     path("job_list/", views.job_list, name="job_list"),
     # Existing URL for submitting a job
     path("submit-json/", views.submit_nested_json_job, name="submit_json"),
-    # This URL now handles both GET (fetch job) and POST (update status)
+    # Official dummy worker API endpoints
+    path("next-job/", views.get_next_job_official, name="next_job_official"),
+    path("status/", views.update_job_status_official, name="update_status_official"),
+    # Legacy endpoint (for backward compatibility)
     path("getthenextjob/", views.get_next_job, name="get_next_job"),
-    path("", include(router.urls)),  # Existing router URLs]
+    path("", include(router.urls)),  # Existing router URLs
 ]
