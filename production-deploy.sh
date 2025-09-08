@@ -340,7 +340,7 @@ setup_ssl_certificates() {
     if [ ! -f "cert.pem" ] || [ ! -f "key.pem" ]; then
         print_status "Generating SSL certificates for HTTPS..."
         openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes \
-            -subj "/C=US/ST=CA/L=San Francisco/O=SSLH-LabHub/CN=localhost" || {
+            -subj "/C=US/ST=CA/L=San Francisco/O=SSLH-LabHub" --addext 'subjectAltName=IP:128.164.33.148' || {
             print_error "Failed to generate SSL certificates"
             exit 1
         }
