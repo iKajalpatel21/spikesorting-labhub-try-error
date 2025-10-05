@@ -431,6 +431,7 @@ function NewPipeline() {
 
 function SubmitPipeline() {
   const [fileName, setFileName] = useState("");
+  const [description, setDescription] = useState("");
   const fileInputRef = useRef();
 
   const handleFileChange = (e) => {
@@ -446,7 +447,11 @@ function SubmitPipeline() {
       alert("Please select a JSON file first!");
       return;
     }
-    alert(`Submitting file: ${fileName}`);
+    if (!description.trim()) {
+      alert("Please enter a description for the pipeline!");
+      return;
+    }
+    alert(`Submitting file: ${fileName}\nDescription: ${description}`);
     // Add your actual submit logic here
   };
 
@@ -458,56 +463,121 @@ function SubmitPipeline() {
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
+      padding: "20px"
     }}>
-      <h2 style={{ color: "#fff", marginBottom: "30px" }}>Submit a Pipeline</h2>
-      <input
-        type="file"
-        accept=".json,application/json"
-        ref={fileInputRef}
-        style={{ display: "none" }}
-        onChange={handleFileChange}
-      />
-      <button
-        style={{
-          padding: "16px 32px",
-          fontSize: "18px",
-          borderRadius: "8px",
-          border: "none",
-          background: "#4fc3f7",
-          color: "#fff",
-          cursor: "pointer",
-          boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
-          marginBottom: "20px",
-        }}
-        onClick={() => fileInputRef.current.click()}
-      >
-        Select JSON File
-      </button>
-      {fileName && (
-        <div style={{ color: "#fff", marginTop: "10px" }}>
-          Selected file: <b>{fileName}</b>
+      <div style={{
+        background: "rgba(255, 255, 255, 0.95)",
+        padding: "30px",
+        borderRadius: "12px",
+        width: "100%",
+        maxWidth: "500px",
+        boxShadow: "0 8px 32px rgba(0,0,0,0.2)"
+      }}>
+        <h2 style={{
+          textAlign: "center",
+          marginBottom: "30px",
+          color: "#333"
+        }}>
+          Submit a Pipeline
+        </h2>
+
+        {/* Description Field */}
+        <div style={{ marginBottom: "20px" }}>
+          <label style={{
+            display: "block",
+            marginBottom: "8px",
+            fontWeight: "bold",
+            color: "#333"
+          }}>
+            Description of Pipeline: <span style={{ color: "red" }}>*</span>
+          </label>
+          <textarea
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Enter a description for your pipeline..."
+            required
+            style={{
+              width: "100%",
+              padding: "12px",
+              borderRadius: "4px",
+              border: "1px solid #ccc",
+              fontSize: "14px",
+              minHeight: "80px",
+              resize: "vertical",
+              fontFamily: "inherit"
+            }}
+          />
         </div>
-      )}
-      <button
-        style={{
-          padding: "16px 32px",
-          fontSize: "18px",
-          borderRadius: "8px",
-          border: "none",
-          background: "#81c784",
-          color: "#fff",
-          cursor: "pointer",
-          boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
-          marginTop: "30px",
-        }}
-        onClick={handleSubmit}
-      >
-        Submit
-      </button>
+
+        {/* File Upload */}
+        <div style={{ marginBottom: "20px" }}>
+          <label style={{
+            display: "block",
+            marginBottom: "8px",
+            fontWeight: "bold",
+            color: "#333"
+          }}>
+            JSON File: <span style={{ color: "red" }}>*</span>
+          </label>
+          <input
+            type="file"
+            accept=".json,application/json"
+            ref={fileInputRef}
+            style={{ display: "none" }}
+            onChange={handleFileChange}
+          />
+          <button
+            style={{
+              padding: "12px 24px",
+              fontSize: "16px",
+              borderRadius: "6px",
+              border: "1px solid #4fc3f7",
+              background: "#4fc3f7",
+              color: "#fff",
+              cursor: "pointer",
+              width: "100%",
+              marginBottom: "10px"
+            }}
+            onClick={() => fileInputRef.current.click()}
+          >
+            Select JSON File
+          </button>
+          {fileName && (
+            <div style={{
+              color: "#666",
+              fontSize: "14px",
+              padding: "8px",
+              background: "#f0f8ff",
+              borderRadius: "4px",
+              border: "1px solid #e0e0e0"
+            }}>
+              Selected file: <strong>{fileName}</strong>
+            </div>
+          )}
+        </div>
+
+        {/* Submit Button */}
+        <button
+          style={{
+            padding: "15px 30px",
+            fontSize: "18px",
+            borderRadius: "8px",
+            border: "none",
+            background: "#81c784",
+            color: "#fff",
+            cursor: "pointer",
+            boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
+            width: "100%",
+            marginTop: "10px"
+          }}
+          onClick={handleSubmit}
+        >
+          Submit Pipeline
+        </button>
+      </div>
     </div>
   );
 }
-
 function App() {
   return (
     <Router>
