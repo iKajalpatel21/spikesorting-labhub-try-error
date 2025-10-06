@@ -24,6 +24,7 @@ from django.conf.urls.static import static
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("qmodel/", include(("qmodel.urls", "qmodel"), namespace="qmodel")),
+    path("pipeline/", include("pipeline.urls")),  # New line added here
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
