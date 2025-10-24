@@ -144,3 +144,29 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+MEDIA_ROOT = BASE_DIR / "media"
+MEDIA_URL = "/media/"
+
+# CORS — allow React dev server during development
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://127.0.0.1:3000",
+]
+
+# Enable corsheaders only if the package is installed. This avoids import-time
+# errors in environments where django-cors-headers isn't available.
+try:
+    import importlib
+
+    if importlib.util.find_spec("corsheaders") is not None:
+        # insert corsheaders into INSTALLED_APPS and MIDDLEWARE
+        if "corsheaders" not in INSTALLED_APPS:
+            INSTALLED_APPS.insert(
+                INSTALLED_APPS.index("rest_framework") + 1, "corsheaders"
+            )
+        if "corsheaders.middleware.CorsMiddleware" not in MIDDLEWARE:
+            MIDDLEWARE.insert(0, "corsheaders.middleware.CorsMiddleware")
+except Exception:
+    # If anything goes wrong, skip enabling CORS middleware (safe fallback)
+    pass

@@ -1,6 +1,49 @@
 from django.contrib import admin
 from .models import Job, JobStep, StepConfig
 
+# Expose DRF Token in admin list so token keys are visible to admins
+try:
+    from rest_framework.authtoken.models import Token
+
+    try:
+        admin.site.unregister(Token)
+    except Exception:
+        # if it wasn't registered yet, ignore
+        pass
+
+    @admin.register(Token)
+    class TokenAdmin(admin.ModelAdmin):
+        list_display = ("key", "user")
+        search_fields = ("key", "user__username", "user__email")
+        readonly_fields = ("key",)
+        ordering = ("-user",)
+
+    # Some installations register a TokenProxy proxy model (name: tokenproxy)
+    # which is what the default admin index links to. Try to register it too
+    # so the admin link resolves and shows token keys.
+    try:
+        # TokenProxy may be defined in rest_framework.authtoken.admin
+        from rest_framework.authtoken.admin import TokenProxy
+
+        try:
+            admin.site.unregister(TokenProxy)
+        except Exception:
+            pass
+
+        @admin.register(TokenProxy)
+        class TokenProxyAdmin(admin.ModelAdmin):
+            list_display = ("key", "user")
+            search_fields = ("key", "user__username", "user__email")
+            readonly_fields = ("key",)
+            ordering = ("-user",)
+
+    except Exception:
+        # If TokenProxy isn't available, that's fine — Token itself is registered
+        pass
+except Exception:
+    # rest_framework.authtoken may not be installed in some environments
+    pass
+
 
 @admin.register(Job)
 class JobAdmin(admin.ModelAdmin):

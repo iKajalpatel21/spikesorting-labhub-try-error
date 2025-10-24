@@ -1,5 +1,5 @@
 from django.db import models
-from qmodel.models import StepConfig, JobStep
+from qmodel.models import StepConfig
 
 
 class Pipeline(models.Model):
@@ -38,23 +38,39 @@ class PipelineStep(models.Model):
         related_name="pipeline_steps",
         help_text="The configuration for this step",
     )
-    depends_on = models.ForeignKey(
-        JobStep,
+    # Previously this was a ForeignKey to JobStep. To support pipeline-local
+    # dependency information coming from uploaded JSON we store an array of
+    # identifiers (or any JSON structure) directly on the model.
+    depends_on = models.JSONField(default=list, null=True, blank=True)
+    # 'order' removed: pipeline execution order is inferred from the
+    # steps' insertion/array order. Keep an explicit field only if
+    # persistence of a separate ordering is later required.
+
+
+class Recording(models.Model):
+    bin_file = models.FileField(upload_to="recordings/")
+    probe_file = models.FileField(upload_to="probes/")
+    sampling_rate = models.FloatField()
+    num_channels = models.IntegerField()
+    gain_to_uV = models.FloatField()
+    offset_to_uV = models.FloatField()
+    remove_channels = models.JSONField(default=list)
+    bad_channels = models.JSONField(default=list)
+    created_at = models.DateTimeField(auto_now_add=True)
+    step_config = models.ForeignKey(
+        StepConfig,
         on_delete=models.CASCADE,
+        related_name="recordings",
         null=True,
         blank=True,
-        related_name="dependent_pipeline_steps",
-        help_text="Optional: The job step this pipeline step depends on",
-    )
-    order = models.PositiveIntegerField(
-        default=0, help_text="Execution order within the pipeline"
     )
 
     class Meta:
-        ordering = ["pipeline", "order"]
-        unique_together = [["pipeline", "step_config"]]
-        verbose_name = "Pipeline Step"
-        verbose_name_plural = "Pipeline Steps"
+        ordering = ["-created_at"]
+        verbose_name = "Recording"
+        verbose_name_plural = "Recordings"
 
     def __str__(self):
-        return f"Pipeline {self.pipeline.pipeline_id} → StepConfig {self.step_config.config_block_hash[:8]}"
+        return (
+            f"Recording {self.id} (StepConfig {self.step_config.config_block_hash[:8]})"
+        )

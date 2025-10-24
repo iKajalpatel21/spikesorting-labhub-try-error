@@ -383,3 +383,7 @@ If fields `a` and `b` are missing, defaults are used: `a=1`, `b=0`
 Built in the Laboratory of Systems Neural Development at George Washington University. This toy system is designed to explore secure job queuing, API-driven worker orchestration, and spike sorting pipeline foundations.
 
 ---
+
+
+#Token needs to be paste in dev consol 
+localStorage.setItem('token','7dad800f91999d083ee56e6d2e59c87a3f43a0df')
