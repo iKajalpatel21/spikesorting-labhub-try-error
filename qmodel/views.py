@@ -1,151 +1,45 @@
 import json
-import hashlib
-import uuid
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib import messages
+from django.shortcuts import render, get_object_or_404
 from django.db import transaction
 from django.http import JsonResponse, HttpRequest
-from django.views.decorators.csrf import csrf_exempt
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.authentication import TokenAuthentication
 from .models import Job, JobStep, StepConfig
 from .serializers import JobSerializer
-from datetime import datetime
 
 
-# ------------------------------
+# ============================================================================
 # API ViewSet for Jobs
-# ------------------------------
+# ============================================================================
+
+
 class JobViewSet(viewsets.ModelViewSet):
-    # This queryset now uses the UUID as the unique identifier
+    """
+    REST API ViewSet for Job management.
+    Provides CRUD operations for Job objects.
+    """
+
     queryset = Job.objects.all().order_by("-created_at")
     serializer_class = JobSerializer
     permission_classes = [IsAuthenticated]
 
 
-# ------------------------------
-# Utility function: compute_fingerprint
-# ------------------------------
-def compute_fingerprint(config_block):
-    """
-    Generates a SHA-256 hash (fingerprint) for a given configuration block.
-    Uses json.dumps with sorted keys to ensure a consistent hash for identical content.
-    """
-    json_str = json.dumps(config_block, sort_keys=True)
-    return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
+# ============================================================================
+# Worker API Endpoints
+# ============================================================================
 
 
-# ------------------------------
-# View: submit_nested_json_job
-# ------------------------------
-@csrf_exempt
-def submit_nested_json_job(request):
-    """
-    Handles the submission of a nested JSON job configuration file.
-    Always creates a new Job with a unique UUID, but reuses existing StepConfig
-    data if the configuration block has been seen before.
-    """
-    # Added Debugging Statements
-    print(f"\n--- DEBUG: POST Request to submit-json ---")
-    print(f"Request Method: {request.method}")
-    print(f"Request FILES keys: {list(request.FILES.keys())}")
-    print(f"Request POST data keys: {list(request.POST.keys())}")
-    print(f"-----------------------------------------\n")
-
-    if request.method == "POST" and request.FILES.get("json_file"):
-        json_file = request.FILES["json_file"]
-
-        try:
-            data = json.load(json_file)
-            print(f"\n--- DEBUG: JSON Data Loaded Successfully ---")
-            print(json.dumps(data, indent=2))
-            print("\n------------------------------------------\n")
-
-            # --- Extract top-level job details from the JSON ---
-            job_env_config = data.get("job_evn", {})
-            job_steps_list = data.get("job_steps", [])
-            version = data.get("version")
-            si = data.get("si")
-
-            # Basic validation: ensure essential fields are present
-            if not job_steps_list:
-                raise ValueError("JSON file is missing 'job_steps'.")
-
-            with transaction.atomic():
-                # --- Step 1: Process each job step's configuration block ---
-                step_configs = {}
-                rebuilt_data = {
-                    "version": version,
-                    "si": si,
-                    "job_evn": job_env_config,
-                    "job_steps": job_steps_list,
-                }
-
-                for step in job_steps_list:
-                    identifier = step.get("identifier")
-                    config_block = data.get(identifier, {})
-                    fingerprint = compute_fingerprint(config_block)
-                    step_configs[identifier] = fingerprint
-                    rebuilt_data[identifier] = config_block
-
-                    StepConfig.objects.get_or_create(
-                        config_block_hash=fingerprint,
-                        defaults={"config_block": config_block},
-                    )
-
-                # --- Step 2: Create a brand new Job record
-                job = Job.objects.create(
-                    job_env_config=job_env_config, status="pending"
-                )
-                rebuilt_data["job_id"] = str(job.job_id)
-                print(f"Job created with ID: {job.job_id}")
-
-                # --- Step 3: Create JobStep records linked to the new Job ---
-                for step in job_steps_list:
-                    identifier = step.get("identifier")
-                    function = step.get("function")
-                    depends_on = step.get("depends", [])
-                    config_hash = step_configs[identifier]
-
-                    JobStep.objects.create(
-                        identifier=identifier,
-                        job=job,
-                        function=function,
-                        depends_on=depends_on,
-                        config_block_hash_id=config_hash,
-                        status="pending",
-                    )
-
-            messages.success(
-                request, f"✅ Job submitted successfully! ID: {job.job_id}"
-            )
-            return redirect("qmodel:submit_json")
-
-        except json.JSONDecodeError:
-            messages.error(request, "❌ Error: Invalid JSON file format.")
-        except ValueError as e:
-            messages.error(request, f"❌ Error: {str(e)}")
-        except Exception as e:
-            messages.error(request, f"❌ An unexpected error occurred: {str(e)}")
-
-        return redirect("qmodel:submit_json")
-
-    # For a GET request, we still want to render the HTML form.
-    jobs = Job.objects.all().order_by("-created_at")
-    return render(request, "qmodel/qmodel_submit_json.html", {"jobs": jobs})
-
-
-# ------------------------------
-# View: get_next_job (Updated to handle both GET and POST)
-# ------------------------------
+# Endpoint: get_next_job (GET/POST)
+# Handles worker requests for job assignments and status updates
 @api_view(["GET", "POST"])
 @permission_classes([IsAuthenticated])
 def get_next_job(request: HttpRequest):
     """
-    API endpoint for a worker to get the next available job (GET) or to update
-    the status of a job/job step (POST).
+    Worker API Endpoint - Get next job and update job/step status.
+
+    GET: Fetch the next pending job for the worker
+    POST: Update job or job step status
     """
     if request.method == "GET":
         try:

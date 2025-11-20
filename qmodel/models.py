@@ -43,6 +43,7 @@ class StepConfig(models.Model):
     # This field holds the SHA-256 hash (fingerprint) of the config_block JSON
     config_block_hash = models.CharField(primary_key=True, max_length=64)
     config_block = models.JSONField()  # The actual JSON configuration data for a step
+    function = models.CharField(max_length=64, null=True, blank=True)
 
     def __str__(self):
         """String representation for a StepConfig object."""

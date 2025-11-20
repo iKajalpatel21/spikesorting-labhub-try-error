@@ -8,12 +8,9 @@ app_name = "qmodel"
 router = DefaultRouter()
 router.register(r"jobs", JobViewSet, basename="job")
 
-# urlpatterns = [path("", include(router.urls))]
 urlpatterns = [
     path("job_list/", views.job_list, name="job_list"),
-    # Existing URL for submitting a job
-    path("submit-json/", views.submit_nested_json_job, name="submit_json"),
-    # This URL now handles both GET (fetch job) and POST (update status)
+    # Worker API endpoint: GET next job, POST status updates
     path("getthenextjob/", views.get_next_job, name="get_next_job"),
-    path("", include(router.urls)),  # Existing router URLs]
+    path("", include(router.urls)),  # REST API routes
 ]
