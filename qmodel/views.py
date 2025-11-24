@@ -29,6 +29,58 @@ class JobViewSet(viewsets.ModelViewSet):
 # Worker API Endpoints
 # ============================================================================
 
+def get_job()->dict:
+    job_to_process = get_next_job_id()
+    if job_to_process is None: return {}
+    job_data = {
+        "version": "0.4.1",  # Added version aug27
+        "si": "0.101.0",  # Added si aug27
+    }
+    job_data["job_id" ] =  str(job_to_process.job_id)
+    job_data["job_evn"] =  job_to_process.job_env_config  # Use "job_evn" to match spec
+
+    job_steps = job_to_process.jobstep_set.all()
+    job_data["job_steps"] = [
+        {
+            "function": step.function,
+            "identifier": step.identifier,
+            "depends": step.depends_on,  # Use "depends" to match spec
+        }
+        for step in job_steps
+    ]
+    for step in job_steps:
+        job_data[step.identifier] = step.config_block_hash.config_block
+    return job_steps
+
+def update_job_status(data:dict)->dict:
+    job_id  = data.get("job_id" , None)
+    step_id = data.get("step_id", None)
+    status  = data.get("status" , None)
+
+    if job_id is None or status is None:
+        return JsonResponse(
+            {"error": "Job ID and status are required."}, status=400
+        )
+
+    if step_id:
+        # Update a specific job step - use identifier field, not id field
+        job_step = get_object_or_404(
+            JobStep, identifier=step_id, job__job_id=job_id
+        )
+        job_step.status = status
+        job_step.save()
+        return JsonResponse(
+            {"message": f"Job step {step_id} status updated to {status}."}
+        )
+    else:
+        # Update the main job
+        job = get_object_or_404(Job, job_id=job_id)
+        job.status = status
+        job.save()
+        return JsonResponse(
+            {"message": f"Job {job_id} status updated to {status}."}
+        )
+    
 
 # Endpoint: get_next_job (GET/POST)
 # Handles worker requests for job assignments and status updates
@@ -43,45 +95,8 @@ def get_next_job(request: HttpRequest):
     """
     if request.method == "GET":
         try:
-            with transaction.atomic():
-                job_to_process = (
-                    Job.objects.select_for_update()
-                    .filter(status="pending")
-                    .order_by("created_at")
-                    .first()
-                )
-
-                if job_to_process:
-                    job_to_process.status = "fetched"
-                    job_to_process.save()
-
-                    job_steps = job_to_process.jobstep_set.all()
-
-                    # Build the response to match the original JSON specification format
-                    job_data = {
-                        "version": "0.4.1",  # Added version aug27
-                        "si": "0.101.0",  # Added si aug27
-                        "job_id": str(job_to_process.job_id),
-                        "job_evn": job_to_process.job_env_config,  # Use "job_evn" to match spec
-                        "job_steps": [
-                            {
-                                "function": step.function,
-                                "identifier": step.identifier,
-                                "depends": step.depends_on,  # Use "depends" to match spec
-                            }
-                            for step in job_steps
-                        ],
-                    }
-
-                    # Add individual step configuration blocks as top-level keys
-                    for step in job_steps:
-                        job_data[step.identifier] = step.config_block_hash.config_block
-
-                    return JsonResponse(job_data, status=200)
-
-            # Return an empty dictionary with a 200 OK status when no jobs are found
-            return JsonResponse({}, status=200)
-
+            job_data = get_job()
+            return JsonResponse(job_data, status=200)
         except Exception as e:
             return JsonResponse({"error": str(e)}, status=500)
 
@@ -89,34 +104,7 @@ def get_next_job(request: HttpRequest):
         # This is the logic that was in the 'update_status' view
         try:
             data = json.loads(request.body)
-            job_id = data.get("job_id")
-            step_id = data.get("step_id")
-            status = data.get("status")
-
-            if not job_id or not status:
-                return JsonResponse(
-                    {"error": "Job ID and status are required."}, status=400
-                )
-
-            if step_id:
-                # Update a specific job step - use identifier field, not id field
-                job_step = get_object_or_404(
-                    JobStep, identifier=step_id, job__job_id=job_id
-                )
-                job_step.status = status
-                job_step.save()
-                return JsonResponse(
-                    {"message": f"Job step {step_id} status updated to {status}."}
-                )
-            else:
-                # Update the main job
-                job = get_object_or_404(Job, job_id=job_id)
-                job.status = status
-                job.save()
-                return JsonResponse(
-                    {"message": f"Job {job_id} status updated to {status}."}
-                )
-
+            update_job_status(data)
         except json.JSONDecodeError:
             return JsonResponse({"error": "Invalid JSON format."}, status=400)
         except Exception as e:

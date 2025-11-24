@@ -12,6 +12,105 @@ STATUS_CHOICES = [
 ]
 
 
+
+def compute_fingerprint(config_block: dict) -> str:
+    """
+    Generates a SHA-256 hash (fingerprint) for a given configuration block.
+    Uses json.dumps with sorted keys to ensure consistent hash for identical content.
+
+    Args:
+        config_block (dict): Configuration dictionary to hash
+
+    Returns:
+        str: SHA-256 hex digest of the config block
+
+    Example:
+        >>> config = {'param': 'value', 'nested': {'key': 'data'}}
+        >>> fp = compute_fingerprint(config)
+        >>> print(len(fp))  # 64 (SHA-256 hex)
+        64
+    """
+    json_str = json.dumps(config_block, sort_keys=True)
+    return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
+    
+    
+def get_or_create_step_configs(
+    stepfunction: str, step_config: dict
+) -> str:
+    '''
+    this function put a step config in the database. 
+    it computes fingerprint, checks if fingerprint is there return just finger print
+    if not it creates a recording in StepConfig tablet and returns new finger print
+    '''
+    fingerprint = compute_fingerprint(step_config)
+    if not StepConfig.objects.filter(config_block_hash=fingerprint).exists():
+        try:
+            stepconf =  StepConfig(
+                config_block_hash=fingerprint,
+                config_block=config_block,
+                function=function,  # Store function name
+            )
+            stepconf.save()
+        except BaseException as e:
+            raise RuntimeError(f'Cannot create a record in step database for function {stepfunction}: {e}'
+    return fingerprint
+
+def create_a_job(job_evn:dict, job_steps:list)->str:
+    if len(job_steps) :
+        raise RuntimeError(f'job_steps are empty')
+    for setpid, step in enumerate(job_steps):
+        if not type(step) is dict:
+            raise RuntimeError(f'step #{setpid} is not a dictionary')
+        for n in 'function identifier depends'.split():
+            if not n in step:
+                raise RuntimeError(f'step #{setpid} does not have {n} key')
+        function   = step['function']
+        identifier = step['identifier']
+        if not StepConfig.objects.filter(config_block_hash=identifier).exists():
+            raise RuntimeError(f'Step config for function {function} with identifier {identifier} does not exist in step config table')
+    
+    with transaction.atomic():
+        # Step 2: Create the main Job record
+        job = Job.objects.create(job_env_config=job_evn, status="pending")
+
+        # Step 3: Prepare JobStep objects for bulk creation
+        job_steps_objects = []
+        for step in job_steps_list:
+            identifier = step.get("identifier")
+            function = step.get("function")
+            depends_on = step.get("depends", [])
+            config_hash = step_configs[identifier]
+
+            job_steps_objects.append(
+                JobStep(
+                    identifier=identifier,
+                    job=job,
+                    function=function,
+                    depends_on=depends_on,
+                    config_block_hash_id=config_hash,
+                    status="pending",
+                )
+            )
+        # Step 4: Bulk create all JobSteps (more efficient than loop.create())
+        JobStep.objects.bulk_create(job_steps_objects)
+    return job
+
+def get_next_job_id()->(Job, None):
+    with transaction.atomic():
+        job_to_process = (
+            Job.objects.select_for_update()
+            .filter(status="pending")
+            .order_by("created_at")
+            .first()
+        )
+
+        if job_to_process:
+            job_to_process.status = "fetched"
+            job_to_process.save()
+        else:
+            job_to_process = None
+    return job_to_process
+        
 class Job(models.Model):
     """
     Represents a main job with its overall environment configuration.
