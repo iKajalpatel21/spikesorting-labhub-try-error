@@ -1,6 +1,7 @@
 import uuid
 import hashlib
-from django.db import models
+import json
+from django.db import models, transaction
 
 # Choices for the 'status' field in Job and JobStep models
 STATUS_CHOICES = [
@@ -10,7 +11,6 @@ STATUS_CHOICES = [
     ("finished", "Finished"),
     ("failed", "Failed"),
 ]
-
 
 
 def compute_fingerprint(config_block: dict) -> str:
@@ -32,54 +32,74 @@ def compute_fingerprint(config_block: dict) -> str:
     """
     json_str = json.dumps(config_block, sort_keys=True)
     return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
-    
-    
-def get_or_create_step_configs(
-    stepfunction: str, step_config: dict
-) -> str:
-    '''
-    this function put a step config in the database. 
-    it computes fingerprint, checks if fingerprint is there return just finger print
-    if not it creates a recording in StepConfig tablet and returns new finger print
-    '''
+
+
+def get_or_create_step_configs(stepfunction: str, step_config: dict) -> str:
+    """
+    Gets or creates a StepConfig record in the database.
+    Computes a fingerprint (SHA-256 hash) of the config block for deduplication.
+    If the config already exists (same fingerprint), returns the existing fingerprint.
+    Otherwise, creates a new StepConfig record and returns its fingerprint.
+
+    Args:
+        stepfunction: The name/type of the step function (e.g., 'recording', 'sorting')
+        step_config: Dictionary containing the step configuration data
+
+    Returns:
+        str: SHA-256 fingerprint (hash) of the config block
+
+    Raises:
+        RuntimeError: If database operation fails
+    """
     fingerprint = compute_fingerprint(step_config)
     if not StepConfig.objects.filter(config_block_hash=fingerprint).exists():
         try:
-            stepconf =  StepConfig(
+            stepconf = StepConfig(
                 config_block_hash=fingerprint,
-                config_block=config_block,
-                function=function,  # Store function name
+                config_block=step_config,
+                function=stepfunction,  # Store function name
             )
             stepconf.save()
         except BaseException as e:
-            raise RuntimeError(f'Cannot create a record in step database for function {stepfunction}: {e}'
+            raise RuntimeError(
+                f"Cannot create a record in step database for function {stepfunction}: {e}"
+            )
     return fingerprint
 
-def create_a_job(job_evn:dict, job_steps:list)->str:
-    if len(job_steps) :
-        raise RuntimeError(f'job_steps are empty')
+
+def create_a_job(job_evn: dict, job_steps: list) -> "Job":
+    if not len(job_steps):
+        raise RuntimeError(f"job_steps are empty")
     for setpid, step in enumerate(job_steps):
         if not type(step) is dict:
-            raise RuntimeError(f'step #{setpid} is not a dictionary')
-        for n in 'function identifier depends'.split():
+            raise RuntimeError(f"step #{setpid} is not a dictionary")
+        for n in "function identifier depends".split():
             if not n in step:
-                raise RuntimeError(f'step #{setpid} does not have {n} key')
-        function   = step['function']
-        identifier = step['identifier']
-        if not StepConfig.objects.filter(config_block_hash=identifier).exists():
-            raise RuntimeError(f'Step config for function {function} with identifier {identifier} does not exist in step config table')
-    
+                raise RuntimeError(f"step #{setpid} does not have {n} key")
+        function = step["function"]
+        identifier = step["identifier"]
+        config_block = step.get("config", {})
+        if not config_block:
+            raise RuntimeError(f"step #{setpid} does not have config")
+        # Get or create the step config
+        config_hash = get_or_create_step_configs(function, config_block)
+        if not StepConfig.objects.filter(config_block_hash=config_hash).exists():
+            raise RuntimeError(
+                f"Step config for function {function} with identifier {identifier} does not exist in step config table"
+            )
+
     with transaction.atomic():
-        # Step 2: Create the main Job record
+        # Step 1: Create the main Job record
         job = Job.objects.create(job_env_config=job_evn, status="pending")
 
-        # Step 3: Prepare JobStep objects for bulk creation
+        # Step 2: Prepare JobStep objects for bulk creation
         job_steps_objects = []
-        for step in job_steps_list:
+        for step in job_steps:
             identifier = step.get("identifier")
             function = step.get("function")
             depends_on = step.get("depends", [])
-            config_hash = step_configs[identifier]
+            config_block = step.get("config", {})
+            config_hash = get_or_create_step_configs(function, config_block)
 
             job_steps_objects.append(
                 JobStep(
@@ -91,12 +111,21 @@ def create_a_job(job_evn:dict, job_steps:list)->str:
                     status="pending",
                 )
             )
-        # Step 4: Bulk create all JobSteps (more efficient than loop.create())
+        # Step 3: Bulk create all JobSteps (more efficient than loop.create())
         JobStep.objects.bulk_create(job_steps_objects)
     return job
 
-def get_next_job_id()->(Job, None):
+
+def get_next_job_id() -> "Job | None":
+    """
+    Fetches the next pending job and marks it as fetched (in progress).
+    Uses row-level locking to prevent race conditions when multiple workers call this simultaneously.
+
+    Returns:
+        Job | None: The next pending job in FIFO order, or None if queue is empty
+    """
     with transaction.atomic():
+        # Select the oldest pending job with row lock to prevent race conditions
         job_to_process = (
             Job.objects.select_for_update()
             .filter(status="pending")
@@ -110,7 +139,8 @@ def get_next_job_id()->(Job, None):
         else:
             job_to_process = None
     return job_to_process
-        
+
+
 class Job(models.Model):
     """
     Represents a main job with its overall environment configuration.

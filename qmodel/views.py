@@ -1,11 +1,10 @@
 import json
 from django.shortcuts import render, get_object_or_404
-from django.db import transaction
 from django.http import JsonResponse, HttpRequest
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated
-from .models import Job, JobStep, StepConfig
+from .models import Job, JobStep, StepConfig, get_next_job_id
 from .serializers import JobSerializer
 
 
@@ -29,15 +28,17 @@ class JobViewSet(viewsets.ModelViewSet):
 # Worker API Endpoints
 # ============================================================================
 
-def get_job()->dict:
+
+def get_job() -> dict:
     job_to_process = get_next_job_id()
-    if job_to_process is None: return {}
+    if job_to_process is None:
+        return {}
     job_data = {
         "version": "0.4.1",  # Added version aug27
         "si": "0.101.0",  # Added si aug27
     }
-    job_data["job_id" ] =  str(job_to_process.job_id)
-    job_data["job_evn"] =  job_to_process.job_env_config  # Use "job_evn" to match spec
+    job_data["job_id"] = str(job_to_process.job_id)
+    job_data["job_evn"] = job_to_process.job_env_config  # Use "job_evn" to match spec
 
     job_steps = job_to_process.jobstep_set.all()
     job_data["job_steps"] = [
@@ -50,23 +51,29 @@ def get_job()->dict:
     ]
     for step in job_steps:
         job_data[step.identifier] = step.config_block_hash.config_block
-    return job_steps
+    return job_data
 
-def update_job_status(data:dict)->dict:
-    job_id  = data.get("job_id" , None)
+
+def update_job_status(data: dict) -> JsonResponse:
+    """
+    Updates job or job step status based on provided data.
+
+    Args:
+        data: Dictionary containing job_id, optional step_id, and status
+
+    Returns:
+        JsonResponse: Success or error message
+    """
+    job_id = data.get("job_id", None)
     step_id = data.get("step_id", None)
-    status  = data.get("status" , None)
+    status = data.get("status", None)
 
     if job_id is None or status is None:
-        return JsonResponse(
-            {"error": "Job ID and status are required."}, status=400
-        )
+        return JsonResponse({"error": "Job ID and status are required."}, status=400)
 
     if step_id:
         # Update a specific job step - use identifier field, not id field
-        job_step = get_object_or_404(
-            JobStep, identifier=step_id, job__job_id=job_id
-        )
+        job_step = get_object_or_404(JobStep, identifier=step_id, job__job_id=job_id)
         job_step.status = status
         job_step.save()
         return JsonResponse(
@@ -77,10 +84,48 @@ def update_job_status(data:dict)->dict:
         job = get_object_or_404(Job, job_id=job_id)
         job.status = status
         job.save()
-        return JsonResponse(
-            {"message": f"Job {job_id} status updated to {status}."}
-        )
-    
+        return JsonResponse({"message": f"Job {job_id} status updated to {status}."})
+
+
+# ============================================================================
+# Worker API Endpoints - Helper Functions
+# ============================================================================
+
+
+def next_job_get_logic() -> JsonResponse:
+    """
+    GET handler for worker job assignment.
+    Fetches the next pending job and returns its details.
+
+    Returns:
+        JsonResponse: Job data with all steps and configurations, or empty dict if none available
+    """
+    try:
+        job_data = get_job()
+        return JsonResponse(job_data, status=200)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
+
+def next_job_post_logic(request: HttpRequest) -> JsonResponse:
+    """
+    POST handler for worker job/step status updates.
+    Updates job or individual step status based on the request data.
+
+    Args:
+        request: HTTP request containing job_id, optional step_id, and status
+
+    Returns:
+        JsonResponse: Success or error message
+    """
+    try:
+        data = json.loads(request.body)
+        return update_job_status(data)
+    except json.JSONDecodeError:
+        return JsonResponse({"error": "Invalid JSON format."}, status=400)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=500)
+
 
 # Endpoint: get_next_job (GET/POST)
 # Handles worker requests for job assignments and status updates
@@ -94,21 +139,9 @@ def get_next_job(request: HttpRequest):
     POST: Update job or job step status
     """
     if request.method == "GET":
-        try:
-            job_data = get_job()
-            return JsonResponse(job_data, status=200)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
-
+        return next_job_get_logic()
     elif request.method == "POST":
-        # This is the logic that was in the 'update_status' view
-        try:
-            data = json.loads(request.body)
-            update_job_status(data)
-        except json.JSONDecodeError:
-            return JsonResponse({"error": "Invalid JSON format."}, status=400)
-        except Exception as e:
-            return JsonResponse({"error": str(e)}, status=500)
+        return next_job_post_logic(request)
 
 
 # ------------------------------
