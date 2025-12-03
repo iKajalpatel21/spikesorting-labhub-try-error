@@ -68,51 +68,68 @@ def get_or_create_step_configs(stepfunction: str, step_config: dict) -> str:
 
 
 def create_a_job(job_evn: dict, job_steps: list) -> "Job":
+    """
+    Creates a Job with its associated JobSteps.
+    Assumes all StepConfigs already exist in the database.
+
+    Args:
+        job_evn: Environment configuration dictionary for the job
+        job_steps: List of step dictionaries, each containing:
+                   - identifier: The config_block_hash (FK to StepConfig)
+                   - function: The step function name
+                   - depends: List of step identifiers this step depends on
+
+    Returns:
+        Job: The created Job object
+
+    Raises:
+        RuntimeError: If job_steps is empty or invalid
+    """
+    # Validation: Check job_steps is not empty
     if not len(job_steps):
-        raise RuntimeError(f"job_steps are empty")
+        raise RuntimeError("job_steps are empty")
+
+    # Validation: Check each step has required fields
     for setpid, step in enumerate(job_steps):
-        if not type(step) is dict:
+        if not isinstance(step, dict):
             raise RuntimeError(f"step #{setpid} is not a dictionary")
-        for n in "function identifier depends".split():
-            if not n in step:
-                raise RuntimeError(f"step #{setpid} does not have {n} key")
-        function = step["function"]
+
+        for required_field in ["function", "identifier", "depends"]:
+            if required_field not in step:
+                raise RuntimeError(
+                    f"step #{setpid} does not have '{required_field}' key"
+                )
+
+        # Validate that the config exists
         identifier = step["identifier"]
-        config_block = step.get("config", {})
-        if not config_block:
-            raise RuntimeError(f"step #{setpid} does not have config")
-        # Get or create the step config
-        config_hash = get_or_create_step_configs(function, config_block)
-        if not StepConfig.objects.filter(config_block_hash=config_hash).exists():
+        if not StepConfig.objects.filter(config_block_hash=identifier).exists():
             raise RuntimeError(
-                f"Step config for function {function} with identifier {identifier} does not exist in step config table"
+                f"step #{setpid}: StepConfig with hash '{identifier}' does not exist. "
+                f"Create the config first before creating the job."
             )
 
+    # Create the Job and JobSteps atomically
     with transaction.atomic():
-        # Step 1: Create the main Job record
+        # Create the main Job record
         job = Job.objects.create(job_env_config=job_evn, status="pending")
 
-        # Step 2: Prepare JobStep objects for bulk creation
+        # Prepare JobStep objects for bulk creation
         job_steps_objects = []
         for step in job_steps:
-            identifier = step.get("identifier")
-            function = step.get("function")
-            depends_on = step.get("depends", [])
-            config_block = step.get("config", {})
-            config_hash = get_or_create_step_configs(function, config_block)
-
             job_steps_objects.append(
                 JobStep(
-                    identifier=identifier,
+                    identifier=step.get("identifier"),
                     job=job,
-                    function=function,
-                    depends_on=depends_on,
-                    config_block_hash_id=config_hash,
+                    function=step.get("function"),
+                    depends_on=step.get("depends", []),
+                    config_block_hash_id=step.get("identifier"),  # FK to StepConfig
                     status="pending",
                 )
             )
-        # Step 3: Bulk create all JobSteps (more efficient than loop.create())
+
+        # Bulk create all JobSteps
         JobStep.objects.bulk_create(job_steps_objects)
+
     return job
 
 
