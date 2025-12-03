@@ -16,6 +16,22 @@ class TestComputeFingerprint(TestCase):
     Tests SHA-256 hash consistency and deduplication capabilities.
     """
 
+    def setUp(self):
+        """Create test configs before each test."""
+        # Use one "realistic" complex structure as the golden example
+        self.complex_config = {
+            "recording": {
+                "duration": 60,
+                "channels": [0, 1, 2, 3],
+                "settings": {"sample_rate": 30000, "gain": 0.195},
+            },
+            "preprocessing": ["filter", "whitening"],
+        }
+        # Real hash computed from the complex structure
+        self.complex_config_hash = (
+            "a32f8873dda4769a34630f29a5da56f186fa518aa27fc03e1d469acad424ac2a"
+        )
+
     def test_same_dict_produces_same_hash(self):
         """
         Test: Same dictionary always produces the same hash.
@@ -244,9 +260,20 @@ class TestCreateAJob(TestCase):
         # Create some StepConfigs
         self.config1 = {"duration": 60, "sample_rate": 30000}
         self.config2 = {"method": "kilosort2", "threshold": 0.5}
+        self.complex_config = {
+            "recording": {
+                "duration": 60,
+                "channels": [0, 1, 2, 3],
+                "settings": {"sample_rate": 30000, "gain": 0.195},
+            },
+            "preprocessing": ["filter", "whitening"],
+        }
 
         self.fingerprint1 = get_or_create_step_configs("recording", self.config1)
         self.fingerprint2 = get_or_create_step_configs("kilosort", self.config2)
+        self.complex_config_hash = (
+            "a32f8873dda4769a34630f29a5da56f186fa518aa27fc03e1d469acad424ac2a"
+        )
 
     def test_creates_job_with_single_step(self):
         """Test: Creates job with a single step."""
@@ -404,7 +431,187 @@ class TestGetNextJobId(TestCase):
         self.assertEqual(fetched3.job_id, job3.job_id, "Third fetched should be job3")
 
 
-class test_model(TestCase):
-    """Placeholder for other model tests"""
+class TestModelRules(TestCase):
+    """
+    Test suite for validating model constraints and business rules.
+    Ensures data integrity and proper model relationships.
+    """
 
-    pass
+    def test_job_status_starts_as_pending(self):
+        """Test: New Job always starts with status='pending'."""
+        job = Job.objects.create(job_env_config={"timeout": 3600})
+        self.assertEqual(job.status, "pending", "New job should have pending status")
+
+    def test_job_env_config_stored_as_json(self):
+        """Test: job_env_config is stored and retrieved as JSON."""
+        config = {"timeout": 3600, "retry": 3, "params": {"key": "value"}}
+        job = Job.objects.create(job_env_config=config)
+        job.refresh_from_db()
+        self.assertEqual(
+            job.job_env_config, config, "Config should round-trip through DB"
+        )
+
+    def test_stepconfig_created_with_hash_and_function(self):
+        """Test: StepConfig requires config_block_hash and function."""
+        config_hash = compute_fingerprint({"duration": 60})
+        step_config = StepConfig.objects.create(
+            config_block_hash=config_hash,
+            function="recording",
+            config_block={"duration": 60},
+        )
+        self.assertIsNotNone(step_config.config_block_hash)
+        self.assertEqual(step_config.function, "recording")
+
+    def test_jobstep_links_to_job_and_config(self):
+        """Test: JobStep properly links to Job and StepConfig."""
+        # Create prerequisites
+        config_hash = compute_fingerprint({"duration": 60})
+        step_config = StepConfig.objects.create(
+            config_block_hash=config_hash,
+            function="recording",
+            config_block={"duration": 60},
+        )
+        job = Job.objects.create(job_env_config={}, status="pending")
+
+        # Create JobStep
+        job_step = JobStep.objects.create(
+            job=job,
+            identifier="step1",
+            function="recording",
+            config_block_hash=step_config,
+            status="pending",
+        )
+
+        # Verify relationships
+        self.assertEqual(job_step.job, job, "JobStep should link to Job")
+        self.assertEqual(
+            job_step.config_block_hash, step_config, "JobStep should link to StepConfig"
+        )
+
+    def test_jobstep_status_defaults_to_pending(self):
+        """Test: JobStep status defaults to 'pending' if not specified."""
+        config_hash = compute_fingerprint({"duration": 60})
+        step_config = StepConfig.objects.create(
+            config_block_hash=config_hash,
+            function="recording",
+            config_block={"duration": 60},
+        )
+        job = Job.objects.create(job_env_config={}, status="pending")
+
+        job_step = JobStep.objects.create(
+            job=job,
+            identifier="step1",
+            function="recording",
+            config_block_hash=step_config,
+        )
+
+        self.assertEqual(
+            job_step.status, "pending", "JobStep should default to pending"
+        )
+
+    def test_stepconfig_hash_is_primary_key(self):
+        """Test: config_block_hash is the primary key for StepConfig."""
+        config_hash = compute_fingerprint({"duration": 60})
+        step_config = StepConfig.objects.create(
+            config_block_hash=config_hash,
+            function="recording",
+            config_block={"duration": 60},
+        )
+
+        # Should be able to retrieve by hash (primary key)
+        retrieved = StepConfig.objects.get(config_block_hash=config_hash)
+        self.assertEqual(retrieved.config_block_hash, config_hash)
+
+    def test_job_timestamps_created_automatically(self):
+        """Test: Job creation timestamps are set automatically."""
+        job = Job.objects.create(job_env_config={}, status="pending")
+        self.assertIsNotNone(job.created_at, "created_at should be set automatically")
+
+    def test_multiple_jobsteps_per_job(self):
+        """Test: One Job can have multiple JobSteps."""
+        config_hash = compute_fingerprint({"duration": 60})
+        step_config = StepConfig.objects.create(
+            config_block_hash=config_hash,
+            function="recording",
+            config_block={"duration": 60},
+        )
+        job = Job.objects.create(job_env_config={}, status="pending")
+
+        # Create multiple steps for same job
+        step1 = JobStep.objects.create(
+            job=job,
+            identifier="step1",
+            function="recording",
+            config_block_hash=step_config,
+        )
+        step2 = JobStep.objects.create(
+            job=job,
+            identifier="step2",
+            function="kilosort",
+            config_block_hash=step_config,
+        )
+
+        self.assertEqual(job.jobstep_set.count(), 2, "Job should have 2 steps")
+
+    def test_jobstep_depends_on_stored_as_list(self):
+        """Test: JobStep depends_on field stores list of dependencies."""
+        config_hash = compute_fingerprint({"duration": 60})
+        step_config = StepConfig.objects.create(
+            config_block_hash=config_hash,
+            function="recording",
+            config_block={"duration": 60},
+        )
+        job = Job.objects.create(job_env_config={}, status="pending")
+
+        dependencies = ["step1", "step2", "step3"]
+        job_step = JobStep.objects.create(
+            job=job,
+            identifier="step4",
+            function="merge",
+            config_block_hash=step_config,
+            depends_on=dependencies,
+        )
+
+        self.assertEqual(
+            job_step.depends_on, dependencies, "Dependencies should be preserved"
+        )
+
+    def test_stepconfig_config_block_stored_as_json(self):
+        """Test: StepConfig config_block is stored and retrieved as JSON."""
+        config_dict = {"duration": 60, "sample_rate": 30000, "nested": {"key": "value"}}
+        config_hash = compute_fingerprint(config_dict)
+
+        step_config = StepConfig.objects.create(
+            config_block_hash=config_hash,
+            function="recording",
+            config_block=config_dict,
+        )
+        step_config.refresh_from_db()
+
+        self.assertEqual(
+            step_config.config_block,
+            config_dict,
+            "config_block should round-trip through DB",
+        )
+
+    def test_job_can_transition_statuses(self):
+        """Test: Job status can be updated through its lifecycle."""
+        job = Job.objects.create(job_env_config={}, status="pending")
+
+        # Transition: pending -> fetched
+        job.status = "fetched"
+        job.save()
+        job.refresh_from_db()
+        self.assertEqual(job.status, "fetched")
+
+        # Transition: fetched -> running
+        job.status = "running"
+        job.save()
+        job.refresh_from_db()
+        self.assertEqual(job.status, "running")
+
+        # Transition: running -> completed
+        job.status = "completed"
+        job.save()
+        job.refresh_from_db()
+        self.assertEqual(job.status, "completed")
