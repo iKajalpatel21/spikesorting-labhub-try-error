@@ -31,7 +31,9 @@ def compute_fingerprint(config_block: dict) -> str:
         64
     """
     json_str = json.dumps(config_block, sort_keys=True)
-    return hashlib.sha256(json_str.encode("utf-8")).hexdigest()
+    return hashlib.sha256(
+        json_str.encode("utf-8")
+    ).hexdigest()  # Sort keys ensure consistent hash  # Sort keys ensure consistent hash
 
 
 def get_or_create_step_configs(stepfunction: str, step_config: dict) -> str:
@@ -52,11 +54,13 @@ def get_or_create_step_configs(stepfunction: str, step_config: dict) -> str:
         RuntimeError: If database operation fails
     """
     fingerprint = compute_fingerprint(step_config)
-    if not StepConfig.objects.filter(config_block_hash=fingerprint).exists():
+    if not StepConfig.objects.filter(
+        config_block_hash=fingerprint
+    ).exists():  # Check if config already exists
         try:
             stepconf = StepConfig(
-                config_block_hash=fingerprint,
-                config_block=step_config,
+                config_block_hash=fingerprint,  # Use hash as unique identifier
+                config_block=step_config,  # Store actual config data
                 function=stepfunction,  # Store function name
             )
             stepconf.save()
@@ -64,7 +68,7 @@ def get_or_create_step_configs(stepfunction: str, step_config: dict) -> str:
             raise RuntimeError(
                 f"Cannot create a record in step database for function {stepfunction}: {e}"
             )
-    return fingerprint
+    return fingerprint  # Return the fingerprint (whether new or existing)
 
 
 def create_a_job(job_evn: dict, job_steps: list) -> "Job":
@@ -86,49 +90,58 @@ def create_a_job(job_evn: dict, job_steps: list) -> "Job":
         RuntimeError: If job_steps is empty or invalid
     """
     # Validation: Check job_steps is not empty
-    if not len(job_steps):
+    if not len(job_steps):  # Fail fast if no steps provided
         raise RuntimeError("job_steps are empty")
 
     # Validation: Check each step has required fields
-    for setpid, step in enumerate(job_steps):
-        if not isinstance(step, dict):
+    for setpid, step in enumerate(job_steps):  # Validate each step
+        if not isinstance(step, dict):  # Each step must be a dictionary
             raise RuntimeError(f"step #{setpid} is not a dictionary")
 
-        for required_field in ["function", "identifier", "depends"]:
+        for required_field in [
+            "function",
+            "identifier",
+            "depends",
+        ]:  # Check for required fields
             if required_field not in step:
                 raise RuntimeError(
                     f"step #{setpid} does not have '{required_field}' key"
                 )
 
         # Validate that the config exists
-        identifier = step["identifier"]
-        if not StepConfig.objects.filter(config_block_hash=identifier).exists():
+        identifier = step["identifier"]  # identifier is the StepConfig hash
+        if not StepConfig.objects.filter(
+            config_block_hash=identifier
+        ).exists():  # Config must exist first
             raise RuntimeError(
                 f"step #{setpid}: StepConfig with hash '{identifier}' does not exist. "
                 f"Create the config first before creating the job."
             )
 
     # Create the Job and JobSteps atomically
-    with transaction.atomic():
-        # Create the main Job record
-        job = Job.objects.create(job_env_config=job_evn, status="pending")
+    with transaction.atomic():  # All-or-nothing transaction
+        job = Job.objects.create(
+            job_env_config=job_evn, status="pending"
+        )  # Create main job
 
-        # Prepare JobStep objects for bulk creation
-        job_steps_objects = []
+        job_steps_objects = []  # Collect all steps for bulk creation
         for step in job_steps:
             job_steps_objects.append(
                 JobStep(
-                    identifier=step.get("identifier"),
-                    job=job,
-                    function=step.get("function"),
-                    depends_on=step.get("depends", []),
-                    config_block_hash_id=step.get("identifier"),  # FK to StepConfig
-                    status="pending",
+                    identifier=step.get("identifier"),  # Step's unique ID within job
+                    job=job,  # Link to parent job
+                    function=step.get("function"),  # Step function type
+                    depends_on=step.get("depends", []),  # Dependencies
+                    config_block_hash_id=step.get(
+                        "identifier"
+                    ),  # Reference to StepConfig
+                    status="pending",  # Initial status
                 )
             )
 
-        # Bulk create all JobSteps
-        JobStep.objects.bulk_create(job_steps_objects)
+        JobStep.objects.bulk_create(
+            job_steps_objects
+        )  # Bulk insert all steps (1 query, not N)
 
     return job
 
@@ -141,21 +154,20 @@ def get_next_job_id() -> "Job | None":
     Returns:
         Job | None: The next pending job in FIFO order, or None if queue is empty
     """
-    with transaction.atomic():
-        # Select the oldest pending job with row lock to prevent race conditions
+    with transaction.atomic():  # Lock during assignment
         job_to_process = (
-            Job.objects.select_for_update()
-            .filter(status="pending")
-            .order_by("created_at")
-            .first()
+            Job.objects.select_for_update()  # Row-level lock prevents race conditions
+            .filter(status="pending")  # Only unprocessed jobs
+            .order_by("created_at")  # FIFO queue
+            .first()  # Get oldest job
         )
 
-        if job_to_process:
-            job_to_process.status = "fetched"
+        if job_to_process:  # If job found
+            job_to_process.status = "fetched"  # Mark as in-progress
             job_to_process.save()
         else:
-            job_to_process = None
-    return job_to_process
+            job_to_process = None  # No pending jobs available
+    return job_to_process  # Return the job or None
 
 
 class Job(models.Model):
