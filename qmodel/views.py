@@ -1,8 +1,10 @@
 import json
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpRequest
+from django.contrib.auth import authenticate
 from rest_framework import viewsets
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from .models import Job, JobStep, StepConfig, get_next_job_id
 from .serializers import JobSerializer
@@ -158,4 +160,46 @@ def job_list(request):
         .order_by("job__created_at", "id")
     )
     context = {"jobs": jobs, "job_steps": job_steps}
+    return render(request, "qmodel/job_list.html", context)
+
+
+# ============================================================================
+# Authentication Endpoint
+# ============================================================================
+
+
+@api_view(["POST"])
+@permission_classes([AllowAny])
+def login(request):
+    """
+    Authenticate user with username and password.
+    Returns token and user info on success.
+    """
+    from rest_framework.authtoken.models import Token
+
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    if not username or not password:
+        return JsonResponse(
+            {"detail": "Username and password are required."},
+            status=400,
+        )
+
+    user = authenticate(username=username, password=password)
+    if user is None:
+        return JsonResponse(
+            {"detail": "Invalid credentials."},
+            status=401,
+        )
+
+    token, _ = Token.objects.get_or_create(user=user)
+    return JsonResponse(
+        {
+            "token": token.key,
+            "user_id": user.id,
+            "username": user.username,
+        },
+        status=200,
+    )
     return render(request, "qmodel/job_list.html", context)

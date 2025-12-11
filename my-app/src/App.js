@@ -1,8 +1,13 @@
 import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./context/AuthContext";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { LoginPage } from "./pages/LoginPage";
 
-function Home() {
+function Dashboard() {
   const navigate = useNavigate();
+  const { logout, user } = useAuth();
+
   return (
     <div style={{
       minHeight: "100vh",
@@ -12,6 +17,37 @@ function Home() {
       alignItems: "center",
       justifyContent: "center",
     }}>
+      <div style={{
+        position: 'absolute',
+        top: '20px',
+        right: '20px',
+        background: 'rgba(255,255,255,0.1)',
+        padding: '10px 15px',
+        borderRadius: '6px',
+        color: '#fff',
+        display: 'flex',
+        gap: '15px',
+        alignItems: 'center',
+      }}>
+        <span>Welcome, {user?.username}</span>
+        <button
+          onClick={logout}
+          style={{
+            padding: '8px 12px',
+            background: '#ff5252',
+            color: '#fff',
+            border: 'none',
+            borderRadius: '4px',
+            cursor: 'pointer',
+            fontSize: '14px',
+          }}
+          onMouseOver={(e) => e.target.style.background = '#ff1744'}
+          onMouseOut={(e) => e.target.style.background = '#ff5252'}
+        >
+          Logout
+        </button>
+      </div>
+
       <h1 style={{ color: "#fff", fontSize: "2.5rem", marginBottom: "40px" }}>
         Welcome to Spikes Jobs!
       </h1>
@@ -56,6 +92,7 @@ function Home() {
 }
 
 function NewPipeline() {
+  const { token } = useAuth();
   const [formData, setFormData] = useState({
     binfile: null,
     samplingRate: 30000.0,
@@ -320,6 +357,7 @@ function NewPipeline() {
 }
 
 function SubmitPipeline() {
+  const { token } = useAuth();
   const [fileName, setFileName] = useState("");
   const [fileObj, setFileObj] = useState(null);
   const [description, setDescription] = useState("");
@@ -569,13 +607,17 @@ function SubmitPipeline() {
 }
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/new-pipeline" element={<NewPipeline />} />
-        <Route path="/submit-pipeline" element={<SubmitPipeline />} />
-      </Routes>
-    </Router>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/new-pipeline" element={<ProtectedRoute><NewPipeline /></ProtectedRoute>} />
+          <Route path="/submit-pipeline" element={<ProtectedRoute><SubmitPipeline /></ProtectedRoute>} />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }
 
