@@ -1,35 +1,6 @@
 import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 
-function TokenControl() {
-  const [token, setToken] = useState(() => window.localStorage.getItem('token') || '');
-
-  const save = () => {
-    if (token && token.trim()) {
-      window.localStorage.setItem('token', token.trim());
-      alert('Token saved to localStorage');
-    } else {
-      window.localStorage.removeItem('token');
-      alert('Token removed from localStorage');
-    }
-  };
-
-  return (
-    <div style={{ position: 'fixed', top: 12, right: 12, background: 'rgba(255,255,255,0.95)', padding: '8px 12px', borderRadius: 8, boxShadow: '0 4px 12px rgba(0,0,0,0.12)', zIndex: 1000 }}>
-      <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-        <input
-          aria-label="api-token"
-          placeholder="Paste token here"
-          value={token}
-          onChange={(e) => setToken(e.target.value)}
-          style={{ width: 260, padding: '6px 8px', borderRadius: 6, border: '1px solid #ccc' }}
-        />
-        <button onClick={save} style={{ padding: '6px 10px', borderRadius: 6, background: '#4fc3f7', color: '#fff', border: 'none' }}>Save</button>
-      </div>
-    </div>
-  );
-}
-
 function Home() {
   const navigate = useNavigate();
   return (
@@ -599,7 +570,6 @@ function SubmitPipeline() {
 function App() {
   return (
     <Router>
-      <TokenControl />
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/new-pipeline" element={<NewPipeline />} />
