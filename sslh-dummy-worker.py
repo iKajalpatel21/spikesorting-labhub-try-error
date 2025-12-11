@@ -110,7 +110,7 @@ def main(config: dict):
     timeout = config.get("TIMEOUT", 10)
     VERIFY_SSL = config.get("VERIFY_SSL", True)
 
-    sys.stderr.write("[Worker] Starting REST-based polling loop")
+    sys.stderr.write(f"[Worker] Starting REST-based polling loop for API: {api_url}\n")
 
     job_config = None  # Track currently running job
 
@@ -118,8 +118,10 @@ def main(config: dict):
         while True:
             try:
                 # Fetch the next job from the server
+                request_url = f"{api_url}/next-job/"
+                sys.stderr.write(f"[Worker] Requesting: {request_url}\n")
                 res = requests.get(
-                    f"{api_url}/next-job/",
+                    request_url,
                     headers=headers,
                     verify=VERIFY_SSL,
                     timeout=timeout,

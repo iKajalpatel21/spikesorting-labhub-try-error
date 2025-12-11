@@ -1,10 +1,10 @@
 {
-    "SERVER": "https://your-trunas-server.local:8443/qmodel",
+    "SERVER": "https://128.164.33.148:8443/qmodel",
     "SSH_KEY": "",
     "NAS": "/mnt/tank/sslh-worker-data",
     "LOCAL": "/tmp/sslh-workspace",
     "TIMEOUT": 30,
-    "API_TOKEN": "${SSLH_API_TOKEN}",
+    "API_TOKEN": "77544d639437a1fdfad7d7bbcd17297e42383917",
     "VERIFY_SSL": false,
     "JOB_SAVE": true
 }
