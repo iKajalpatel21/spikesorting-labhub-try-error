@@ -1,45 +1,45 @@
 import React, { useRef, useState } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { WizardProvider } from "./context/WizardContext";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { LoginPage } from "./pages/LoginPage";
+import Dashboard from "./pages/Dashboard";
 
-function Dashboard() {
-  const navigate = useNavigate();
+function DashboardLayout() {
   const { logout, user } = useAuth();
 
   return (
     <div style={{
       minHeight: "100vh",
-      background: "linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      justifyContent: "center",
+      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
+      paddingTop: "20px",
     }}>
       <div style={{
-        position: 'absolute',
+        position: 'fixed',
         top: '20px',
         right: '20px',
         background: 'rgba(255,255,255,0.1)',
-        padding: '10px 15px',
+        padding: '10px 20px',
         borderRadius: '6px',
         color: '#fff',
         display: 'flex',
         gap: '15px',
         alignItems: 'center',
+        zIndex: 1000,
       }}>
         <span>Welcome, {user?.username}</span>
         <button
           onClick={logout}
           style={{
-            padding: '8px 12px',
+            padding: '8px 16px',
             background: '#ff5252',
             color: '#fff',
             border: 'none',
             borderRadius: '4px',
             cursor: 'pointer',
             fontSize: '14px',
+            fontWeight: 'bold',
           }}
           onMouseOver={(e) => e.target.style.background = '#ff1744'}
           onMouseOut={(e) => e.target.style.background = '#ff5252'}
@@ -47,46 +47,7 @@ function Dashboard() {
           Logout
         </button>
       </div>
-
-      <h1 style={{ color: "#fff", fontSize: "2.5rem", marginBottom: "40px" }}>
-        Welcome to Spikes Jobs!
-      </h1>
-      <div>
-        <button
-          style={{
-            margin: "20px",
-            padding: "20px 40px",
-            fontSize: "18px",
-            borderRadius: "8px",
-            border: "none",
-            background: "#4fc3f7",
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
-            transition: "background 0.2s",
-          }}
-          onClick={() => navigate("/new-pipeline")}
-        >
-          New Pipeline
-        </button>
-        <button
-          style={{
-            margin: "20px",
-            padding: "20px 40px",
-            fontSize: "18px",
-            borderRadius: "8px",
-            border: "none",
-            background: "#81c784",
-            color: "#fff",
-            cursor: "pointer",
-            boxShadow: "0 4px 14px rgba(0,0,0,0.15)",
-            transition: "background 0.2s",
-          }}
-          onClick={() => navigate("/submit-pipeline")}
-        >
-          Submit Pipeline
-        </button>
-      </div>
+      <Dashboard />
     </div>
   );
 }
@@ -608,15 +569,17 @@ function SubmitPipeline() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <Routes>
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
-          <Route path="/new-pipeline" element={<ProtectedRoute><NewPipeline /></ProtectedRoute>} />
-          <Route path="/submit-pipeline" element={<ProtectedRoute><SubmitPipeline /></ProtectedRoute>} />
-        </Routes>
-      </Router>
+      <WizardProvider>
+        <Router>
+          <Routes>
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/dashboard" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>} />
+            <Route path="/" element={<ProtectedRoute><DashboardLayout /></ProtectedRoute>} />
+            <Route path="/new-pipeline" element={<ProtectedRoute><NewPipeline /></ProtectedRoute>} />
+            <Route path="/submit-pipeline" element={<ProtectedRoute><SubmitPipeline /></ProtectedRoute>} />
+          </Routes>
+        </Router>
+      </WizardProvider>
     </AuthProvider>
   );
 }
