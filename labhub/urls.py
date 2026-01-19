@@ -16,7 +16,7 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import path, include
+from django.urls import path, include, re_path
 from django.conf import settings
 from django.conf.urls.static import static
 from django.views.generic import TemplateView
@@ -26,8 +26,14 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("qmodel/", include(("qmodel.urls", "qmodel"), namespace="qmodel")),
     path("pipeline/", include("pipeline.urls")),
-    # Serve React app for all non-API routes
-    path("", TemplateView.as_view(template_name="index.html"), name="react-app"),
+    # Serve React app for all non-API routes (must be last)
+    re_path(
+        r"^(?!admin|qmodel|pipeline|static).*$",
+        TemplateView.as_view(template_name="index.html"),
+        name="react-app",
+    ),
+    # Root path
+    path("", TemplateView.as_view(template_name="index.html"), name="react-app-root"),
 ]
 
 # Serve static files

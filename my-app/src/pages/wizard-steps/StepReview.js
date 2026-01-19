@@ -3,149 +3,199 @@ import { useWizard } from '../../context/WizardContext';
 import '../../styles/WizardSteps.css';
 
 export default function StepReview({ onComplete }) {
-  const { wizardState, resetWizard } = useWizard();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [error, setError] = useState('');
-  const { recording, selectedPipeline, jobEnvironment, availablePipelines, availableEnvironments } = wizardState;
+    const { wizardState, resetWizard } = useWizard();
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState('');
+    const { recording, selectedPipeline, jobEnvironment, availablePipelines } = wizardState;
 
-  const selectedPipelineData = availablePipelines.find(p => p.id === selectedPipeline);
-  const selectedEnvData = availableEnvironments.find(e => e.id === jobEnvironment.preset);
+    const selectedPipelineData = availablePipelines.find(p => p.pipeline_id === selectedPipeline);
 
-  const handleSubmit = async () => {
-    setIsSubmitting(true);
-    setError('');
+    const handleSubmit = async () => {
+        setIsSubmitting(true);
+        setError('');
 
-    try {
-      // Prepare form data with files
-      const formData = new FormData();
-      formData.append('bin_file', recording.binFile);
-      formData.append('probe_file', recording.probeFile);
-      formData.append('sampling_rate', recording.samplingRate);
-      formData.append('num_channels', recording.numChannels);
-      formData.append('gain_to_microvolts', recording.gainToMicroVolts);
-      formData.append('offset_to_microvolts', recording.offsetToMicroVolts);
-      formData.append('bad_channels', JSON.stringify(recording.badChannels));
-      formData.append('pipeline_id', selectedPipeline);
-      formData.append('job_environment', jobEnvironment.preset);
+        try {
+            // Check if token exists
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found. Please log in first.');
+            }
 
-      // TODO: Replace with actual API endpoint
-      const response = await fetch('/api/jobs/create/', {
-        method: 'POST',
-        headers: {
-          'Authorization': `Token ${localStorage.getItem('token')}`,
-        },
-        body: formData,
-      });
+            // Check if pipeline is selected
+            if (!selectedPipeline) {
+                throw new Error('Pipeline not selected. Please go back and select a pipeline.');
+            }
 
-      if (!response.ok) {
-        throw new Error('Failed to create job');
-      }
+            // Prepare JSON payload
+            const payload = {
+                recording: {
+                    samplingRate: recording.samplingRate,
+                    numChannels: recording.numChannels,
+                    gainToMicroVolts: recording.gainToMicroVolts,
+                    offsetToMicroVolts: recording.offsetToMicroVolts,
+                    badChannels: recording.badChannels,
+                },
+                pipeline_id: selectedPipeline,
+                job_env_preset: jobEnvironment.preset,
+            };
 
-      const data = await response.json();
-      alert(`✅ Job created successfully! Job ID: ${data.id}`);
-      
-      // Reset wizard and go back to dashboard
-      resetWizard();
-      onComplete();
-    } catch (err) {
-      setError(err.message || 'Failed to submit job');
-      console.error('Error:', err);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
+            console.log('Submitting payload:', payload);
 
-  return (
-    <div className="step-container">
-      <h2>Step 4: Review & Submit</h2>
-      <p className="step-description">Review all settings before submitting your job.</p>
+            const response = await fetch('/qmodel/jobs/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Token ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
 
-      <div className="review-sections">
-        {/* Recording Summary */}
-        <div className="review-section">
-          <h3>📁 Recording Configuration</h3>
-          <div className="review-items">
-            <div className="review-item">
-              <span className="label">Binary File:</span>
-              <span className="value">{recording.binFile?.name || 'Not selected'}</span>
+            console.log('Response status:', response.status);
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                console.error('Error response:', errorData);
+                throw new Error(errorData.error || `Failed to create job (${response.status})`);
+            }
+
+            const data = await response.json();
+            console.log('Success response:', data);
+            alert(`Job created successfully! Job ID: ${data.job_id}`);
+
+            // Reset wizard and go back to dashboard
+            resetWizard();
+            onComplete();
+        } catch (err) {
+            const errorMsg = err.message || 'Failed to submit job';
+            setError(errorMsg);
+            console.error('Error:', err);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    return (
+        <div className="step-container">
+            <h2>Step 4: Review & Submit</h2>
+            <p className="step-description">Review all settings before submitting your job.</p>
+
+            <div className="review-sections">
+                {/* Recording Summary */}
+                <div className="review-section">
+                    <h3>Recording Configuration</h3>
+                    <div className="review-items">
+                        {recording.binFile && (
+                            <div className="review-item">
+                                <span className="label">Bin File:</span>
+                                <span className="value">{recording.binFile.name}</span>
+                            </div>
+                        )}
+                        {recording.probeFile && (
+                            <div className="review-item">
+                                <span className="label">Probe File:</span>
+                                <span className="value">{recording.probeFile.name}</span>
+                            </div>
+                        )}
+                        <div className="review-item">
+                            <span className="label">Sampling Rate:</span>
+                            <span className="value">{recording.samplingRate} Hz</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Number of Channels:</span>
+                            <span className="value">{recording.numChannels}</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Gain to µV:</span>
+                            <span className="value">{recording.gainToMicroVolts}</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Offset to µV:</span>
+                            <span className="value">{recording.offsetToMicroVolts}</span>
+                        </div>
+                        {recording.badChannels.length > 0 && (
+                            <div className="review-item">
+                                <span className="label">Bad Channels:</span>
+                                <span className="value">{recording.badChannels.join(', ')}</span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* Pipeline Summary */}
+                <div className="review-section">
+                    <h3>Pipeline</h3>
+                    <div className="review-items">
+                        <div className="review-item">
+                            <span className="label">Pipeline ID:</span>
+                            <span className="value">{selectedPipelineData?.pipeline_id || 'Not selected'}</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Description:</span>
+                            <span className="value">{selectedPipelineData?.description || '-'}</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Environment Summary */}
+                <div className="review-section">
+                    <h3>Job Environment</h3>
+                    <div className="review-items">
+                        <div className="review-item">
+                            <span className="label">Base Directory:</span>
+                            <span className="value">$LOCAL$/c7df2f67-b3f6-460b</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Number of Jobs:</span>
+                            <span className="value">40</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Total Memory:</span>
+                            <span className="value">128G</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Chunk Duration:</span>
+                            <span className="value">60s</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Progress Bar:</span>
+                            <span className="value">Enabled</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Log Level:</span>
+                            <span className="value">DEBUG</span>
+                        </div>
+                    </div>
+                    <div className="review-items" style={{ marginTop: '1rem' }}>
+                        <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>Output Redirects</h4>
+                        <div className="review-item">
+                            <span className="label">Log:</span>
+                            <span className="value">$NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.log</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Out:</span>
+                            <span className="value">$NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.out</span>
+                        </div>
+                        <div className="review-item">
+                            <span className="label">Error:</span>
+                            <span className="value">$NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.err</span>
+                        </div>
+                    </div>
+                </div>
             </div>
-            <div className="review-item">
-              <span className="label">Probe File:</span>
-              <span className="value">{recording.probeFile?.name || 'Not selected'}</span>
-            </div>
-            <div className="review-item">
-              <span className="label">Sampling Rate:</span>
-              <span className="value">{recording.samplingRate} Hz</span>
-            </div>
-            <div className="review-item">
-              <span className="label">Number of Channels:</span>
-              <span className="value">{recording.numChannels}</span>
-            </div>
-            <div className="review-item">
-              <span className="label">Gain to µV:</span>
-              <span className="value">{recording.gainToMicroVolts}</span>
-            </div>
-            <div className="review-item">
-              <span className="label">Offset to µV:</span>
-              <span className="value">{recording.offsetToMicroVolts}</span>
-            </div>
-            {recording.badChannels.length > 0 && (
-              <div className="review-item">
-                <span className="label">Bad Channels:</span>
-                <span className="value">{recording.badChannels.join(', ')}</span>
-              </div>
+
+            {error && (
+                <div className="error-message">
+                    {error}
+                </div>
             )}
-          </div>
-        </div>
 
-        {/* Pipeline Summary */}
-        <div className="review-section">
-          <h3>🔧 Pipeline</h3>
-          <div className="review-items">
-            <div className="review-item">
-              <span className="label">Pipeline Name:</span>
-              <span className="value">{selectedPipelineData?.name || 'Not selected'}</span>
-            </div>
-            <div className="review-item">
-              <span className="label">Description:</span>
-              <span className="value">{selectedPipelineData?.description || '-'}</span>
-            </div>
-            <div className="review-item">
-              <span className="label">Number of Steps:</span>
-              <span className="value">{selectedPipelineData?.steps_count || 0}</span>
-            </div>
-          </div>
+            <button
+                className="submit-button"
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+            >
+                {isSubmitting ? 'Submitting...' : 'Submit Job'}
+            </button>
         </div>
-
-        {/* Environment Summary */}
-        <div className="review-section">
-          <h3>⚙️ Job Environment</h3>
-          <div className="review-items">
-            <div className="review-item">
-              <span className="label">Environment:</span>
-              <span className="value">{selectedEnvData?.name || 'Not selected'}</span>
-            </div>
-            <div className="review-item">
-              <span className="label">Description:</span>
-              <span className="value">{selectedEnvData?.description || '-'}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {error && (
-        <div className="error-message">
-          ❌ {error}
-        </div>
-      )}
-
-      <button
-        className="submit-button"
-        onClick={handleSubmit}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? '⏳ Submitting...' : '✅ Submit Job'}
-      </button>
-    </div>
-  );
+    );
 }

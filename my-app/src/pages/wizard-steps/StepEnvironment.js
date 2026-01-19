@@ -3,47 +3,69 @@ import { useWizard } from '../../context/WizardContext';
 import '../../styles/WizardSteps.css';
 
 export default function StepEnvironment() {
-  const { wizardState, updateJobEnvironment } = useWizard();
-  const { jobEnvironment, availableEnvironments } = wizardState;
+    const { wizardState, updateJobEnvironment } = useWizard();
+    const { jobEnvironment } = wizardState;
 
-  return (
-    <div className="step-container">
-      <h2>Step 3: Job Environment</h2>
-      <p className="step-description">Select the execution environment for your job.</p>
+    return (
+        <div className="step-container">
+            <h2>Step 3: Job Environment</h2>
+            <p className="step-description">Select the execution environment for your job.</p>
 
-      <div className="environments-grid">
-        {availableEnvironments.map(env => (
-          <div
-            key={env.id}
-            className={`environment-card ${jobEnvironment.preset === env.id ? 'selected' : ''}`}
-            onClick={() => updateJobEnvironment(env.id)}
-          >
-            <div className="env-header">
-              <h3>{env.name}</h3>
-              {jobEnvironment.preset === env.id && <span className="selected-badge">✓ Selected</span>}
+            <div className="environment-card-single">
+                <div className="environment-checkbox-group">
+                    <input
+                        type="checkbox"
+                        id="default-env"
+                        checked={jobEnvironment.preset === 'default'}
+                        onChange={() => updateJobEnvironment('default')}
+                        className="environment-checkbox"
+                    />
+                    <label htmlFor="default-env" className="environment-label">
+                        <div className="env-title">Default Environment (Recommended)</div>
+                        <div className="env-description">Automatically configured for optimal processing</div>
+                    </label>
+                </div>
             </div>
-            <p className="env-description">{env.description}</p>
-          </div>
-        ))}
-      </div>
 
-      <div className="form-section">
-        <h3>📋 Environment Details</h3>
-        <div className="env-details">
-          <div className="detail-item">
-            <strong>Selected:</strong> {availableEnvironments.find(e => e.id === jobEnvironment.preset)?.name}
-          </div>
+            <div className="form-section">
+                <h3>Environment Configuration</h3>
+                <div className="env-details">
+                    <div className="detail-item">
+                        <strong>Base Directory:</strong> $LOCAL$/c7df2f67-b3f6-460b
+                    </div>
+                    <div className="detail-item">
+                        <strong>Number of Jobs:</strong> 40
+                    </div>
+                    <div className="detail-item">
+                        <strong>Total Memory:</strong> 128G
+                    </div>
+                    <div className="detail-item">
+                        <strong>Chunk Duration:</strong> 60s
+                    </div>
+                    <div className="detail-item">
+                        <strong>Progress Bar:</strong> Enabled
+                    </div>
+                    <div className="detail-item">
+                        <strong>Log Level:</strong> DEBUG
+                    </div>
+                </div>
+                <div className="env-details" style={{ marginTop: '1rem' }}>
+                    <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>Output Redirects</h4>
+                    <div className="detail-item">
+                        <strong>Log:</strong> $NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.log
+                    </div>
+                    <div className="detail-item">
+                        <strong>Out:</strong> $NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.out
+                    </div>
+                    <div className="detail-item">
+                        <strong>Error:</strong> $NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.err
+                    </div>
+                </div>
+            </div>
+
+            <div className="info-box">
+                <strong>Info:</strong> Default Environment is automatically optimized for your recording with intelligent resource allocation
+            </div>
         </div>
-      </div>
-
-      <div className="info-box">
-        <strong>💡 Info:</strong>
-        <ul>
-          <li><strong>Local CPU:</strong> Process on your local machine using CPU (slower)</li>
-          <li><strong>Local GPU:</strong> Process on your local machine using GPU (faster, requires GPU)</li>
-          <li><strong>Test Environment:</strong> Run in test mode for validation</li>
-        </ul>
-      </div>
-    </div>
-  );
+    );
 }

@@ -1,152 +1,194 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import { useWizard } from '../../context/WizardContext';
 import '../../styles/WizardSteps.css';
 
 export default function StepRecording() {
-  const { wizardState, updateRecording } = useWizard();
-  const binInputRef = useRef();
-  const probeInputRef = useRef();
-  const recording = wizardState.recording;
+    const { wizardState, updateRecording } = useWizard();
+    const binInputRef = useRef();
+    const probeInputRef = useRef();
+    const recording = wizardState.recording;
+    const [removeChannels, setRemoveChannels] = useState([]);
 
-  const handleBinFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      updateRecording({ binFile: file });
-    }
-  };
+    const validateJsonFile = (file) => {
+        const fileName = file.name.toLowerCase();
+        return fileName.endsWith('.json');
+    };
 
-  const handleProbeFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      updateRecording({ probeFile: file });
-    }
-  };
+    const handleBinFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (!validateJsonFile(file)) {
+                alert('Please select a JSON file (.json extension required)');
+                e.target.value = '';
+                return;
+            }
+            updateRecording({ binFile: file });
+        }
+    };
 
-  const handleParameterChange = (field, value) => {
-    const numValue = parseFloat(value);
-    updateRecording({ [field]: isNaN(numValue) ? value : numValue });
-  };
+    const handleProbeFileSelect = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            if (!validateJsonFile(file)) {
+                alert('Please select a JSON file (.json extension required)');
+                e.target.value = '';
+                return;
+            }
+            updateRecording({ probeFile: file });
+        }
+    };
 
-  const handleBadChannelToggle = (channel) => {
-    const updated = recording.badChannels.includes(channel)
-      ? recording.badChannels.filter(c => c !== channel)
-      : [...recording.badChannels, channel];
-    updateRecording({ badChannels: updated });
-  };
+    const handleParameterChange = (field, value) => {
+        if (field === 'numChannels') {
+            const intValue = parseInt(value, 10);
+            updateRecording({ [field]: isNaN(intValue) ? value : intValue });
+        } else {
+            const numValue = parseFloat(value);
+            updateRecording({ [field]: isNaN(numValue) ? value : numValue });
+        }
+    };
 
-  return (
-    <div className="step-container">
-      <h2>Step 1: Create New Recording</h2>
-      <p className="step-description">Upload your recording files and configure the recording parameters.</p>
+    const handleRemoveChannelToggle = (channel) => {
+        const updated = removeChannels.includes(channel)
+            ? removeChannels.filter(c => c !== channel)
+            : [...removeChannels, channel];
+        setRemoveChannels(updated);
+    };
 
-      <div className="form-section">
-        <h3>📁 Upload Files</h3>
+    const handleBadChannelToggle = (channel) => {
+        const updated = recording.badChannels.includes(channel)
+            ? recording.badChannels.filter(c => c !== channel)
+            : [...recording.badChannels, channel];
+        updateRecording({ badChannels: updated });
+    };
 
-        <div className="form-group">
-          <label>Binary File (.bin)</label>
-          <input
-            ref={binInputRef}
-            type="file"
-            accept=".bin"
-            onChange={handleBinFileSelect}
-            className="file-input"
-          />
-          {recording.binFile && (
-            <div className="file-info">✅ {recording.binFile.name}</div>
-          )}
+    return (
+        <div className="step-container recording-step">
+            <h2>Step 1: Create New Recording</h2>
+
+            <div className="recording-form">
+                {/* Binfile */}
+                <div className="form-group recording-form-group">
+                    <label>Binfile:</label>
+                    <input
+                        ref={binInputRef}
+                        type="file"
+                        accept="application/json,.json"
+                        onChange={handleBinFileSelect}
+                        className="file-input recording-file-input"
+                    />
+                    {recording.binFile && (
+                        <div className="file-info">{recording.binFile.name}</div>
+                    )}
+                </div>
+
+                {/* Sampling Rate */}
+                <div className="form-group recording-form-group">
+                    <label>Sampling Rate:</label>
+                    <input
+                        type="number"
+                        value={recording.samplingRate}
+                        onChange={(e) => handleParameterChange('samplingRate', e.target.value)}
+                        className="form-input recording-form-input"
+                    />
+                </div>
+
+                {/* Number of Channels */}
+                <div className="form-group recording-form-group">
+                    <label>Number of Channels:</label>
+                    <input
+                        type="number"
+                        value={recording.numChannels}
+                        onChange={(e) => handleParameterChange('numChannels', e.target.value)}
+                        className="form-input recording-form-input"
+                    />
+                </div>
+
+                {/* Gain to µV */}
+                <div className="form-group recording-form-group">
+                    <label>Gain to µV:</label>
+                    <input
+                        type="number"
+                        step="0.001"
+                        value={recording.gainToMicroVolts}
+                        onChange={(e) => handleParameterChange('gainToMicroVolts', e.target.value)}
+                        className="form-input recording-form-input"
+                    />
+                </div>
+
+                {/* Offset to µV */}
+                <div className="form-group recording-form-group">
+                    <label>Offset to µV:</label>
+                    <input
+                        type="number"
+                        step="0.001"
+                        value={recording.offsetToMicroVolts}
+                        onChange={(e) => handleParameterChange('offsetToMicroVolts', e.target.value)}
+                        className="form-input recording-form-input"
+                    />
+                </div>
+
+                {/* Probe */}
+                <div className="form-group recording-form-group">
+                    <label>Probe:</label>
+                    <input
+                        ref={probeInputRef}
+                        type="file"
+                        accept="application/json,.json"
+                        onChange={handleProbeFileSelect}
+                        className="file-input recording-file-input"
+                    />
+                    {recording.probeFile && (
+                        <div className="file-info">{recording.probeFile.name}</div>
+                    )}
+                </div>
+
+                {/* Remove Channels */}
+                <div className="channels-section">
+                    <label className="channels-label">Remove Channels</label>
+                    <div className="channels-grid">
+                        {Array.from({ length: Math.max(0, recording.numChannels) }).map((_, idx) => (
+                            <label key={`remove-${idx}`} className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={removeChannels.includes(idx)}
+                                    onChange={() => handleRemoveChannelToggle(idx)}
+                                    className="checkbox-input"
+                                />
+                                <span className="checkbox-text">{idx}</span>
+                            </label>
+                        ))}
+                    </div>
+                    {removeChannels.length > 0 && (
+                        <div className="selected-text">
+                            Selected: {removeChannels.join(', ')}
+                        </div>
+                    )}
+                </div>
+
+                {/* Bad Channels */}
+                <div className="channels-section">
+                    <label className="channels-label">Bad Channels</label>
+                    <div className="channels-grid">
+                        {Array.from({ length: Math.max(0, recording.numChannels) }).map((_, idx) => (
+                            <label key={`bad-${idx}`} className="checkbox-label">
+                                <input
+                                    type="checkbox"
+                                    checked={recording.badChannels.includes(idx)}
+                                    onChange={() => handleBadChannelToggle(idx)}
+                                    className="checkbox-input"
+                                />
+                                <span className="checkbox-text">{idx}</span>
+                            </label>
+                        ))}
+                    </div>
+                    {recording.badChannels.length > 0 && (
+                        <div className="selected-text">
+                            Selected: {recording.badChannels.join(', ')}
+                        </div>
+                    )}
+                </div>
+            </div>
         </div>
-
-        <div className="form-group">
-          <label>Probe File (.prb, .json)</label>
-          <input
-            ref={probeInputRef}
-            type="file"
-            accept=".prb,.json"
-            onChange={handleProbeFileSelect}
-            className="file-input"
-          />
-          {recording.probeFile && (
-            <div className="file-info">✅ {recording.probeFile.name}</div>
-          )}
-        </div>
-      </div>
-
-      <div className="form-section">
-        <h3>⚙️ Recording Parameters</h3>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Sampling Rate (Hz)</label>
-            <input
-              type="number"
-              value={recording.samplingRate}
-              onChange={(e) => handleParameterChange('samplingRate', e.target.value)}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Number of Channels</label>
-            <input
-              type="number"
-              value={recording.numChannels}
-              onChange={(e) => handleParameterChange('numChannels', e.target.value)}
-              className="form-input"
-            />
-          </div>
-        </div>
-
-        <div className="form-row">
-          <div className="form-group">
-            <label>Gain to µV</label>
-            <input
-              type="number"
-              step="0.001"
-              value={recording.gainToMicroVolts}
-              onChange={(e) => handleParameterChange('gainToMicroVolts', e.target.value)}
-              className="form-input"
-            />
-          </div>
-
-          <div className="form-group">
-            <label>Offset to µV</label>
-            <input
-              type="number"
-              step="0.001"
-              value={recording.offsetToMicroVolts}
-              onChange={(e) => handleParameterChange('offsetToMicroVolts', e.target.value)}
-              className="form-input"
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="form-section">
-        <h3>❌ Bad Channels</h3>
-        <p className="section-description">Select channels to exclude from analysis</p>
-        
-        <div className="bad-channels-grid">
-          {Array.from({ length: recording.numChannels }).map((_, idx) => (
-            <button
-              key={idx}
-              className={`channel-btn ${recording.badChannels.includes(idx) ? 'selected' : ''}`}
-              onClick={() => handleBadChannelToggle(idx)}
-              title={`Channel ${idx}`}
-            >
-              {idx}
-            </button>
-          ))}
-        </div>
-        {recording.badChannels.length > 0 && (
-          <div className="bad-channels-list">
-            <strong>Bad channels:</strong> {recording.badChannels.join(', ')}
-          </div>
-        )}
-      </div>
-
-      <div className="validation-note">
-        <strong>✓ Validation:</strong> All required files and parameters are filled
-      </div>
-    </div>
-  );
+    );
 }

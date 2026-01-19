@@ -1,117 +1,117 @@
 .dashboard-container {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 40px 20px;
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 40px 20px;
 }
 
 .dashboard-header {
-  text-align: center;
-  color: white;
-  margin-bottom: 50px;
+    text-align: center;
+    color: white;
+    margin-bottom: 50px;
 }
 
 .dashboard-header h1 {
-  font-size: 2.5em;
-  margin: 0 0 10px 0;
-  font-weight: 700;
+    font-size: 2.5em;
+    margin: 0 0 10px 0;
+    font-weight: 700;
 }
 
 .dashboard-header p {
-  font-size: 1.1em;
-  margin: 0;
-  opacity: 0.9;
+    font-size: 1.1em;
+    margin: 0;
+    opacity: 0.9;
 }
 
 .dashboard-actions {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-  gap: 30px;
-  max-width: 1200px;
-  margin: 0 auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
 }
 
 .action-card {
-  background: white;
-  border-radius: 12px;
-  padding: 30px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
-  cursor: pointer;
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .action-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
+    transform: translateY(-8px);
+    box-shadow: 0 12px 48px rgba(0, 0, 0, 0.15);
 }
 
 .card-icon {
-  font-size: 2.5em;
-  line-height: 1;
+    font-size: 2.5em;
+    line-height: 1;
 }
 
 .action-card h3 {
-  margin: 0;
-  font-size: 1.5em;
-  color: #333;
+    margin: 0;
+    font-size: 1.5em;
+    color: #333;
 }
 
 .action-card p {
-  margin: 0;
-  color: #666;
-  font-size: 0.95em;
-  line-height: 1.5;
-  flex-grow: 1;
+    margin: 0;
+    color: #666;
+    font-size: 0.95em;
+    line-height: 1.5;
+    flex-grow: 1;
 }
 
 .action-button {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  border: none;
-  padding: 12px 24px;
-  border-radius: 8px;
-  font-size: 1em;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  align-self: flex-start;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-size: 1em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    align-self: flex-start;
 }
 
 .action-button:hover {
-  transform: scale(1.05);
-  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .action-button:active {
-  transform: scale(0.98);
+    transform: scale(0.98);
 }
 
 .create-job {
-  border-left: 4px solid #667eea;
+    border-left: 4px solid #667eea;
 }
 
 .add-pipeline {
-  border-left: 4px solid #764ba2;
+    border-left: 4px solid #764ba2;
 }
 
 .manage-jobs {
-  border-left: 4px solid #f093fb;
+    border-left: 4px solid #f093fb;
 }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .dashboard-header h1 {
-    font-size: 1.8em;
-  }
+    .dashboard-header h1 {
+        font-size: 1.8em;
+    }
 
-  .dashboard-actions {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
+    .dashboard-actions {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 
-  .action-card {
-    padding: 20px;
-  }
+    .action-card {
+        padding: 20px;
+    }
 }

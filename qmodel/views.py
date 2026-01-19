@@ -202,4 +202,99 @@ def login(request):
         },
         status=200,
     )
-    return render(request, "qmodel/job_list.html", context)
+
+
+# ============================================================================
+# Job Creation Endpoint
+# ============================================================================
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_job(request):
+    """
+    Create a new job from wizard submission.
+
+    Expects JSON payload with:
+    - recording: Recording configuration (binfile, probeFile, samplingRate, etc.)
+    - pipeline_id: Selected pipeline ID
+    - job_env_preset: Environment preset (e.g., 'default')
+
+    Returns job_id and job_env_config
+    """
+    import uuid
+    from django.conf import settings
+
+    try:
+        data = request.data
+
+        # Extract recording and pipeline info
+        recording = data.get("recording", {})
+        pipeline_id = data.get("pipeline_id")
+        job_env_preset = data.get("job_env_preset", "default")
+
+        # Validate required fields
+        if not recording:
+            return JsonResponse({"error": "Recording data is required."}, status=400)
+        if not pipeline_id:
+            return JsonResponse({"error": "Pipeline ID is required."}, status=400)
+
+        # Generate job_id
+        job_id = uuid.uuid4()
+
+        # Generate default environment config using template
+        job_env_config = _generate_job_env_config(
+            job_id=job_id, preset=job_env_preset, recording=recording
+        )
+
+        # Create Job record
+        job = Job.objects.create(
+            job_id=job_id, job_env_config=job_env_config, status="pending"
+        )
+
+        return JsonResponse(
+            {
+                "job_id": str(job_id),
+                "job_env_config": job_env_config,
+                "status": "created",
+            },
+            status=201,
+        )
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+def _generate_job_env_config(job_id, preset, recording):
+    """
+    Generate job environment config from template.
+
+    Args:
+        job_id: UUID of the job
+        preset: Environment preset (e.g., 'default')
+        recording: Recording configuration dict
+
+    Returns:
+        dict: job_env configuration
+    """
+    # Extract recording directory (can be from binfile path or provided)
+    recording_dir = recording.get("recording_dir", f"/tmp/recording_{job_id}")
+
+    # Default environment template
+    job_env_config = {
+        "base_directory": f"$LOCAL$/{job_id}",
+        "job_kwargs": {
+            "n_jobs": 40,
+            "total_memory": "128G",
+            "chunk_duration": "60s",
+            "progress_bar": True,
+        },
+        "log_level": "DEBUG",
+        "REDIRECT": {
+            "log": f"{recording_dir}/{job_id}/run.log",
+            "out": f"{recording_dir}/{job_id}/run.out",
+            "err": f"{recording_dir}/{job_id}/run.err",
+        },
+    }
+
+    return job_env_config
