@@ -26,9 +26,10 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path("qmodel/", include(("qmodel.urls", "qmodel"), namespace="qmodel")),
     path("pipeline/", include("pipeline.urls")),
+    path("jobs/", include("jobs.urls")),  # Add jobs routes
     # Serve React app for all non-API routes (must be last)
     re_path(
-        r"^(?!admin|qmodel|pipeline|static).*$",
+        r"^(?!admin|qmodel|pipeline|jobs|static).*$",
         TemplateView.as_view(template_name="index.html"),
         name="react-app",
     ),

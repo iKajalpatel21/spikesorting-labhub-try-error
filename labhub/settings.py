@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     "rest_framework",
     "rest_framework.authtoken",
     "qmodel.apps.QmodelConfig",
-    "pipeline.apps.PipelineConfig",  # Add this line
+    "pipeline.apps.PipelineConfig",
+    "jobs.apps.JobsConfig",  # Add jobs app
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
