@@ -9,6 +9,7 @@ from qmodel.models import Job, JobStep, get_or_create_step_configs, compute_fing
 from pipeline.models import Pipeline, PipelineStep
 from .models import JobCreationLog
 from .serializers import JobSerializer, JobCreationLogSerializer
+from .step_config import get_step_dependencies, validate_dependencies
 
 
 @api_view(["POST"])
@@ -47,7 +48,7 @@ def create_job(request):
             )
 
         # Validate pipeline exists
-        pipeline = get_object_or_404(Pipeline, id=pipeline_id)
+        pipeline = get_object_or_404(Pipeline, pipeline_id=pipeline_id)
 
         # All operations happen in a single transaction
         with transaction.atomic():
@@ -83,9 +84,8 @@ def create_job(request):
                 "order"
             )
 
-            # Build template order: preprocessing → sorting → analyzer → phy_export → upload
-            # (skip recording as it was already created)
-            previous_hash = recording_hash
+            # Track available steps for dependency resolution
+            available_steps = {}  # Maps step identifier to {function, hash}
 
             for pipeline_step in pipeline_steps:
                 step_function = pipeline_step.function
@@ -99,39 +99,47 @@ def create_job(request):
                 step_hash = get_or_create_step_configs(step_function, step_config)
                 dependencies_map[step_function] = step_hash
 
-                # Determine dependencies based on step type
-                if step_function == "preprocessing":
-                    # Preprocessing depends on recording
-                    depends_on = [recording_hash]
-                elif step_function == "sorting":
-                    # Sorting depends on preprocessing
-                    depends_on = [dependencies_map.get("preprocessing")]
-                elif step_function == "analyzer":
-                    # Analyzer depends on preprocessing AND sorting
-                    depends_on = [
-                        dependencies_map.get("preprocessing"),
-                        dependencies_map.get("sorting"),
-                    ]
-                elif step_function == "phy_export":
-                    # Phy export depends on preprocessing AND sorting
-                    depends_on = [
-                        dependencies_map.get("preprocessing"),
-                        dependencies_map.get("sorting"),
-                    ]
-                elif step_function == "upload":
-                    # Upload can depend on analyzer and phy_export
-                    depends_on = [
-                        dependencies_map.get("analyzer"),
-                        dependencies_map.get("phy_export"),
-                    ]
+                # Build available steps map for dependency resolution
+                available_steps[step_hash] = {
+                    "function": step_function,
+                    "identifier": step_hash,
+                }
+
+                # Get required dependencies from STEP_DEPENDENCIES spec
+                required_dep_slots = get_step_dependencies(step_function)
+
+                if not required_dep_slots:
+                    # No dependencies required
+                    depends_on = []
                 else:
-                    # Custom steps depend on previous step
-                    depends_on = [previous_hash]
+                    # Resolve dependencies based on spec
+                    # For each required dependency slot, find a matching previous step
+                    depends_on = []
+                    for slot_idx, required_funcs in enumerate(required_dep_slots):
+                        # required_funcs is a tuple of acceptable function types
+                        if isinstance(required_funcs, str):
+                            required_funcs = (required_funcs,)
 
-                # Clean up None values from depends_on
-                depends_on = [dep for dep in depends_on if dep is not None]
+                        # Find the most recent step of acceptable type
+                        found_dep = None
+                        for prev_step_hash in reversed(list(available_steps.keys())):
+                            if prev_step_hash == step_hash:
+                                continue  # Skip self
+                            prev_step_func = available_steps[prev_step_hash]["function"]
+                            if prev_step_func in required_funcs:
+                                found_dep = prev_step_hash
+                                break
 
-                # Create JobStep with injected dependencies
+                        if found_dep:
+                            depends_on.append(found_dep)
+                        else:
+                            # No matching previous step found
+                            raise ValueError(
+                                f"Cannot find dependency for {step_function} slot {slot_idx + 1}. "
+                                f"Need one of: {required_funcs}"
+                            )
+
+                # Create JobStep with proper dependencies from spec
                 job_step = JobStep.objects.create(
                     job=job,
                     identifier=step_hash,
@@ -141,7 +149,6 @@ def create_job(request):
                     status="pending",
                 )
                 job_steps_list.append(job_step)
-                previous_hash = step_hash
 
             # ============================================================
             # STEP 9: Transaction commits automatically at end of with block

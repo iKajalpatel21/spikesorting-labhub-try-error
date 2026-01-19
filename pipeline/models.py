@@ -42,9 +42,12 @@ class PipelineStep(models.Model):
     # dependency information coming from uploaded JSON we store an array of
     # identifiers (or any JSON structure) directly on the model.
     depends_on = models.JSONField(default=list, null=True, blank=True)
-    # 'order' removed: pipeline execution order is inferred from the
-    # steps' insertion/array order. Keep an explicit field only if
-    # persistence of a separate ordering is later required.
+    # Order field for explicit step ordering within pipeline
+    order = models.IntegerField(default=0, help_text="Execution order within pipeline")
+    # Function name (e.g., 'recording', 'preprocessing', 'sorting')
+    function = models.CharField(max_length=64, default='', help_text="Step function name")
+    # Configuration block for this step
+    config = models.JSONField(null=True, blank=True, help_text="Step-specific configuration")
 
 
 class Recording(models.Model):

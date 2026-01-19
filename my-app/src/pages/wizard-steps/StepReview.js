@@ -26,22 +26,38 @@ export default function StepReview({ onComplete }) {
                 throw new Error('Pipeline not selected. Please go back and select a pipeline.');
             }
 
-            // Prepare JSON payload
+            // Prepare JSON payload following the correct structure
             const payload = {
-                recording: {
-                    samplingRate: recording.samplingRate,
-                    numChannels: recording.numChannels,
-                    gainToMicroVolts: recording.gainToMicroVolts,
-                    offsetToMicroVolts: recording.offsetToMicroVolts,
-                    badChannels: recording.badChannels,
-                },
                 pipeline_id: selectedPipeline,
-                job_env_preset: jobEnvironment.preset,
+                recording_config: {
+                    binfile: recording.binFile?.name || '/local/rth/recording.dat',
+                    sampling_rate: parseFloat(recording.samplingRate),
+                    number_of_channels: parseInt(recording.numChannels),
+                    gain_to_uV: parseFloat(recording.gainToMicroVolts),
+                    offset_to_uV: parseFloat(recording.offsetToMicroVolts),
+                    probe: recording.probeFile?.name || '/local/probes/probe.json',
+                    bad_channels: recording.badChannels.map(ch => parseInt(ch)),
+                },
+                job_env_preset: {
+                    base_directory: `$LOCAL$/${Math.random().toString(36).substr(2, 12)}`,
+                    job_kwargs: {
+                        n_jobs: 40,
+                        total_memory: "128G",
+                        chunk_duration: "60s",
+                        progress_bar: true
+                    },
+                    log_level: "DEBUG",
+                    REDIRECT: {
+                        log: `$NAS$/__RECORDING_DIRECTORY__/${Math.random().toString(36).substr(2, 12)}/run.log`,
+                        out: `$NAS$/__RECORDING_DIRECTORY__/${Math.random().toString(36).substr(2, 12)}/run.out`,
+                        err: `$NAS$/__RECORDING_DIRECTORY__/${Math.random().toString(36).substr(2, 12)}/run.err`
+                    }
+                }
             };
 
-            console.log('Submitting payload:', payload);
+            console.log('Submitting payload:', JSON.stringify(payload, null, 2));
 
-            const response = await fetch('/qmodel/jobs/create/', {
+            const response = await fetch('/jobs/create/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
