@@ -2,74 +2,34 @@ import React, { useState } from 'react';
 import '../styles/AddNewPipeline.css';
 
 export default function AddNewPipeline({ onBack }) {
-    const [formData, setFormData] = useState({
-        description: '',
-        steps: [{ id: 'step-1', name: '', function_name: '', config: '{}', dependencies: '' }],
-    });
+    const [jsonFile, setJsonFile] = useState(null);
+    const [fileContent, setFileContent] = useState(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
+    const [fileValidationError, setFileValidationError] = useState('');
 
-    const handleDescriptionChange = (e) => {
-        setFormData({ ...formData, description: e.target.value });
-    };
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    const handleStepChange = (index, field, value) => {
-        const newSteps = [...formData.steps];
-        newSteps[index] = { ...newSteps[index], [field]: value };
-        setFormData({ ...formData, steps: newSteps });
-    };
+        setJsonFile(file);
+        setFileValidationError('');
+        setError('');
 
-    const addStep = () => {
-        const newStepId = `step-${Math.max(...formData.steps.map(s => parseInt(s.id.split('-')[1]) || 0)) + 1}`;
-        const newStep = {
-            id: newStepId,
-            name: '',
-            function_name: '',
-            config: '{}',
-            dependencies: '',
-        };
-        setFormData({ ...formData, steps: [...formData.steps, newStep] });
-    };
-
-    const removeStep = (index) => {
-        if (formData.steps.length > 1) {
-            setFormData({
-                ...formData,
-                steps: formData.steps.filter((_, i) => i !== index),
-            });
-        }
-    };
-
-    const validateForm = () => {
-        if (!formData.description.trim()) {
-            setError('Pipeline description is required');
-            return false;
-        }
-
-        if (formData.steps.length === 0) {
-            setError('At least one step is required');
-            return false;
-        }
-
-        for (let step of formData.steps) {
-            if (!step.name.trim()) {
-                setError('All steps must have a name');
-                return false;
-            }
-            if (!step.function_name.trim()) {
-                setError('All steps must have a function name');
-                return false;
-            }
+        // Read the file
+        const reader = new FileReader();
+        reader.onload = (event) => {
             try {
-                JSON.parse(step.config);
-            } catch (e) {
-                setError(`Invalid JSON in step "${step.name}" config`);
-                return false;
+                const content = JSON.parse(event.target.result);
+                setFileContent(content);
+                setFileValidationError('');
+            } catch (err) {
+                setFileValidationError(`Invalid JSON: ${err.message}`);
+                setFileContent(null);
             }
-        }
-
-        return true;
+        };
+        reader.readAsText(file);
     };
 
     const handleSubmit = async (e) => {
@@ -77,48 +37,44 @@ export default function AddNewPipeline({ onBack }) {
         setError('');
         setSuccess('');
 
-        if (!validateForm()) {
+        if (!fileContent) {
+            setError('Please select and validate a JSON file first');
             return;
         }
 
         setIsSubmitting(true);
 
         try {
-            // TODO: Replace with actual API endpoint
-            const response = await fetch('/api/pipelines/create/', {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                throw new Error('No authentication token found. Please log in first.');
+            }
+
+            // Send the entire JSON content to the backend
+            const response = await fetch('/pipeline/pipelines/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
+                    'Authorization': `Token ${token}`,
                 },
-                body: JSON.stringify({
-                    description: formData.description,
-                    steps: formData.steps.map(step => ({
-                        identifier: step.id,
-                        name: step.name,
-                        function_name: step.function_name,
-                        config: JSON.parse(step.config),
-                        dependencies: step.dependencies
-                            ? step.dependencies.split(',').map(d => d.trim())
-                            : [],
-                    })),
-                }),
+                body: JSON.stringify(fileContent),
             });
 
             if (!response.ok) {
-                throw new Error('Failed to create pipeline');
+                const errorData = await response.json();
+                throw new Error(errorData.detail || 'Failed to create pipeline');
             }
 
             const data = await response.json();
-            setSuccess(`Pipeline created successfully! Pipeline ID: ${data.id}`);
+            setSuccess(`✅ Pipeline created successfully! Pipeline ID: ${data.pipeline_id}`);
 
             // Reset form after success
             setTimeout(() => {
-                setFormData({
-                    description: '',
-                    steps: [{ id: 'step-1', name: '', function_name: '', config: '{}', dependencies: '' }],
-                });
-            }, 1500);
+                setJsonFile(null);
+                setFileContent(null);
+                setFileValidationError('');
+                document.getElementById('json-file-input').value = '';
+            }, 2000);
         } catch (err) {
             setError(err.message || 'Failed to create pipeline');
             console.error('Error:', err);
@@ -130,106 +86,59 @@ export default function AddNewPipeline({ onBack }) {
     return (
         <div className="pipeline-form-container">
             <div className="pipeline-form-header">
-                <button className="back-btn" onClick={onBack}>Back</button>
-                <h1>Create New Pipeline</h1>
+                <button className="back-btn" onClick={onBack}>← Back</button>
+                <h1>📁 Create New Pipeline from JSON</h1>
+                <p className="subtitle">Upload a JSON file to create a new pipeline configuration</p>
             </div>
 
             <form onSubmit={handleSubmit} className="pipeline-form">
-                {/* Description */}
-                <div className="form-section">
-                    <h3>📝 Pipeline Description</h3>
-                    <div className="form-group">
-                        <label>Description</label>
-                        <textarea
-                            value={formData.description}
-                            onChange={handleDescriptionChange}
-                            placeholder="Describe what this pipeline does..."
-                            rows="3"
-                            className="form-textarea"
+                {/* JSON File Upload */}
+                <div className="form-section json-upload-section">
+                    <h3>📤 Upload Pipeline JSON</h3>
+                    <p className="section-description">
+                        Select a JSON file that contains your pipeline configuration with steps and their dependencies.
+                    </p>
+
+                    <div className="file-upload-box">
+                        <input
+                            type="file"
+                            id="json-file-input"
+                            accept=".json"
+                            onChange={handleFileChange}
+                            className="file-input"
                         />
-                    </div>
-                </div>
-
-                {/* Steps */}
-                <div className="form-section">
-                    <h3>Pipeline Steps</h3>
-                    <p className="section-description">Define the processing steps for this pipeline.</p>
-
-                    <div className="steps-container">
-                        {formData.steps.map((step, index) => (
-                            <div key={step.id} className="step-card">
-                                <div className="step-header">
-                                    <h4>Step {index + 1}: {step.name || 'Unnamed'}</h4>
-                                    {formData.steps.length > 1 && (
-                                        <button
-                                            type="button"
-                                            className="remove-step-btn"
-                                            onClick={() => removeStep(index)}
-                                            title="Remove this step"
-                                        >
-                                            ✕
-                                        </button>
-                                    )}
-                                </div>
-
-                                <div className="step-grid">
-                                    <div className="form-group">
-                                        <label>Step Name *</label>
-                                        <input
-                                            type="text"
-                                            value={step.name}
-                                            onChange={(e) => handleStepChange(index, 'name', e.target.value)}
-                                            placeholder="e.g., Preprocessing"
-                                            className="form-input"
-                                        />
-                                    </div>
-
-                                    <div className="form-group">
-                                        <label>Function Name *</label>
-                                        <input
-                                            type="text"
-                                            value={step.function_name}
-                                            onChange={(e) => handleStepChange(index, 'function_name', e.target.value)}
-                                            placeholder="e.g., preprocess_signal"
-                                            className="form-input"
-                                        />
-                                    </div>
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Step Configuration (JSON)</label>
-                                    <textarea
-                                        value={step.config}
-                                        onChange={(e) => handleStepChange(index, 'config', e.target.value)}
-                                        placeholder='{"param1": "value1", "param2": 42}'
-                                        rows="4"
-                                        className="form-textarea config-textarea"
-                                    />
-                                    <small className="help-text">Enter valid JSON for the step parameters</small>
-                                </div>
-
-                                <div className="form-group">
-                                    <label>Dependencies (comma-separated step IDs)</label>
-                                    <input
-                                        type="text"
-                                        value={step.dependencies}
-                                        onChange={(e) => handleStepChange(index, 'dependencies', e.target.value)}
-                                        placeholder="e.g., step-1, step-2"
-                                        className="form-input"
-                                    />
-                                    <small className="help-text">Leave empty if this step has no dependencies</small>
-                                </div>
+                        <label htmlFor="json-file-input" className="file-label">
+                            <div className="file-icon">📋</div>
+                            <div className="file-text">
+                                {jsonFile ? (
+                                    <>
+                                        <strong>✓ Selected: {jsonFile.name}</strong>
+                                        <br />
+                                        <small>Click to change file</small>
+                                    </>
+                                ) : (
+                                    <>
+                                        <strong>Choose JSON file or drag and drop</strong>
+                                        <br />
+                                        <small>.json format required</small>
+                                    </>
+                                )}
                             </div>
-                        ))}
+                        </label>
                     </div>
 
-                    <button
-                        type="button"
-                        className="add-step-btn"
-                        onClick={addStep}
-                    >
-                        + Add Another Step
-                    </button>
+                    {/* File Validation Status */}
+                    {fileValidationError && (
+                        <div className="error-message validation-error">
+                            ❌ {fileValidationError}
+                        </div>
+                    )}
+
+                    {fileContent && (
+                        <div className="success-message validation-success">
+                            ✅ File is valid!
+                        </div>
+                    )}
                 </div>
 
                 {/* Messages */}
@@ -241,9 +150,9 @@ export default function AddNewPipeline({ onBack }) {
                     <button
                         type="submit"
                         className="submit-btn"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || !fileContent}
                     >
-                        {isSubmitting ? 'Creating Pipeline...' : 'Create Pipeline'}
+                        {isSubmitting ? '⏳ Creating Pipeline...' : '✓ Create Pipeline'}
                     </button>
                 </div>
             </form>

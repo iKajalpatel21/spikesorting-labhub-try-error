@@ -142,6 +142,7 @@ if DEBUG:
     STATICFILES_DIRS = [
         BASE_DIR / "static",
         BASE_DIR / "my-app" / "build",
+        BASE_DIR / "labhub" / "templates" / "static",
     ]
 else:
     STATIC_ROOT = BASE_DIR / "staticfiles"

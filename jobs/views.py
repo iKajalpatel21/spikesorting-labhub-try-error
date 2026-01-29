@@ -4,7 +4,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.db import transaction
 from django.shortcuts import get_object_or_404
-
 from qmodel.models import Job, JobStep, get_or_create_step_configs, compute_fingerprint
 from pipeline.models import Pipeline, PipelineStep
 from .models import JobCreationLog
@@ -59,6 +58,7 @@ def create_job(request):
 
             job_steps_list = []
             dependencies_map = {}  # Track hashes for dependency injection
+            available_steps = {}  # Track all steps for dependency resolution
 
             # ============================================================
             # STEP 2-3: Create recording StepConfig and JobStep
@@ -77,15 +77,18 @@ def create_job(request):
             )
             job_steps_list.append(recording_step)
 
+            # Add recording to available steps for dependency resolution
+            available_steps[recording_hash] = {
+                "function": "recording",
+                "identifier": recording_hash,
+            }
+
             # ============================================================
             # STEP 4: Fetch pipeline templates
             # ============================================================
             pipeline_steps = PipelineStep.objects.filter(pipeline=pipeline).order_by(
                 "order"
             )
-
-            # Track available steps for dependency resolution
-            available_steps = {}  # Maps step identifier to {function, hash}
 
             for pipeline_step in pipeline_steps:
                 step_function = pipeline_step.function

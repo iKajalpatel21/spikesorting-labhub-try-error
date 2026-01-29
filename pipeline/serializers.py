@@ -1,21 +1,22 @@
 from rest_framework import serializers
-from .models import Pipeline, PipelineStep, Recording
-from qmodel.models import StepConfig
+from .models import Pipeline, PipelineStep
+from qmodel.models import StepConfig, get_or_create_step_configs
+import json
 
 
 class PipelineStepSerializer(serializers.ModelSerializer):
-    step_config_hash = serializers.CharField(
-        source="step_config.config_block_hash", read_only=True
+    config_hash = serializers.CharField(
+        source="config_block_hash.config_block_hash", read_only=True
     )
-    # depends_on now stores pipeline-local identifiers (JSON) so expose as-is
-    depends_on = serializers.JSONField(required=False, allow_null=True)
+    function = serializers.CharField(read_only=True)
+    depends_on = serializers.JSONField(read_only=True)
 
     class Meta:
         model = PipelineStep
         fields = [
-            "id",
-            "step_config",
-            "step_config_hash",
+            "pipeline_step_id",
+            "function",
+            "config_hash",
             "depends_on",
         ]
 
@@ -36,143 +37,62 @@ class PipelineSerializer(serializers.ModelSerializer):
 class PipelineCreateSerializer(serializers.Serializer):
     """Serializer for creating a pipeline with steps"""
 
-    description = serializers.CharField(required=True)
+    description = serializers.CharField(required=False, allow_blank=True)
     steps = serializers.ListField(
-        child=serializers.DictField(), required=True, allow_empty=False
+        child=serializers.DictField(), required=False, allow_empty=False
+    )
+    job_steps = serializers.ListField(
+        child=serializers.DictField(), required=False, allow_empty=False
     )
 
     def create(self, validated_data):
-        description = validated_data["description"]
-        steps_data = validated_data["steps"]
+        # Support both 'steps' and 'job_steps' field names
+        steps_data = validated_data.get("steps") or validated_data.get("job_steps")
+        description = validated_data.get("description", "Pipeline from JSON")
 
         # Create pipeline
         pipeline = Pipeline.objects.create(description=description)
 
         # Create pipeline steps
         for idx, step_data in enumerate(steps_data):
-            # Support either a provided config_block (full JSON) or an existing hash
-            step_config = None
-            if "config_block" in step_data:
-                config_block = step_data.get("config_block")
-                # Extract 'depends' from config_block before hashing (so it's not part of the hash)
-                depends_on = config_block.pop("depends", [])
+            try:
+                # Extract function name and config from step
+                function = step_data.get("function")
+                depends_on = step_data.get("depends_on") or step_data.get("depends", [])
 
-                # Compute deterministic hash for the provided config block
-                try:
-                    import json as _json, hashlib as _hashlib
+                # Check if config is embedded or referenced by identifier
+                config = step_data.get("config", {})
+                if not config and "identifier" in step_data:
+                    # For Pipeline_steps.json format: config is in a separate key
+                    identifier = step_data.get("identifier")
+                    config = validated_data.get(identifier, {})
 
-                    json_text = _json.dumps(
-                        config_block, sort_keys=True, separators=(",", ":")
+                if not function:
+                    raise serializers.ValidationError(
+                        f"Step {idx + 1} must have a 'function' field"
                     )
-                    step_hash = _hashlib.sha256(json_text.encode("utf-8")).hexdigest()
-                except Exception:
-                    pipeline.delete()
-                    raise serializers.ValidationError("Invalid config_block provided")
 
-                step_config, created = StepConfig.objects.get_or_create(
-                    config_block_hash=step_hash, defaults={"config_block": config_block}
+                # Call get_or_create_step_configs to create/get StepConfig
+                config_block_hash = get_or_create_step_configs(function, config)
+
+                # Get the StepConfig object
+                step_config = StepConfig.objects.get(
+                    config_block_hash=config_block_hash
                 )
-            else:
-                # Fall back to existing step_config_hash
-                step_config_hash = step_data.get("step_config_hash")
-                if not step_config_hash:
-                    pipeline.delete()
-                    raise serializers.ValidationError(
-                        "Each step must include either 'config_block' or 'step_config_hash'"
-                    )
-                try:
-                    step_config = StepConfig.objects.get(
-                        config_block_hash=step_config_hash
-                    )
-                except StepConfig.DoesNotExist:
-                    pipeline.delete()  # Rollback
-                    raise serializers.ValidationError(
-                        f"StepConfig with hash {step_config_hash} not found"
-                    )
-                # Extract depends_on from step_data if using existing hash
-                depends_on = step_data.get("depends_on") or []
 
-            # For Option 1 we record pipeline-local dependency identifiers
-            # (depends_on already extracted above)
+                # Create PipelineStep with both ForeignKeys
+                PipelineStep.objects.create(
+                    pipeline=pipeline,
+                    function=function,
+                    config_block_hash=step_config,  # FK to StepConfig via hash
+                    config_block=step_config,  # FK to StepConfig via config JSON
+                    depends_on=depends_on,
+                )
 
-            PipelineStep.objects.create(
-                pipeline=pipeline,
-                step_config=step_config,
-                depends_on=depends_on,
-            )
+            except Exception as e:
+                pipeline.delete()  # Rollback on error
+                raise serializers.ValidationError(
+                    f"Error creating step {idx + 1}: {str(e)}"
+                )
 
         return pipeline
-
-
-class RecordingSerializer(serializers.ModelSerializer):
-    # step_config is computed server-side and therefore read-only for clients
-    step_config = serializers.PrimaryKeyRelatedField(read_only=True)
-
-    class Meta:
-        model = Recording
-        fields = [
-            "id",
-            "bin_file",
-            "probe_file",
-            "sampling_rate",
-            "num_channels",
-            "gain_to_uV",
-            "offset_to_uV",
-            "remove_channels",
-            "bad_channels",
-            "created_at",
-            "step_config",
-        ]
-        read_only_fields = ["id", "created_at"]
-        # step_config is read-only; server computes and attaches it
-
-    def create(self, validated_data):
-        import json
-        import hashlib
-
-        # Pop the optional step_config if provided so super().create() won't try to use it
-        provided_step_config = validated_data.pop("step_config", None)
-
-        # Create the Recording first so file fields are saved and their paths are available
-        recording = super().create(validated_data)
-
-        # If a StepConfig was provided, attach it and return
-        if provided_step_config:
-            recording.step_config = provided_step_config
-            recording.save()
-            return recording
-
-        # Normalize lists for deterministic ordering
-        remove_channels = (
-            sorted(recording.remove_channels) if recording.remove_channels else []
-        )
-        bad_channels = sorted(recording.bad_channels) if recording.bad_channels else []
-
-        # Build a deterministic config block for hashing. Note: we intentionally
-        # exclude the creation timestamp so identical recordings hash the same.
-        config_block = {
-            "function": "recording",
-            "bin_file": recording.bin_file.name if recording.bin_file else None,
-            "probe_file": recording.probe_file.name if recording.probe_file else None,
-            "sampling_rate": recording.sampling_rate,
-            "num_channels": recording.num_channels,
-            "gain_to_uV": recording.gain_to_uV,
-            "offset_to_uV": recording.offset_to_uV,
-            "remove_channels": remove_channels,
-            "bad_channels": bad_channels,
-        }
-
-        # Deterministic JSON string for hashing
-        json_text = json.dumps(config_block, sort_keys=True, separators=(",", ":"))
-        hash_val = hashlib.sha256(json_text.encode("utf-8")).hexdigest()
-
-        # Get or create the StepConfig
-        step_config_obj, created = StepConfig.objects.get_or_create(
-            config_block_hash=hash_val, defaults={"config_block": config_block}
-        )
-
-        # Link recording to the StepConfig and save
-        recording.step_config = step_config_obj
-        recording.save()
-
-        return recording

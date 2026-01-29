@@ -31,49 +31,34 @@ class PipelineStep(models.Model):
         related_name="steps",
         help_text="The pipeline this step belongs to",
     )
-    step_config = models.ForeignKey(
+    # Unique identifier for this pipeline step
+    pipeline_step_id = models.AutoField(primary_key=True)
+    # Function name (e.g., 'recording', 'preprocessing', 'sorting')
+    function = models.CharField(
+        max_length=64, default="", help_text="Step function name"
+    )
+    # Reference to the configuration block hash
+    config_block_hash = models.ForeignKey(
         StepConfig,
         to_field="config_block_hash",
         on_delete=models.CASCADE,
         related_name="pipeline_steps",
         help_text="The configuration for this step",
     )
-    # Previously this was a ForeignKey to JobStep. To support pipeline-local
-    # dependency information coming from uploaded JSON we store an array of
-    # identifiers (or any JSON structure) directly on the model.
-    depends_on = models.JSONField(default=list, null=True, blank=True)
-    # Order field for explicit step ordering within pipeline
-    order = models.IntegerField(default=0, help_text="Execution order within pipeline")
-    # Function name (e.g., 'recording', 'preprocessing', 'sorting')
-    function = models.CharField(max_length=64, default='', help_text="Step function name")
-    # Configuration block for this step
-    config = models.JSONField(null=True, blank=True, help_text="Step-specific configuration")
-
-
-class Recording(models.Model):
-    bin_file = models.FileField(upload_to="recordings/")
-    probe_file = models.FileField(upload_to="probes/")
-    sampling_rate = models.FloatField()
-    num_channels = models.IntegerField()
-    gain_to_uV = models.FloatField()
-    offset_to_uV = models.FloatField()
-    remove_channels = models.JSONField(default=list)
-    bad_channels = models.JSONField(default=list)
-    created_at = models.DateTimeField(auto_now_add=True)
-    step_config = models.ForeignKey(
+    # Step-specific configuration block
+    config_block = models.ForeignKey(
         StepConfig,
+        to_field="config_block",
         on_delete=models.CASCADE,
-        related_name="recordings",
+        related_name="pipeline_steps_config",
+        help_text="Step-specific configuration",
         null=True,
         blank=True,
     )
-
-    class Meta:
-        ordering = ["-created_at"]
-        verbose_name = "Recording"
-        verbose_name_plural = "Recordings"
-
-    def __str__(self):
-        return (
-            f"Recording {self.id} (StepConfig {self.step_config.config_block_hash[:8]})"
-        )
+    # Dependencies for this step (array of identifiers or JSON structure)
+    depends_on = models.JSONField(
+        default=list,
+        null=True,
+        blank=True,
+        help_text="Step dependencies (identifiers of prerequisite steps)",
+    )
