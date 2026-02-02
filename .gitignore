@@ -24,7 +24,18 @@ MANIFEST
 # Django
 *.log
 local_settings.py
+db.sqlite3
 db.sqlite3-journal
+
+# SSL/TLS Certificates (keep locally, don't commit)
+cert.pem
+key.pem
+
+# Build artifacts
+node_modules/
+static/
+my-app/build/
+.qodo/
 
 # Environment variables
 .env
