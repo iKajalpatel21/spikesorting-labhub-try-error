@@ -5,7 +5,6 @@ app_name = "jobs"
 
 urlpatterns = [
     # Specific paths must come BEFORE generic <job_id> pattern
-    path("create/", views.create_job, name="create_job"),
     path("create-sorting-job/", views.create_sorting_job, name="create_sorting_job"),
     path("list/", views.list_jobs, name="list_jobs"),
     path("statistics/", views.job_statistics, name="job_statistics"),
