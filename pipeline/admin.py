@@ -37,12 +37,12 @@ class PipelineAdmin(admin.ModelAdmin):
 
 @admin.register(PipelineStep)
 class PipelineStepAdmin(admin.ModelAdmin):
-    list_display = ["pipeline_step_id", "pipeline", "function", "depends_on"]
+    list_display = ["pipeline_step_id", "pipeline", "config_block_hash", "depends_on"]
     list_filter = ["pipeline"]
     search_fields = [
         "pipeline__description",
         "config_block_hash__config_block_hash",
-        "function",
+        "config_block_hash__function",
     ]
     # depends_on is a JSONField and not a FK/M2M, so remove it from autocomplete
     autocomplete_fields = ["pipeline", "config_block_hash"]

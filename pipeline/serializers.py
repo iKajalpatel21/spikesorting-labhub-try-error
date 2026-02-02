@@ -8,7 +8,9 @@ class PipelineStepSerializer(serializers.ModelSerializer):
     config_hash = serializers.CharField(
         source="config_block_hash.config_block_hash", read_only=True
     )
-    function = serializers.CharField(read_only=True)
+    function = serializers.CharField(
+        source="config_block_hash.function", read_only=True
+    )
     depends_on = serializers.JSONField(read_only=True)
 
     class Meta:
@@ -78,7 +80,6 @@ class PipelineCreateSerializer(serializers.Serializer):
                 # Create PipelineStep with single FK to StepConfig
                 PipelineStep.objects.create(
                     pipeline=pipeline,
-                    function=function,
                     config_block_hash_id=config_block_hash_value,  # Direct FK assignment using hash
                     depends_on=depends_on,
                 )

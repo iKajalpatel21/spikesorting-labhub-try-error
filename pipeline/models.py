@@ -33,11 +33,7 @@ class PipelineStep(models.Model):
     )
     # Unique identifier for this pipeline step
     pipeline_step_id = models.AutoField(primary_key=True)
-    # Function name (e.g., 'recording', 'preprocessing', 'sorting')
-    function = models.CharField(
-        max_length=64, default="", help_text="Step function name"
-    )
-    # Reference to the configuration block hash
+    # Reference to the configuration block hash (access function via config_block_hash.function)
     config_block_hash = models.ForeignKey(
         StepConfig,
         to_field="config_block_hash",

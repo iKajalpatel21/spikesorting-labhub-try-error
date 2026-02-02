@@ -91,8 +91,8 @@ def create_job(request):
             )
 
             for pipeline_step in pipeline_steps:
-                step_function = pipeline_step.function
-                step_config = pipeline_step.config or {}
+                step_function = pipeline_step.config_block_hash.function
+                step_config = pipeline_step.config_block_hash.config_block or {}
 
                 # ============================================================
                 # STEPS 5-8: Create StepConfigs and JobSteps with dependencies
@@ -313,7 +313,7 @@ def create_sorting_job(request):
             )
 
             job_step = {
-                "function": step.function,
+                "function": step.config_block_hash.function,
                 "identifier": real_identifier,
                 "depends": step.depends_on if step.depends_on else [],
             }
