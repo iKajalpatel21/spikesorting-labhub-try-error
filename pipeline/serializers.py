@@ -73,19 +73,13 @@ class PipelineCreateSerializer(serializers.Serializer):
                     )
 
                 # Call get_or_create_step_configs to create/get StepConfig
-                config_block_hash = get_or_create_step_configs(function, config)
+                config_block_hash_value = get_or_create_step_configs(function, config)
 
-                # Get the StepConfig object
-                step_config = StepConfig.objects.get(
-                    config_block_hash=config_block_hash
-                )
-
-                # Create PipelineStep with both ForeignKeys
+                # Create PipelineStep with single FK to StepConfig
                 PipelineStep.objects.create(
                     pipeline=pipeline,
                     function=function,
-                    config_block_hash=step_config,  # FK to StepConfig via hash
-                    config_block=step_config,  # FK to StepConfig via config JSON
+                    config_block_hash_id=config_block_hash_value,  # Direct FK assignment using hash
                     depends_on=depends_on,
                 )
 

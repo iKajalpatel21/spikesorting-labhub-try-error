@@ -43,17 +43,7 @@ class PipelineStep(models.Model):
         to_field="config_block_hash",
         on_delete=models.CASCADE,
         related_name="pipeline_steps",
-        help_text="The configuration for this step",
-    )
-    # Step-specific configuration block
-    config_block = models.ForeignKey(
-        StepConfig,
-        to_field="config_block",
-        on_delete=models.CASCADE,
-        related_name="pipeline_steps_config",
-        help_text="Step-specific configuration",
-        null=True,
-        blank=True,
+        help_text="FK to StepConfig - access both hash and config via this relationship",
     )
     # Dependencies for this step (array of identifiers or JSON structure)
     depends_on = models.JSONField(
