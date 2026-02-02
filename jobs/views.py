@@ -368,3 +368,112 @@ def create_sorting_job(request):
             {"error": f"Job creation failed: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_jobs(request):
+    """
+    List all jobs from qmodel database.
+    Returns job summary with status, step counts, and environment info.
+
+    Optional query params:
+    - status: Filter by job status (pending, fetched, running, finished, failed)
+    - limit: Limit number of results (default: 100)
+    - offset: Pagination offset (default: 0)
+    """
+    try:
+        from .serializers import JobListSerializer
+
+        # Get query parameters
+        status_filter = request.query_params.get("status", None)
+        limit = int(request.query_params.get("limit", 100))
+        offset = int(request.query_params.get("offset", 0))
+
+        # Query jobs
+        jobs_query = Job.objects.all().order_by("-created_at")
+
+        # Apply status filter if provided
+        if status_filter:
+            jobs_query = jobs_query.filter(status=status_filter)
+
+        # Get total count before pagination
+        total_count = jobs_query.count()
+
+        # Apply pagination
+        jobs = jobs_query[offset : offset + limit]
+
+        # Serialize
+        serializer = JobListSerializer(jobs, many=True)
+
+        return Response(
+            {
+                "total_count": total_count,
+                "count": len(jobs),
+                "limit": limit,
+                "offset": offset,
+                "jobs": serializer.data,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to fetch jobs: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def job_detail(request, job_id):
+    """
+    Get detailed information about a specific job.
+    """
+    try:
+        from .serializers import JobListSerializer
+
+        job = Job.objects.get(job_id=job_id)
+        serializer = JobListSerializer(job)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    except Job.DoesNotExist:
+        return Response(
+            {"error": f"Job {job_id} not found"},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to fetch job: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def job_statistics(request):
+    """
+    Get job statistics: total jobs, jobs by status, etc.
+    """
+    try:
+        total_jobs = Job.objects.count()
+
+        status_breakdown = {}
+        for status_choice in ["pending", "fetched", "running", "finished", "failed"]:
+            count = Job.objects.filter(status=status_choice).count()
+            status_breakdown[status_choice] = count
+
+        return Response(
+            {
+                "total_jobs": total_jobs,
+                "status_breakdown": status_breakdown,
+            },
+            status=status.HTTP_200_OK,
+        )
+
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to fetch statistics: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )

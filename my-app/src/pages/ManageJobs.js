@@ -3,20 +3,26 @@ import '../styles/ManageJobs.css';
 
 export default function ManageJobs({ onBack }) {
     const [jobs, setJobs] = useState([]);
+    const [statistics, setStatistics] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState('');
     const [selectedJob, setSelectedJob] = useState(null);
+    const [statusFilter, setStatusFilter] = useState('');
 
     useEffect(() => {
         fetchJobs();
-    }, []);
+        fetchStatistics();
+    }, [statusFilter]);
 
     const fetchJobs = async () => {
         setIsLoading(true);
         setError('');
         try {
-            // TODO: Replace with actual API endpoint
-            const response = await fetch('/api/jobs/', {
+            const url = statusFilter
+                ? `/jobs/list/?status=${statusFilter}`
+                : `/jobs/list/`;
+
+            const response = await fetch(url, {
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('token')}`,
                 },
@@ -27,63 +33,44 @@ export default function ManageJobs({ onBack }) {
             }
 
             const data = await response.json();
-            setJobs(data);
+            setJobs(data.jobs || []);
         } catch (err) {
             setError(err.message || 'Failed to load jobs');
-            // Use mock data for demo
-            setJobs(getMockJobs());
+            console.error('Error fetching jobs:', err);
         } finally {
             setIsLoading(false);
         }
     };
 
-    const getMockJobs = () => [
-        {
-            id: 1,
-            created_at: '2024-01-07T10:30:00Z',
-            status: 'completed',
-            recording_name: 'recording_001.bin',
-            pipeline_name: 'Standard Pipeline',
-            steps: [
-                { id: 1, name: 'Preprocessing', status: 'completed' },
-                { id: 2, name: 'Detection', status: 'completed' },
-                { id: 3, name: 'Sorting', status: 'completed' },
-            ],
-        },
-        {
-            id: 2,
-            created_at: '2024-01-07T11:15:00Z',
-            status: 'running',
-            recording_name: 'recording_002.bin',
-            pipeline_name: 'Advanced Pipeline',
-            steps: [
-                { id: 1, name: 'Preprocessing', status: 'completed' },
-                { id: 2, name: 'Detection', status: 'running' },
-                { id: 3, name: 'Sorting', status: 'pending' },
-            ],
-        },
-        {
-            id: 3,
-            created_at: '2024-01-07T12:00:00Z',
-            status: 'pending',
-            recording_name: 'recording_003.bin',
-            pipeline_name: 'Standard Pipeline',
-            steps: [
-                { id: 1, name: 'Preprocessing', status: 'pending' },
-                { id: 2, name: 'Detection', status: 'pending' },
-                { id: 3, name: 'Sorting', status: 'pending' },
-            ],
-        },
-    ];
+    const fetchStatistics = async () => {
+        try {
+            const response = await fetch('/jobs/statistics/', {
+                headers: {
+                    'Authorization': `Token ${localStorage.getItem('token')}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch statistics');
+            }
+
+            const data = await response.json();
+            setStatistics(data);
+        } catch (err) {
+            console.error('Error fetching statistics:', err);
+        }
+    };
 
     const getStatusColor = (status) => {
         switch (status) {
-            case 'completed':
+            case 'finished':
                 return '#28a745';
             case 'running':
                 return '#ffc107';
             case 'pending':
                 return '#6c757d';
+            case 'fetched':
+                return '#0dcaf0';
             case 'failed':
                 return '#dc3545';
             default:
@@ -93,17 +80,24 @@ export default function ManageJobs({ onBack }) {
 
     const getStatusIcon = (status) => {
         switch (status) {
-            case 'completed':
-                return 'Finished';
+            case 'finished':
+                return '✓';
             case 'running':
-                return 'Running';
+                return '⟳';
             case 'pending':
-                return '⏹️';
+                return '⋯';
+            case 'fetched':
+                return '↓';
             case 'failed':
-                return 'Failed';
+                return '✗';
             default:
-                return '❓';
+                return '?';
         }
+    };
+
+    const getProgressPercentage = (job) => {
+        if (!job.step_count || job.step_count === 0) return 0;
+        return Math.round((job.completed_steps / job.step_count) * 100);
     };
 
     const formatDate = (dateString) => {
@@ -111,11 +105,20 @@ export default function ManageJobs({ onBack }) {
         return date.toLocaleString();
     };
 
+    const formatRecordingConfig = (step) => {
+        if (!step.config_block) return '';
+        const cfg = step.config_block;
+        if (cfg.binfile) {
+            return `${cfg.binfile.split('/').pop()} (${cfg.sampling_rate}Hz)`;
+        }
+        return JSON.stringify(cfg).substring(0, 50) + '...';
+    };
+
     if (isLoading) {
         return (
             <div className="manage-jobs-container">
                 <div className="jobs-header">
-                    <button className="back-btn" onClick={onBack}>Back</button>
+                    <button className="back-btn" onClick={onBack}>← Back</button>
                     <h1>Manage Jobs</h1>
                 </div>
                 <div className="loading">Loading jobs...</div>
@@ -127,8 +130,8 @@ export default function ManageJobs({ onBack }) {
         return (
             <div className="manage-jobs-container">
                 <div className="jobs-header">
-                    <button className="back-btn" onClick={() => setSelectedJob(null)}>Back</button>
-                    <h1>Job Details: #{selectedJob.id}</h1>
+                    <button className="back-btn" onClick={() => setSelectedJob(null)}>← Back</button>
+                    <h1>Job Details: {selectedJob.job_id}</h1>
                 </div>
 
                 <div className="job-details">
@@ -136,7 +139,7 @@ export default function ManageJobs({ onBack }) {
                         <h3>Job Information</h3>
                         <div className="detail-row">
                             <span className="label">Job ID:</span>
-                            <span className="value">#{selectedJob.id}</span>
+                            <span className="value">{selectedJob.job_id}</span>
                         </div>
                         <div className="detail-row">
                             <span className="label">Status:</span>
@@ -148,36 +151,46 @@ export default function ManageJobs({ onBack }) {
                             <span className="label">Created:</span>
                             <span className="value">{formatDate(selectedJob.created_at)}</span>
                         </div>
-                    </div>
-
-                    <div className="detail-section">
-                        <h3>Recording</h3>
                         <div className="detail-row">
-                            <span className="label">Recording:</span>
-                            <span className="value">{selectedJob.recording_name}</span>
+                            <span className="label">Progress:</span>
+                            <span className="value">{selectedJob.completed_steps}/{selectedJob.step_count} steps completed</span>
                         </div>
                     </div>
 
                     <div className="detail-section">
-                        <h3>Pipeline</h3>
+                        <h3>Environment</h3>
                         <div className="detail-row">
-                            <span className="label">Pipeline:</span>
-                            <span className="value">{selectedJob.pipeline_name}</span>
+                            <span className="label">Environment:</span>
+                            <span className="value">{selectedJob.job_env.environment}</span>
+                        </div>
+                        <div className="detail-row">
+                            <span className="label">Base Directory:</span>
+                            <span className="value">{selectedJob.job_env.base_directory}</span>
+                        </div>
+                        <div className="detail-row">
+                            <span className="label">Log Level:</span>
+                            <span className="value">{selectedJob.job_env.log_level}</span>
                         </div>
                     </div>
 
                     <div className="detail-section">
-                        <h3>🔄 Step Status</h3>
+                        <h3>Job Steps</h3>
                         <div className="steps-list">
-                            {selectedJob.steps.map((step, idx) => (
-                                <div key={step.id} className="step-item">
+                            {selectedJob.job_steps.map((step, idx) => (
+                                <div key={idx} className="step-item">
                                     <div className="step-number">{idx + 1}</div>
                                     <div className="step-info">
-                                        <div className="step-name">{step.name}</div>
+                                        <div className="step-name">{step.function}</div>
+                                        <div className="step-config">{formatRecordingConfig(step)}</div>
                                         <div className="step-status" style={{ color: getStatusColor(step.status) }}>
                                             {getStatusIcon(step.status)} {step.status}
                                         </div>
                                     </div>
+                                    {step.depends_on && step.depends_on.length > 0 && (
+                                        <div className="step-deps">
+                                            Depends on: {step.depends_on.join(', ')}
+                                        </div>
+                                    )}
                                 </div>
                             ))}
                         </div>
@@ -192,7 +205,67 @@ export default function ManageJobs({ onBack }) {
             <div className="jobs-header">
                 <button className="back-btn" onClick={onBack}>← Back</button>
                 <h1>Manage Jobs</h1>
-                <button className="refresh-btn" onClick={fetchJobs}>🔄 Refresh</button>
+                <button className="refresh-btn" onClick={() => { fetchJobs(); fetchStatistics(); }}>🔄 Refresh</button>
+            </div>
+
+            {/* Statistics */}
+            {statistics && (
+                <div className="statistics-bar">
+                    <div className="stat-item">
+                        <div className="stat-value">{statistics.total_jobs}</div>
+                        <div className="stat-label">Total Jobs</div>
+                    </div>
+                    <div className="stat-item">
+                        <div className="stat-value" style={{ color: '#28a745' }}>{statistics.status_breakdown.finished}</div>
+                        <div className="stat-label">Finished</div>
+                    </div>
+                    <div className="stat-item">
+                        <div className="stat-value" style={{ color: '#ffc107' }}>{statistics.status_breakdown.running}</div>
+                        <div className="stat-label">Running</div>
+                    </div>
+                    <div className="stat-item">
+                        <div className="stat-value" style={{ color: '#6c757d' }}>{statistics.status_breakdown.pending}</div>
+                        <div className="stat-label">Pending</div>
+                    </div>
+                    <div className="stat-item">
+                        <div className="stat-value" style={{ color: '#dc3545' }}>{statistics.status_breakdown.failed}</div>
+                        <div className="stat-label">Failed</div>
+                    </div>
+                </div>
+            )}
+
+            {/* Status Filter */}
+            <div className="filter-bar">
+                <button
+                    className={`filter-btn ${statusFilter === '' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('')}
+                >
+                    All Jobs
+                </button>
+                <button
+                    className={`filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('pending')}
+                >
+                    Pending
+                </button>
+                <button
+                    className={`filter-btn ${statusFilter === 'running' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('running')}
+                >
+                    Running
+                </button>
+                <button
+                    className={`filter-btn ${statusFilter === 'finished' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('finished')}
+                >
+                    Finished
+                </button>
+                <button
+                    className={`filter-btn ${statusFilter === 'failed' ? 'active' : ''}`}
+                    onClick={() => setStatusFilter('failed')}
+                >
+                    Failed
+                </button>
             </div>
 
             {error && <div className="error-message">⚠️ {error}</div>}
@@ -205,12 +278,12 @@ export default function ManageJobs({ onBack }) {
                 <div className="jobs-grid">
                     {jobs.map(job => (
                         <div
-                            key={job.id}
+                            key={job.job_id}
                             className="job-card"
                             onClick={() => setSelectedJob(job)}
                         >
                             <div className="job-header">
-                                <h3>Job #{job.id}</h3>
+                                <h3>{job.job_id.substring(0, 8)}...</h3>
                                 <div
                                     className="status-badge"
                                     style={{ backgroundColor: getStatusColor(job.status) }}
@@ -225,32 +298,25 @@ export default function ManageJobs({ onBack }) {
                                     <span className="value">{formatDate(job.created_at)}</span>
                                 </div>
                                 <div className="info-item">
-                                    <span className="label">Recording:</span>
-                                    <span className="value">{job.recording_name}</span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label">Pipeline:</span>
-                                    <span className="value">{job.pipeline_name}</span>
+                                    <span className="label">Environment:</span>
+                                    <span className="value">{job.job_env.environment}</span>
                                 </div>
                             </div>
 
                             <div className="job-progress">
                                 <div className="progress-label">
-                                    Step Progress: {job.steps.filter(s => s.status === 'completed').length}/{job.steps.length}
+                                    Steps: {job.completed_steps}/{job.step_count}
                                 </div>
                                 <div className="progress-bar">
-                                    {job.steps.map((step, idx) => (
-                                        <div
-                                            key={step.id}
-                                            className="progress-segment"
-                                            style={{ backgroundColor: getStatusColor(step.status) }}
-                                            title={`${step.name}: ${step.status}`}
-                                        />
-                                    ))}
+                                    <div
+                                        className="progress-fill"
+                                        style={{ width: `${getProgressPercentage(job)}%` }}
+                                    />
                                 </div>
+                                <div className="progress-text">{getProgressPercentage(job)}%</div>
                             </div>
 
-                            <button className="view-details-btn">View Details</button>
+                            <button className="view-details-btn">View Details →</button>
                         </div>
                     ))}
                 </div>
