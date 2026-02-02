@@ -288,7 +288,9 @@ def create_sorting_job(request):
             "pipeline_step_id"
         )
 
-        # ========== STEP 4-5: CREATE STEPCONFIGS AND BUILD JOB STEPS ==========
+        # ========== STEP 4-5: USE EXISTING STEPCONFIGS FROM PIPELINE ==========
+        # NOTE: StepConfigs were already created when the pipeline was submitted.
+        # We just reference them here instead of recreating.
         job_steps_data = []
         placeholder_to_real_identifier = {}  # Map placeholders to real identifiers
 
@@ -302,10 +304,8 @@ def create_sorting_job(request):
 
         # Add pipeline steps and build identifier mapping
         for step in pipeline_steps:
-            step_config_block = step.config_block_hash.config_block
-            real_identifier = get_or_create_step_configs(
-                step.function, step_config_block
-            )
+            # Use the config_block_hash that was already created when pipeline was submitted
+            real_identifier = step.config_block_hash.config_block_hash
 
             # Store original placeholder -> real identifier mapping
             placeholder_to_real_identifier[step.config_block_hash.config_block_hash] = (
