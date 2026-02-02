@@ -1,6 +1,45 @@
 from rest_framework import serializers
 from qmodel.models import Job, JobStep, StepConfig
+from pipeline.models import Pipeline
 from .models import JobCreationLog
+
+
+class RecordingConfigSerializer(serializers.Serializer):
+    """Validates recording configuration from React wizard"""
+
+    binfile = serializers.CharField(required=True, min_length=1)
+    sampling_rate = serializers.IntegerField(required=True, min_value=1)
+    num_channels = serializers.IntegerField(required=True, min_value=1)
+    gain = serializers.FloatField(required=True)
+    offset = serializers.FloatField(required=True)
+    probe = serializers.CharField(required=False, allow_blank=True)
+
+
+class CreateSortingJobSerializer(serializers.Serializer):
+    """
+    STEP 1: Validates React wizard payload
+
+    Input from React:
+    {
+      "recording": {...},
+      "pipeline_id": 1,
+      "environment": "local"
+    }
+    """
+
+    recording = RecordingConfigSerializer(required=True)
+    pipeline_id = serializers.IntegerField(required=True, min_value=1)
+    environment = serializers.ChoiceField(
+        required=True, choices=["local", "gpu", "aws"]
+    )
+
+    def validate_pipeline_id(self, value):
+        """Check if pipeline exists"""
+        try:
+            Pipeline.objects.get(pipeline_id=value)
+        except Pipeline.DoesNotExist:
+            raise serializers.ValidationError(f"Pipeline {value} does not exist")
+        return value
 
 
 class StepConfigSerializer(serializers.ModelSerializer):

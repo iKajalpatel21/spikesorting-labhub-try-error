@@ -236,3 +236,135 @@ def get_all_jobs(request):
             {"error": f"Failed to retrieve jobs: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def create_sorting_job(request):
+    """
+    STEP 1: Validate React Sorting Job Wizard Payload
+    STEP 2: Create recording config in qmodel StepConfig
+
+    Input from React:
+    {
+      "recording": {
+        "binfile": "/path/to/recording.bin",
+        "sampling_rate": 30000,
+        "num_channels": 32,
+        "gain": 0.195,
+        "offset": 0,
+        "probe": "/path/to/probe.json"
+      },
+      "pipeline_id": 1,
+      "environment": "local"
+    }
+    """
+    from .serializers import CreateSortingJobSerializer
+
+    try:
+        # ========== STEP 1: VALIDATE REQUEST ==========
+        serializer = CreateSortingJobSerializer(data=request.data)
+
+        if not serializer.is_valid():
+            return Response(
+                {"errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST
+            )
+
+        validated_data = serializer.validated_data
+        recording = validated_data["recording"]
+        pipeline_id = validated_data["pipeline_id"]
+        environment = validated_data["environment"]
+
+        # ========== STEP 2: CREATE RECORDING CONFIG IN QMODEL ==========
+        # Convert OrderedDict to dict for JSON serialization
+        recording_config = dict(recording)
+
+        # Create recording StepConfig and get its identifier (SHA-256 hash)
+        recording_identifier = get_or_create_step_configs("recording", recording_config)
+
+        # ========== STEP 3: LOAD PIPELINE STEPS ==========
+        pipeline = Pipeline.objects.get(pipeline_id=pipeline_id)
+        pipeline_steps = PipelineStep.objects.filter(pipeline=pipeline).order_by(
+            "pipeline_step_id"
+        )
+
+        # ========== STEP 4-5: CREATE STEPCONFIGS AND BUILD JOB STEPS ==========
+        job_steps_data = []
+        placeholder_to_real_identifier = {}  # Map placeholders to real identifiers
+
+        # Add recording step first
+        recording_step = {
+            "function": "recording",
+            "identifier": recording_identifier,
+            "depends": [],
+        }
+        job_steps_data.append(recording_step)
+
+        # Add pipeline steps and build identifier mapping
+        for step in pipeline_steps:
+            step_config_block = step.config_block_hash.config_block
+            real_identifier = get_or_create_step_configs(
+                step.function, step_config_block
+            )
+
+            # Store original placeholder -> real identifier mapping
+            placeholder_to_real_identifier[step.config_block_hash.config_block_hash] = (
+                real_identifier
+            )
+
+            job_step = {
+                "function": step.function,
+                "identifier": real_identifier,
+                "depends": step.depends_on if step.depends_on else [],
+            }
+            job_steps_data.append(job_step)
+
+        # ========== STEP 6: RESOLVE PLACEHOLDER DEPENDENCIES ==========
+        for job_step in job_steps_data:
+            if job_step["depends"]:
+                resolved_depends = []
+                for dep in job_step["depends"]:
+                    # If this dependency is a placeholder, resolve it to real identifier
+                    if dep in placeholder_to_real_identifier:
+                        resolved_depends.append(placeholder_to_real_identifier[dep])
+                    else:
+                        # If already a real identifier or special case, keep as is
+                        resolved_depends.append(dep)
+                job_step["depends"] = resolved_depends
+
+        # ========== STEP 7: BUILD JOB ENVIRONMENT ==========
+        job_env_config = {
+            "base_directory": "/tmp/spike_sorting",
+            "job_kwargs": {"environment": environment},
+            "log_level": "INFO",
+            "REDIRECT": True,
+        }
+
+        # ========== STEP 8: CREATE JOB AND JOBSTEPS USING QMODEL FUNCTIONS ==========
+        from qmodel.models import create_a_job
+
+        try:
+            job = create_a_job(job_env_config, job_steps_data)
+
+            return Response(
+                {
+                    "message": "Job created successfully",
+                    "job_id": str(job.job_id),
+                    "recording_identifier": recording_identifier,
+                    "pipeline_steps_count": pipeline_steps.count(),
+                    "job_steps_count": len(job_steps_data),
+                    "status": "pending",
+                },
+                status=status.HTTP_201_CREATED,
+            )
+        except RuntimeError as e:
+            return Response(
+                {"error": f"Failed to create job: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+    except Exception as e:
+        return Response(
+            {"error": f"Job creation failed: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )

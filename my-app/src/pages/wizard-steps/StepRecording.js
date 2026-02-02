@@ -69,16 +69,24 @@ export default function StepRecording() {
             <div className="recording-form">
                 {/* Binfile */}
                 <div className="form-group recording-form-group">
-                    <label>Binfile:</label>
+                    <label>Binfile (JSON):</label>
                     <input
                         ref={binInputRef}
                         type="file"
                         accept="application/json,.json"
                         onChange={handleBinFileSelect}
-                        className="file-input recording-file-input"
+                        className="file-input-hidden"
+                        style={{ display: 'none' }}
                     />
+                    <button
+                        type="button"
+                        onClick={() => binInputRef.current?.click()}
+                        className="file-upload-btn"
+                    >
+                        📁 Choose Binfile (JSON)
+                    </button>
                     {recording.binFile && (
-                        <div className="file-info">{recording.binFile.name}</div>
+                        <div className="file-info">✓ {recording.binFile.name}</div>
                     )}
                 </div>
 
@@ -130,16 +138,24 @@ export default function StepRecording() {
 
                 {/* Probe */}
                 <div className="form-group recording-form-group">
-                    <label>Probe:</label>
+                    <label>Probe (JSON):</label>
                     <input
                         ref={probeInputRef}
                         type="file"
                         accept="application/json,.json"
                         onChange={handleProbeFileSelect}
-                        className="file-input recording-file-input"
+                        className="file-input-hidden"
+                        style={{ display: 'none' }}
                     />
+                    <button
+                        type="button"
+                        onClick={() => probeInputRef.current?.click()}
+                        className="file-upload-btn"
+                    >
+                        📁 Choose Probe (JSON)
+                    </button>
                     {recording.probeFile && (
-                        <div className="file-info">{recording.probeFile.name}</div>
+                        <div className="file-info">✓ {recording.probeFile.name}</div>
                     )}
                 </div>
 
