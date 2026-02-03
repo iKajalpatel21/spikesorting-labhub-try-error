@@ -2,13 +2,9 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from django.db import transaction
 from django.shortcuts import get_object_or_404
-from qmodel.models import Job, JobStep, get_or_create_step_configs, compute_fingerprint
+from qmodel.models import Job, JobStep, get_or_create_step_configs
 from pipeline.models import Pipeline, PipelineStep
-from .models import JobCreationLog
-from .serializers import JobSerializer, JobCreationLogSerializer
-from .step_config import get_step_dependencies, validate_dependencies
 
 
 @api_view(["GET"])
@@ -19,36 +15,13 @@ def get_job_status(request, job_id):
     """
     try:
         job = get_object_or_404(Job, job_id=job_id)
-        serializer = JobSerializer(job)
+        from .serializers import JobListSerializer
+
+        serializer = JobListSerializer(job)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except Exception as e:
         return Response(
             {"error": f"Failed to retrieve job: {str(e)}"},
-            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
-        )
-
-
-@api_view(["GET"])
-@permission_classes([IsAuthenticated])
-def get_all_jobs(request):
-    """
-    Retrieve all jobs with pagination and filtering.
-    """
-    try:
-        # Optional filters
-        status_filter = request.query_params.get("status")
-
-        jobs = Job.objects.all()
-        if status_filter:
-            jobs = jobs.filter(status=status_filter)
-
-        jobs = jobs.order_by("-created_at")
-
-        serializer = JobSerializer(jobs, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except Exception as e:
-        return Response(
-            {"error": f"Failed to retrieve jobs: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
 
@@ -290,5 +263,32 @@ def job_statistics(request):
     except Exception as e:
         return Response(
             {"error": f"Failed to fetch statistics: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_jobs(request):
+    """
+    Retrieve all jobs with pagination and filtering.
+    """
+    try:
+        # Optional filters
+        status_filter = request.query_params.get("status")
+
+        jobs = Job.objects.all()
+        if status_filter:
+            jobs = jobs.filter(status=status_filter)
+
+        jobs = jobs.order_by("-created_at")
+
+        from .serializers import JobListSerializer
+
+        serializer = JobListSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response(
+            {"error": f"Failed to retrieve jobs: {str(e)}"},
             status=status.HTTP_500_INTERNAL_SERVER_ERROR,
         )
