@@ -17,7 +17,7 @@ export default function CreateSortingJobWizard({ onBack }) {
 
     const fetchPipelines = async () => {
         try {
-            const response = await fetch('/pipeline/pipelines/', {
+            const response = await fetch('/pipeline-factory/pipelines/', {
                 headers: {
                     'Authorization': `Token ${localStorage.getItem('token')}`,
                 },

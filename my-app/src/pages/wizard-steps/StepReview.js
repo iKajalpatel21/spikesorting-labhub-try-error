@@ -26,38 +26,24 @@ export default function StepReview({ onComplete }) {
                 throw new Error('Pipeline not selected. Please go back and select a pipeline.');
             }
 
-            // Prepare JSON payload following the correct structure
+            // Prepare JSON payload matching backend CreateSortingJobSerializer
             const payload = {
                 pipeline_id: selectedPipeline,
-                recording_config: {
+                recording: {
                     binfile: recording.binFile?.name || '/local/rth/recording.dat',
-                    sampling_rate: parseFloat(recording.samplingRate),
-                    number_of_channels: parseInt(recording.numChannels),
-                    gain_to_uV: parseFloat(recording.gainToMicroVolts),
-                    offset_to_uV: parseFloat(recording.offsetToMicroVolts),
+                    sampling_rate: parseInt(recording.samplingRate),
+                    num_channels: parseInt(recording.numChannels),
+                    gain: parseFloat(recording.gainToMicroVolts),
+                    offset: parseFloat(recording.offsetToMicroVolts),
                     probe: recording.probeFile?.name || '/local/probes/probe.json',
                     bad_channels: recording.badChannels.map(ch => parseInt(ch)),
                 },
-                job_env_preset: {
-                    base_directory: `$LOCAL$/${Math.random().toString(36).substr(2, 12)}`,
-                    job_kwargs: {
-                        n_jobs: 40,
-                        total_memory: "128G",
-                        chunk_duration: "60s",
-                        progress_bar: true
-                    },
-                    log_level: "DEBUG",
-                    REDIRECT: {
-                        log: `$NAS$/__RECORDING_DIRECTORY__/${Math.random().toString(36).substr(2, 12)}/run.log`,
-                        out: `$NAS$/__RECORDING_DIRECTORY__/${Math.random().toString(36).substr(2, 12)}/run.out`,
-                        err: `$NAS$/__RECORDING_DIRECTORY__/${Math.random().toString(36).substr(2, 12)}/run.err`
-                    }
-                }
+                environment: jobEnvironment?.environment || "local"
             };
 
             console.log('Submitting payload:', JSON.stringify(payload, null, 2));
 
-            const response = await fetch('/jobs/create/', {
+            const response = await fetch('/submit-jobs/create-sorting-job/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

@@ -102,7 +102,7 @@ function NewPipeline() {
       const token = window.localStorage.getItem('token');
 
       // Use absolute API base since we're no longer using npm proxy
-      const API_BASE = 'http://localhost:8000/pipeline';
+      const API_BASE = 'http://localhost:8000/pipeline-factory';
       const resp = await fetch(`${API_BASE}/recordings/`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Token ${token}` } : {},
@@ -395,7 +395,7 @@ function SubmitPipeline() {
 
       const token = window.localStorage.getItem('token');
 
-      const API_BASE = 'http://localhost:8000/pipeline';
+      const API_BASE = 'http://localhost:8000/pipeline-factory';
       const resp = await fetch(`${API_BASE}/pipelines/`, {
         method: 'POST',
         headers: {

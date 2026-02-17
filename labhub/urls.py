@@ -24,12 +24,12 @@ from django.views.generic import TemplateView
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("qmodel/", include(("qmodel.urls", "qmodel"), namespace="qmodel")),
-    path("pipeline/", include("pipeline.urls")),
-    path("jobs/", include("jobs.urls")),  # Add jobs routes
+    path("job-queue/", include(("job_queue.urls", "job_queue"), namespace="job_queue")),
+    path("pipeline-factory/", include("pipeline_factory.urls")),
+    path("submit-jobs/", include("submit_jobs.urls")),
     # Serve React app for all non-API routes (must be last)
     re_path(
-        r"^(?!admin|qmodel|pipeline|jobs|static).*$",
+        r"^(?!admin|job-queue|pipeline-factory|submit-jobs|static).*$",
         TemplateView.as_view(template_name="index.html"),
         name="react-app",
     ),

@@ -51,7 +51,7 @@ export default function AddNewPipeline({ onBack }) {
             }
 
             // Send the entire JSON content to the backend
-            const response = await fetch('/pipeline/pipelines/', {
+            const response = await fetch('/pipeline-factory/pipelines/', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

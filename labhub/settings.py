@@ -38,9 +38,9 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "rest_framework",
     "rest_framework.authtoken",
-    "qmodel.apps.QmodelConfig",
-    "pipeline.apps.PipelineConfig",
-    "jobs.apps.JobsConfig",  # Add jobs app
+    "job_queue.apps.JobQueueConfig",
+    "pipeline_factory.apps.PipelineFactoryConfig",
+    "submit_jobs.apps.SubmitJobsConfig",
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
