@@ -10,6 +10,23 @@ LOG_STATUS_CHOICES = [
 ]
 
 
+def _validate_pipeline_exists(pipeline_id: int) -> None:
+    """Raises RuntimeError if the pipeline does not exist."""
+    from pipeline_factory.models import Pipeline  # Avoid circular imports at module level
+
+    if not Pipeline.objects.filter(pipeline_id=pipeline_id).exists():
+        raise RuntimeError(f"Pipeline {pipeline_id} does not exist")
+
+
+def _fetch_pipeline_steps(pipeline_id: int):
+    """Returns ordered PipelineStep queryset for the given pipeline."""
+    from pipeline_factory.models import PipelineStep  # Avoid circular imports at module level
+
+    return PipelineStep.objects.filter(
+        pipeline_id=pipeline_id
+    ).order_by("pipeline_step_id")  # Preserve step order defined in pipeline
+
+
 def build_job_steps_from_pipeline(pipeline_id: int, recording_identifier: str) -> list:
     """
     Loads a Pipeline's steps from the database and assembles the ordered job_steps
@@ -28,35 +45,19 @@ def build_job_steps_from_pipeline(pipeline_id: int, recording_identifier: str) -
     Raises:
         RuntimeError: If the pipeline does not exist
     """
-    from pipeline_factory.models import Pipeline, PipelineStep  # Avoid circular imports at module level
-
-    # Fail-fast: validate pipeline exists before querying steps
-    if not Pipeline.objects.filter(pipeline_id=pipeline_id).exists():
-        raise RuntimeError(f"Pipeline {pipeline_id} does not exist")
-
-    pipeline_steps = PipelineStep.objects.filter(
-        pipeline_id=pipeline_id
-    ).order_by("pipeline_step_id")  # Preserve step order defined in pipeline
-
-    job_steps = []
+    _validate_pipeline_exists(pipeline_id)
+    pipeline_steps = _fetch_pipeline_steps(pipeline_id)
 
     # Recording step is always first — it is the root dependency for all other steps
-    job_steps.append(
-        {
-            "function": "recording",
-            "identifier": recording_identifier,
-            "depends": [],
-        }
-    )
+    job_steps = [{"function": "recording", "identifier": recording_identifier, "depends": []}]
 
     # Append each pipeline step, using its pre-existing config_block_hash from StepConfig
     for step in pipeline_steps:
-        real_identifier = step.config_block_hash.config_block_hash  # SHA-256 hash string
         job_steps.append(
             {
-                "function": step.config_block_hash.function,  # Function name from StepConfig
-                "identifier": real_identifier,
-                "depends": step.depends_on if step.depends_on else [],  # Default to empty list
+                "function": step.config_block_hash.function,
+                "identifier": step.config_block_hash.config_block_hash,
+                "depends": step.depends_on if step.depends_on else [],
             }
         )
 
