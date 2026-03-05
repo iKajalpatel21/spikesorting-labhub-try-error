@@ -5,7 +5,10 @@ from .models import JobCreationLog
 
 
 class RecordingConfigSerializer(serializers.Serializer):
-    """Validates recording configuration from React wizard"""
+    """
+    Validates the recording configuration block submitted by the React wizard.
+    All file paths and numeric parameters are validated before job creation.
+    """
 
     binfile = serializers.CharField(required=True, min_length=1)
     sampling_rate = serializers.IntegerField(required=True, min_value=1)
@@ -20,14 +23,14 @@ class RecordingConfigSerializer(serializers.Serializer):
 
 class CreateSortingJobSerializer(serializers.Serializer):
     """
-    STEP 1: Validates React wizard payload
+    Validates the React Sorting Job Wizard payload before job creation.
 
-    Input from React:
-    {
-      "recording": {...},
-      "pipeline_id": 1,
-      "environment": "local"
-    }
+    Expected input:
+        {
+          "recording": {"binfile": "...", "sampling_rate": 30000, ...},
+          "pipeline_id": 1,
+          "environment": "local"
+        }
     """
 
     recording = RecordingConfigSerializer(required=True)
@@ -37,16 +40,34 @@ class CreateSortingJobSerializer(serializers.Serializer):
     )
 
     def validate_pipeline_id(self, value):
-        """Check if pipeline exists"""
-        try:
-            Pipeline.objects.get(pipeline_id=value)
-        except Pipeline.DoesNotExist:
+        """Fail-fast: reject the request immediately if the pipeline does not exist."""
+        if not Pipeline.objects.filter(pipeline_id=value).exists():
             raise serializers.ValidationError(f"Pipeline {value} does not exist")
         return value
 
 
+# ============================================================================
+# Job Read Serializers
+# ============================================================================
+
+
+class StepConfigSerializer(serializers.ModelSerializer):
+    """
+    Read-only serializer for a StepConfig record.
+    Exposes the hash, the raw config block, and the function name.
+    """
+
+    class Meta:
+        model = StepConfig
+        fields = ["config_block_hash", "config_block", "function"]
+        read_only_fields = ["config_block_hash"]
+
+
 class JobStepSerializer(serializers.ModelSerializer):
-    """Serialize individual job steps"""
+    """
+    Serializes a JobStep for list and detail views.
+    Includes the flat config_block JSON for quick inspection without a nested object.
+    """
 
     config_block = serializers.SerializerMethodField()
 
@@ -56,14 +77,31 @@ class JobStepSerializer(serializers.ModelSerializer):
         read_only_fields = ["identifier", "function", "status", "depends_on"]
 
     def get_config_block(self, obj):
-        """Get the config block from the StepConfig"""
+        """Returns the raw config block JSON from the linked StepConfig."""
         if obj.config_block_hash:
             return obj.config_block_hash.config_block
         return {}
 
 
+class JobStepWithConfigSerializer(serializers.ModelSerializer):
+    """
+    Serializes a JobStep with a fully nested StepConfig object.
+    Used by JobSerializer where the full config structure is required.
+    """
+
+    config = StepConfigSerializer(source="config_block_hash", read_only=True)
+
+    class Meta:
+        model = JobStep
+        fields = ["identifier", "function", "status", "depends_on", "config"]
+        read_only_fields = ["identifier", "function", "status", "depends_on"]
+
+
 class JobListSerializer(serializers.ModelSerializer):
-    """Serialize jobs for list/detail view"""
+    """
+    Serializes a Job for list and detail views.
+    Includes step summary, completion count, and a condensed environment block.
+    """
 
     job_steps = JobStepSerializer(source="jobstep_set", many=True, read_only=True)
     step_count = serializers.SerializerMethodField()
@@ -84,13 +122,15 @@ class JobListSerializer(serializers.ModelSerializer):
         read_only_fields = ["job_id", "status", "created_at"]
 
     def get_step_count(self, obj):
+        """Returns the total number of steps in this job."""
         return obj.jobstep_set.count()
 
     def get_completed_steps(self, obj):
+        """Returns the number of steps with status 'finished'."""
         return obj.jobstep_set.filter(status="finished").count()
 
     def get_job_env(self, obj):
-        """Extract key info from job environment config"""
+        """Extracts the key environment fields from the job_env_config JSON blob."""
         env = obj.job_env_config or {}
         return {
             "environment": env.get("job_kwargs", {}).get("environment", "unknown"),
@@ -99,24 +139,13 @@ class JobListSerializer(serializers.ModelSerializer):
         }
 
 
-class StepConfigSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = StepConfig
-        fields = ["config_block_hash", "config_block", "function"]
-        read_only_fields = ["config_block_hash"]
-
-
-class JobStepSerializer(serializers.ModelSerializer):
-    config = StepConfigSerializer(source="config_block_hash", read_only=True)
-
-    class Meta:
-        model = JobStep
-        fields = ["identifier", "function", "status", "depends_on", "config"]
-        read_only_fields = ["identifier", "function", "status", "depends_on"]
-
-
 class JobSerializer(serializers.ModelSerializer):
-    steps = JobStepSerializer(source="jobstep_set", many=True, read_only=True)
+    """
+    Full serializer for a Job, including all steps with their nested StepConfig objects.
+    Used where the complete job payload is required (e.g. admin or detailed exports).
+    """
+
+    steps = JobStepWithConfigSerializer(source="jobstep_set", many=True, read_only=True)
 
     class Meta:
         model = Job
@@ -125,6 +154,10 @@ class JobSerializer(serializers.ModelSerializer):
 
 
 class JobCreationLogSerializer(serializers.ModelSerializer):
+    """
+    Serializes a JobCreationLog audit record for inspection and debugging.
+    """
+
     class Meta:
         model = JobCreationLog
         fields = [

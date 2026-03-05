@@ -11,17 +11,19 @@ from .serializers import (
     PipelineCreateSerializer,
 )
 from job_queue.models import StepConfig
-import json
-import hashlib
 
 
-class PipelineViewSet(viewsets.ModelViewSet):
+# Shared base viewset for authentication/permission
+class AuthenticatedModelViewSet(viewsets.ModelViewSet):
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
+
+
+class PipelineViewSet(AuthenticatedModelViewSet):
     """ViewSet for listing and creating Pipelines."""
 
     queryset = Pipeline.objects.all()
     serializer_class = PipelineSerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         # Support uploaded JSON that uses the 'job_steps' convention.
@@ -36,10 +38,8 @@ class PipelineViewSet(viewsets.ModelViewSet):
         return Response(out_serializer.data, status=status.HTTP_201_CREATED)
 
 
-class PipelineStepViewSet(viewsets.ModelViewSet):
+class PipelineStepViewSet(AuthenticatedModelViewSet):
     """ViewSet for managing pipeline steps"""
 
     queryset = PipelineStep.objects.all()
     serializer_class = PipelineStepSerializer
-    authentication_classes = [TokenAuthentication]
-    permission_classes = [IsAuthenticated]

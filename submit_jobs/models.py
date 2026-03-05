@@ -1,13 +1,122 @@
 from django.db import models
-from job_queue.models import Job, JobStep, StepConfig
+from job_queue.models import Job
+
+
+# Choices for the 'status' field in JobCreationLog model
+LOG_STATUS_CHOICES = [
+    ("pending", "Pending"),
+    ("success", "Success"),
+    ("failed", "Failed"),
+]
+
+
+def build_job_steps_from_pipeline(pipeline_id: int, recording_identifier: str) -> list:
+    """
+    Loads a Pipeline's steps from the database and assembles the ordered job_steps
+    list required by create_a_job. The recording step is always prepended first.
+
+    Args:
+        pipeline_id: Primary key of the Pipeline to load
+        recording_identifier: SHA-256 hash of the recording StepConfig
+
+    Returns:
+        list[dict]: Ordered job_steps, each dict containing:
+                    - function: step function name (e.g., 'sorting', 'analyzer')
+                    - identifier: config_block_hash SHA-256 string
+                    - depends: list of dependency identifiers (may contain placeholders)
+
+    Raises:
+        RuntimeError: If the pipeline does not exist
+    """
+    from pipeline_factory.models import Pipeline, PipelineStep  # Avoid circular imports at module level
+
+    # Fail-fast: validate pipeline exists before querying steps
+    if not Pipeline.objects.filter(pipeline_id=pipeline_id).exists():
+        raise RuntimeError(f"Pipeline {pipeline_id} does not exist")
+
+    pipeline_steps = PipelineStep.objects.filter(
+        pipeline_id=pipeline_id
+    ).order_by("pipeline_step_id")  # Preserve step order defined in pipeline
+
+    job_steps = []
+
+    # Recording step is always first — it is the root dependency for all other steps
+    job_steps.append(
+        {
+            "function": "recording",
+            "identifier": recording_identifier,
+            "depends": [],
+        }
+    )
+
+    # Append each pipeline step, using its pre-existing config_block_hash from StepConfig
+    for step in pipeline_steps:
+        real_identifier = step.config_block_hash.config_block_hash  # SHA-256 hash string
+        job_steps.append(
+            {
+                "function": step.config_block_hash.function,  # Function name from StepConfig
+                "identifier": real_identifier,
+                "depends": step.depends_on if step.depends_on else [],  # Default to empty list
+            }
+        )
+
+    return job_steps
+
+
+def resolve_placeholder_dependencies(job_steps: list, recording_identifier: str) -> list:
+    """
+    Resolves placeholder dependency references to real config_block_hash identifiers.
+    Replaces the special '_RECORDING_' and 'recording' string placeholders with the
+    actual recording identifier. All other identifiers are passed through unchanged.
+
+    Args:
+        job_steps: Ordered list of step dicts (as returned by build_job_steps_from_pipeline)
+        recording_identifier: SHA-256 hash of the recording StepConfig
+
+    Returns:
+        list[dict]: Same job_steps list with all placeholders replaced by real identifiers
+    """
+    for job_step in job_steps:
+        if not job_step["depends"]:  # Skip steps with no dependencies
+            continue
+
+        resolved = []
+        for dep in job_step["depends"]:
+            if dep in ("_RECORDING_", "recording"):  # Recording placeholder — resolve to real hash
+                resolved.append(recording_identifier)
+            else:
+                resolved.append(dep)  # Already a real identifier — pass through unchanged
+        job_step["depends"] = resolved
+
+    return job_steps
+
+
+def build_job_env_config(environment: str) -> dict:
+    """
+    Constructs the standard job environment configuration dictionary passed to create_a_job.
+
+    Args:
+        environment: Target execution environment (e.g., 'local', 'gpu', 'aws')
+
+    Returns:
+        dict: Job environment config with base_directory, job_kwargs, log_level, and REDIRECT
+    """
+    return {
+        "base_directory": "/tmp/spike_sorting",
+        "job_kwargs": {"environment": environment},  # Passed to the worker at runtime
+        "log_level": "INFO",
+        "REDIRECT": True,
+    }
 
 
 class JobCreationLog(models.Model):
     """
-    Logs job creation requests for audit and debugging purposes.
-    Tracks when jobs are created, with what parameters, and any errors that occur.
+    Audit log for every job creation request submitted via the sorting wizard.
+    Records the pipeline used, recording config, environment preset, final outcome,
+    and any error message — enabling debugging of failed submissions.
     """
 
+    # OneToOne link to the created Job; null when job creation itself failed
     job = models.OneToOneField(
         Job,
         on_delete=models.CASCADE,
@@ -15,24 +124,19 @@ class JobCreationLog(models.Model):
         null=True,
         blank=True,
     )
-    pipeline_id = models.IntegerField()  # Reference to the selected pipeline
-    recording_config = models.JSONField()  # The recording config submitted
-    job_env_preset = models.JSONField()  # The environment preset submitted
-    created_at = models.DateTimeField(auto_now_add=True)
+    pipeline_id = models.IntegerField()  # ID of the pipeline selected for this job
+    recording_config = models.JSONField()  # Recording configuration submitted by the researcher
+    job_env_preset = models.JSONField()  # Environment preset submitted by the researcher
+    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp set automatically on creation
     status = models.CharField(
-        max_length=20,
-        choices=[
-            ("pending", "Pending"),
-            ("success", "Success"),
-            ("failed", "Failed"),
-        ],
-        default="pending",
-    )
-    error_message = models.TextField(null=True, blank=True)
-
-    def __str__(self):
-        return f"Job Creation Log - Pipeline {self.pipeline_id} - {self.status}"
+        max_length=20, choices=LOG_STATUS_CHOICES, default="pending"
+    )  # Outcome of the job creation attempt
+    error_message = models.TextField(null=True, blank=True)  # Populated only when status is 'failed'
 
     class Meta:
         db_table = "jobs_jobcreationlog"
         ordering = ["-created_at"]
+
+    def __str__(self):
+        """String representation for a JobCreationLog object."""
+        return f"JobCreationLog - Pipeline {self.pipeline_id} - {self.status}"
