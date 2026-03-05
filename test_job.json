@@ -1,35 +1,68 @@
 {
-    "version": "1.0",
-    "si": "sample_input",
-    "job_evn": {
-        "timeout": 3600,
-        "memory_limit": "4GB"
-    },
     "job_steps": [
         {
-            "identifier": "preprocess",
-            "function": "preprocess_data",
-            "depends": []
+            "function": "preprocessing",
+            "identifier": "86b3b4fb869a1cb6",
+            "depends": [
+                "_RECORDING_"
+            ]
         },
         {
-            "identifier": "analysis",
-            "function": "analyze_data",
+            "function": "sorting",
+            "identifier": "b24445a04911d6c6",
             "depends": [
-                "preprocess"
+                "86b3b4fb869a1cb6"
             ]
+        },
+        {
+            "function": "phy_export",
+            "identifier": "873bde7667f3d8ba",
+            "depends": [
+                "86b3b4fb869a1cb6",
+                "b24445a04911d6c6"
+            ]
+        },
+        {
+            "function": "upload",
+            "identifier": "8a69bd0f12fca9b9",
+            "depends": []
         }
     ],
-    "preprocess": {
-        "filter_type": "bandpass",
-        "frequency_range": [
-            300,
-            6000
-        ]
-    },
-    "analysis": {
-        "method": "kilosort",
+    "b24445a04911d6c6": {
+        "name": "hdsort",
         "parameters": {
-            "threshold": 0.8
+            "loop_mode": "local_parfor",
+            "chunk_memory": "500M",
+            "chunk_size": 3870000,
+            "filter": false,
+            "freq_min": 50,
+            "freq_max": 10000,
+            "parfor": true,
+            "detect_sign": -1,
+            "detect_threshold": 2.8461521921744675,
+            "max_el_per_group": 8,
+            "min_el_per_group": 2,
+            "max_distance_within_group": 424,
+            "add_if_nearer_than": 322,
+            "n_pc_dims": 4
+        },
+        "folder": "sorting-saved",
+        "image": "$LOCAL$/images/hdsort-compiled-base:latest.sif"
+    },
+    "86b3b4fb869a1cb6": {
+        "methods": [
+            "highpass or band filtering"
+        ],
+        "highpass or band filtering": {
+            "btype": "bandpass",
+            "band": [
+                100.0,
+                10000.0
+            ]
         }
+    },
+    "873bde7667f3d8ba": {},
+    "8a69bd0f12fca9b9": {
+        "suffix": "0176fo"
     }
 }
