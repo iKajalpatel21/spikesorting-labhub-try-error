@@ -1,0 +1,11 @@
+services:
+  web:
+    build: .
+    volumes:
+      # Bind mount NAS_Database as readonly — container cannot modify the host file
+      - type: bind
+        source: ./NAS_Database
+        target: /nas_db
+        read_only: true
+    ports:
+      - "8000:8000"
