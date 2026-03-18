@@ -153,6 +153,7 @@ else:
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTHENTICATION_BACKENDS = [
+    "django.contrib.auth.backends.ModelBackend",  # Default Django authentication
     "labhub.backends.FreeNASBackend",  # Only NAS authentication
 ]
 
