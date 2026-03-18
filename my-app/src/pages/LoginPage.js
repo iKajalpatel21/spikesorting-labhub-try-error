@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -14,7 +14,6 @@ export function LoginPage() {
         e.preventDefault();
         setError('');
         setLoading(true);
-
         try {
             await login(username, password);
             navigate('/dashboard');
@@ -28,132 +27,152 @@ export function LoginPage() {
     return (
         <div style={{
             minHeight: '100vh',
-            background: 'linear-gradient(135deg, #1e3c72 0%, #2a5298 100%)',
+            background: '#f0efe8',
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'system-ui, -apple-system, sans-serif',
+            fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
         }}>
-            <div style={{
-                background: '#fff',
-                borderRadius: '12px',
-                boxShadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
-                padding: '40px',
-                width: '100%',
-                maxWidth: '400px',
-            }}>
-                <h1 style={{
-                    textAlign: 'center',
-                    color: '#333',
-                    marginBottom: '30px',
-                    fontSize: '28px',
-                }}>
-                    Spikes Jobs
-                </h1>
-
-                <form onSubmit={handleSubmit}>
-                    <div style={{ marginBottom: '20px' }}>
-                        <label style={{
-                            display: 'block',
-                            marginBottom: '8px',
-                            color: '#555',
-                            fontWeight: '500',
-                        }}>
-                            Username
-                        </label>
-                        <input
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Enter your username"
-                            style={{
-                                width: '100%',
-                                padding: '12px',
-                                border: '1px solid #ddd',
-                                borderRadius: '6px',
-                                fontSize: '14px',
-                                boxSizing: 'border-box',
-                                transition: 'border-color 0.2s',
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#1e3c72'}
-                            onBlur={(e) => e.target.style.borderColor = '#ddd'}
-                            disabled={loading}
-                        />
+            <div style={{ width: '100%', maxWidth: '360px', padding: '0 24px', boxSizing: 'border-box' }}>
+                {/* Logo / brand */}
+                <div style={{ textAlign: 'center', marginBottom: '40px' }}>
+                    <div style={{
+                        width: '48px',
+                        height: '48px',
+                        background: '#8fa06e',
+                        borderRadius: '12px',
+                        margin: '0 auto 16px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                    }}>
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="1.8">
+                            <path d="M3 12 Q6 4 9 12 Q12 20 15 12 Q18 4 21 12"/>
+                        </svg>
                     </div>
-
-                    <div style={{ marginBottom: '30px' }}>
-                        <label style={{
-                            display: 'block',
-                            marginBottom: '8px',
-                            color: '#555',
-                            fontWeight: '500',
-                        }}>
-                            Password
-                        </label>
-                        <input
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Enter your password"
-                            style={{
-                                width: '100%',
-                                padding: '12px',
-                                border: '1px solid #ddd',
-                                borderRadius: '6px',
-                                fontSize: '14px',
-                                boxSizing: 'border-box',
-                                transition: 'border-color 0.2s',
-                            }}
-                            onFocus={(e) => e.target.style.borderColor = '#1e3c72'}
-                            onBlur={(e) => e.target.style.borderColor = '#ddd'}
-                            disabled={loading}
-                        />
-                    </div>
-
-                    {error && (
-                        <div style={{
-                            background: '#ffebee',
-                            color: '#c62828',
-                            padding: '12px',
-                            borderRadius: '6px',
-                            marginBottom: '20px',
-                            fontSize: '14px',
-                            border: '1px solid #ef5350',
-                        }}>
-                            {error}
-                        </div>
-                    )}
-
-                    <button
-                        type="submit"
-                        disabled={loading}
-                        style={{
-                            width: '100%',
-                            padding: '12px',
-                            background: loading ? '#ccc' : '#1e3c72',
-                            color: '#fff',
-                            border: 'none',
-                            borderRadius: '6px',
-                            fontSize: '16px',
-                            fontWeight: '600',
-                            cursor: loading ? 'not-allowed' : 'pointer',
-                            transition: 'background 0.2s',
-                        }}
-                        onMouseOver={(e) => !loading && (e.target.style.background = '#2a5298')}
-                        onMouseOut={(e) => (e.target.style.background = loading ? '#ccc' : '#1e3c72')}
-                    >
-                        {loading ? 'Logging in...' : 'Login'}
-                    </button>
-                </form>
-
-                <div style={{
-                    marginTop: '20px',
-                    textAlign: 'center',
-                    color: '#999',
-                    fontSize: '12px',
-                }}>
-                    Demo: admin / admin
+                    <h1 style={{ margin: 0, fontSize: '1.4em', fontWeight: '500', color: '#1e1e1e', letterSpacing: '-0.3px' }}>
+                        LabHub
+                    </h1>
+                    <p style={{ margin: '6px 0 0', fontSize: '0.85em', color: '#999' }}>
+                        Spike sorting pipeline manager
+                    </p>
                 </div>
+
+                {/* Form card */}
+                <div style={{
+                    background: '#fff',
+                    borderRadius: '14px',
+                    padding: '32px',
+                    border: '1px solid #e8e7e0',
+                }}>
+                    <form onSubmit={handleSubmit}>
+                        <div style={{ marginBottom: '18px' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '6px',
+                                color: '#555',
+                                fontSize: '0.85em',
+                                fontWeight: '500',
+                            }}>
+                                Username
+                            </label>
+                            <input
+                                type="text"
+                                value={username}
+                                onChange={(e) => setUsername(e.target.value)}
+                                placeholder="Enter your username"
+                                disabled={loading}
+                                style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    border: '1px solid #e0dfd8',
+                                    borderRadius: '8px',
+                                    fontSize: '0.9em',
+                                    boxSizing: 'border-box',
+                                    background: '#fafaf8',
+                                    color: '#1e1e1e',
+                                    outline: 'none',
+                                    transition: 'border-color 0.15s',
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#8fa06e'}
+                                onBlur={(e) => e.target.style.borderColor = '#e0dfd8'}
+                            />
+                        </div>
+
+                        <div style={{ marginBottom: '24px' }}>
+                            <label style={{
+                                display: 'block',
+                                marginBottom: '6px',
+                                color: '#555',
+                                fontSize: '0.85em',
+                                fontWeight: '500',
+                            }}>
+                                Password
+                            </label>
+                            <input
+                                type="password"
+                                value={password}
+                                onChange={(e) => setPassword(e.target.value)}
+                                placeholder="Enter your password"
+                                disabled={loading}
+                                style={{
+                                    width: '100%',
+                                    padding: '10px 12px',
+                                    border: '1px solid #e0dfd8',
+                                    borderRadius: '8px',
+                                    fontSize: '0.9em',
+                                    boxSizing: 'border-box',
+                                    background: '#fafaf8',
+                                    color: '#1e1e1e',
+                                    outline: 'none',
+                                    transition: 'border-color 0.15s',
+                                }}
+                                onFocus={(e) => e.target.style.borderColor = '#8fa06e'}
+                                onBlur={(e) => e.target.style.borderColor = '#e0dfd8'}
+                            />
+                        </div>
+
+                        {error && (
+                            <div style={{
+                                background: '#fef2f0',
+                                color: '#c0392b',
+                                padding: '10px 14px',
+                                borderRadius: '8px',
+                                marginBottom: '18px',
+                                fontSize: '0.83em',
+                                border: '1px solid #f5c6c0',
+                            }}>
+                                {error}
+                            </div>
+                        )}
+
+                        <button
+                            type="submit"
+                            disabled={loading}
+                            style={{
+                                width: '100%',
+                                padding: '11px',
+                                background: loading ? '#c0c9aa' : '#8fa06e',
+                                color: '#fff',
+                                border: 'none',
+                                borderRadius: '8px',
+                                fontSize: '0.9em',
+                                fontWeight: '500',
+                                cursor: loading ? 'not-allowed' : 'pointer',
+                                transition: 'background 0.15s',
+                                letterSpacing: '0.2px',
+                            }}
+                            onMouseOver={(e) => !loading && (e.target.style.background = '#7d8e5e')}
+                            onMouseOut={(e) => (e.target.style.background = loading ? '#c0c9aa' : '#8fa06e')}
+                        >
+                            {loading ? 'Signing in...' : 'Sign in'}
+                        </button>
+                    </form>
+                </div>
+
+                <p style={{ textAlign: 'center', marginTop: '20px', fontSize: '0.78em', color: '#bbb' }}>
+                    Demo: admin / admin
+                </p>
             </div>
         </div>
     );

@@ -10,44 +10,52 @@ function DashboardLayout() {
   const { logout, user } = useAuth();
 
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "linear-gradient(135deg, #667eea 0%, #764ba2 100%)",
-      paddingTop: "20px",
-    }}>
+    <div style={{ minHeight: '100vh', background: '#f0efe8' }}>
+      {/* Minimal top bar */}
       <div style={{
         position: 'fixed',
-        top: '20px',
-        right: '20px',
-        background: 'rgba(255,255,255,0.1)',
-        padding: '10px 20px',
-        borderRadius: '6px',
-        color: '#fff',
+        top: 0,
+        left: 0,
+        right: 0,
+        height: '52px',
+        background: '#f0efe8',
+        borderBottom: '1px solid #e4e3dc',
         display: 'flex',
-        gap: '15px',
         alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: '0 56px',
         zIndex: 1000,
+        boxSizing: 'border-box',
       }}>
-        <span>Welcome, {user?.username}</span>
-        <button
-          onClick={logout}
-          style={{
-            padding: '8px 16px',
-            background: '#ff5252',
-            color: '#fff',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: 'pointer',
-            fontSize: '14px',
-            fontWeight: 'bold',
-          }}
-          onMouseOver={(e) => e.target.style.background = '#ff1744'}
-          onMouseOut={(e) => e.target.style.background = '#ff5252'}
-        >
-          Logout
-        </button>
+        <span style={{ fontSize: '0.9em', fontWeight: '500', color: '#1e1e1e', letterSpacing: '-0.2px' }}>
+          LabHub
+        </span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span style={{ fontSize: '0.85em', color: '#888' }}>{user?.username}</span>
+          <button
+            onClick={logout}
+            style={{
+              padding: '6px 14px',
+              background: 'transparent',
+              color: '#888',
+              border: '1px solid #d4d3cc',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '0.82em',
+              fontWeight: '500',
+              transition: 'border-color 0.15s, color 0.15s',
+            }}
+            onMouseOver={(e) => { e.target.style.borderColor = '#999'; e.target.style.color = '#444'; }}
+            onMouseOut={(e) => { e.target.style.borderColor = '#d4d3cc'; e.target.style.color = '#888'; }}
+          >
+            Sign out
+          </button>
+        </div>
       </div>
-      <Dashboard />
+      {/* Push content below fixed bar */}
+      <div style={{ paddingTop: '52px' }}>
+        <Dashboard />
+      </div>
     </div>
   );
 }

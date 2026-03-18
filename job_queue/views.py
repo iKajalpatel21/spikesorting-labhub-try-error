@@ -102,8 +102,15 @@ def next_job_get_logic() -> JsonResponse:
     Returns:
         JsonResponse: Job data with all steps and configurations, or empty dict if none available
     """
+    # try:
+    #     job_data = get_job()
+    #     return JsonResponse(job_data, status=200)
+    # except Exception as e:
+    #     return JsonResponse({"error": str(e)}, status=500)
     try:
         job_data = get_job()
+        if not job_data:
+            return JsonResponse({}, status=204)
         return JsonResponse(job_data, status=200)
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
@@ -202,7 +209,6 @@ def login(request):
         },
         status=200,
     )
-
 
 
 # ============================================================================

@@ -10,6 +10,14 @@ from job_queue.models import get_or_create_step_configs
 # ============================================================================
 
 
+def _coerce_band_floats(config: dict) -> dict:
+    """Ensures band values in highpass/bandpass filter configs are floats, not ints."""
+    for _, value in config.items():
+        if isinstance(value, dict) and "band" in value:
+            value["band"] = [float(v) for v in value["band"]]
+    return config
+
+
 def _resolve_step_config(step_data: dict, raw_data: dict) -> tuple:
     """
     Extracts the function name and config block for a single pipeline step.
@@ -37,7 +45,7 @@ def _resolve_step_config(step_data: dict, raw_data: dict) -> tuple:
         identifier = step_data["identifier"]
         config = raw_data.get(identifier) or {}  # External config block keyed by short identifier
 
-    return function, config
+    return function, _coerce_band_floats(config)
 
 
 def _build_placeholder_map(steps_data: list, raw_data: dict) -> dict:

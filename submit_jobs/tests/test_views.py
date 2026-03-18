@@ -37,8 +37,8 @@ RECORDING_PAYLOAD = {
     "binfile": "/data/test.bin",
     "sampling_rate": 30000,
     "num_channels": 32,
-    "gain": 0.195,
-    "offset": 0.0,
+    "gain_to_uV": 0.195,
+    "offset_to_uV": 0.0,
     "probe": "/data/probe.json",
     "bad_channels": [],
 }

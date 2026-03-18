@@ -83,10 +83,10 @@ export default function StepRecording() {
                         onClick={() => binInputRef.current?.click()}
                         className="file-upload-btn"
                     >
-                        📁 Choose Binfile (JSON)
+                        Choose Binfile (JSON)
                     </button>
                     {recording.binFile && (
-                        <div className="file-info">✓ {recording.binFile.name}</div>
+                        <div className="file-info">{recording.binFile.name}</div>
                     )}
                 </div>
 
@@ -152,10 +152,10 @@ export default function StepRecording() {
                         onClick={() => probeInputRef.current?.click()}
                         className="file-upload-btn"
                     >
-                        📁 Choose Probe (JSON)
+                        Choose Probe (JSON)
                     </button>
                     {recording.probeFile && (
-                        <div className="file-info">✓ {recording.probeFile.name}</div>
+                        <div className="file-info">{recording.probeFile.name}</div>
                     )}
                 </div>
 

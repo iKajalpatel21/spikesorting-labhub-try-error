@@ -350,7 +350,7 @@ export default function ManageJobs({ onBack }) {
             <div className="jobs-header">
                 <button className="back-btn" onClick={onBack}>← Back</button>
                 <h1>Manage Jobs</h1>
-                <button className="refresh-btn" onClick={() => { fetchJobs(); fetchStatistics(); }}>🔄 Refresh</button>
+                <button className="refresh-btn" onClick={() => { fetchJobs(); fetchStatistics(); }}>Refresh</button>
             </div>
 
             {/* Statistics */}
@@ -413,7 +413,7 @@ export default function ManageJobs({ onBack }) {
                 </button>
             </div>
 
-            {error && <div className="error-message">⚠️ {error}</div>}
+            {error && <div className="error-message">{error}</div>}
 
             {jobs.length === 0 ? (
                 <div className="empty-state">

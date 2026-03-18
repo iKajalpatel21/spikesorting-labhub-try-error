@@ -71,7 +71,16 @@ def create_sorting_job_logic(validated_data: dict) -> Response:
     Raises:
         RuntimeError: Propagated from create_a_job if job_steps are invalid
     """
-    recording = dict(validated_data["recording"])  # Convert OrderedDict to plain dict for JSON serialization
+    raw = dict(validated_data["recording"])  # Convert OrderedDict to plain dict for JSON serialization
+    recording = {
+        "binfile":            raw["binfile"],
+        "sampling rate":      raw["sampling_rate"],
+        "number of channels": raw["num_channels"],
+        "gain_to_uV":         raw["gain_to_uV"],
+        "offset_to_uV":       raw["offset_to_uV"],
+        "probe":              raw.get("probe", ""),
+        "bad_channels":       raw.get("bad_channels", []),
+    }
     pipeline_id = validated_data["pipeline_id"]
     environment = validated_data["environment"]
 
@@ -117,7 +126,7 @@ def create_sorting_job(request):
 
     Expected body:
         {
-          "recording": {"binfile": "...", "sampling_rate": 30000, ...},
+          "recording": {"binfile": "...", "sampling_rate": 30000, "gain_to_uV": 0.195, "offset_to_uV": 0, ...},
           "pipeline_id": 1,
           "environment": "local"
         }

@@ -103,10 +103,14 @@ def build_job_env_config(environment: str) -> dict:
         dict: Job environment config with base_directory, job_kwargs, log_level, and REDIRECT
     """
     return {
-        "base_directory": "/tmp/spike_sorting",
-        "job_kwargs": {"environment": environment},  # Passed to the worker at runtime
+        "base directory": "/tmp/spike_sorting",
+        "job_kwargs": {},  # Valid keys: n_jobs, total_memory, chunk_duration, progress_bar
         "log_level": "INFO",
-        "REDIRECT": True,
+        "REDIRECT": {
+            "log": "$NAS$/logs/job.log",
+            "out": "$NAS$/logs/job.out",
+            "err": "$NAS$/logs/job.err",
+        },
     }
 
 

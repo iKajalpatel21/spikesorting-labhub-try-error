@@ -66,7 +66,7 @@ export default function AddNewPipeline({ onBack }) {
             }
 
             const data = await response.json();
-            setSuccess(`✅ Pipeline created successfully! Pipeline ID: ${data.pipeline_id}`);
+            setSuccess(`Pipeline created successfully. Pipeline ID: ${data.pipeline_id}`);
 
             // Reset form after success
             setTimeout(() => {
@@ -87,14 +87,14 @@ export default function AddNewPipeline({ onBack }) {
         <div className="pipeline-form-container">
             <div className="pipeline-form-header">
                 <button className="back-btn" onClick={onBack}>← Back</button>
-                <h1>📁 Create New Pipeline from JSON</h1>
+                <h1>Create New Pipeline from JSON</h1>
                 <p className="subtitle">Upload a JSON file to create a new pipeline configuration</p>
             </div>
 
             <form onSubmit={handleSubmit} className="pipeline-form">
                 {/* JSON File Upload */}
                 <div className="form-section json-upload-section">
-                    <h3>📤 Upload Pipeline JSON</h3>
+                    <h3>Upload Pipeline JSON</h3>
                     <p className="section-description">
                         Select a JSON file that contains your pipeline configuration with steps and their dependencies.
                     </p>
@@ -108,11 +108,16 @@ export default function AddNewPipeline({ onBack }) {
                             className="file-input"
                         />
                         <label htmlFor="json-file-input" className="file-label">
-                            <div className="file-icon">📋</div>
+                            <div className="file-icon">
+                                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                            </div>
                             <div className="file-text">
                                 {jsonFile ? (
                                     <>
-                                        <strong>✓ Selected: {jsonFile.name}</strong>
+                                        <strong>Selected: {jsonFile.name}</strong>
                                         <br />
                                         <small>Click to change file</small>
                                     </>
@@ -130,13 +135,13 @@ export default function AddNewPipeline({ onBack }) {
                     {/* File Validation Status */}
                     {fileValidationError && (
                         <div className="error-message validation-error">
-                            ❌ {fileValidationError}
+                            {fileValidationError}
                         </div>
                     )}
 
                     {fileContent && (
                         <div className="success-message validation-success">
-                            ✅ File is valid!
+                            File is valid
                         </div>
                     )}
                 </div>
@@ -152,7 +157,7 @@ export default function AddNewPipeline({ onBack }) {
                         className="submit-btn"
                         disabled={isSubmitting || !fileContent}
                     >
-                        {isSubmitting ? '⏳ Creating Pipeline...' : '✓ Create Pipeline'}
+                        {isSubmitting ? 'Creating Pipeline...' : 'Create Pipeline'}
                     </button>
                 </div>
             </form>

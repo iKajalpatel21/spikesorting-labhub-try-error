@@ -13,8 +13,8 @@ class RecordingConfigSerializer(serializers.Serializer):
     binfile = serializers.CharField(required=True, min_length=1)
     sampling_rate = serializers.IntegerField(required=True, min_value=1)
     num_channels = serializers.IntegerField(required=True, min_value=1)
-    gain = serializers.FloatField(required=True)
-    offset = serializers.FloatField(required=True)
+    gain_to_uV = serializers.FloatField(required=True)
+    offset_to_uV = serializers.FloatField(required=True)
     probe = serializers.CharField(required=False, allow_blank=True)
     bad_channels = serializers.ListField(
         child=serializers.IntegerField(), required=False, default=list
