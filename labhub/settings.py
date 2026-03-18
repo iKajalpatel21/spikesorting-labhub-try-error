@@ -153,8 +153,7 @@ else:
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTHENTICATION_BACKENDS = [
-    "django.contrib.auth.backends.ModelBackend",  # Django's default authentication
-    "labhub.backends.FreeNASBackend",  # Custom NAS authentication (fallback)
+    "labhub.backends.FreeNASBackend",  # Only NAS authentication
 ]
 
 MEDIA_ROOT = BASE_DIR / "media"
