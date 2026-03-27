@@ -45,8 +45,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication", -- Optional: This needs to be commented out if you want to use only token authentication and not session authentication.
-
+        "rest_framework.authentication.SessionAuthentication",  # Optional: This needs to be commented out if you want to use only token authentication and not session authentication.
     ],
 }
 
@@ -163,10 +162,12 @@ MEDIA_URL = "/media/"
 
 # Directories on the server that are scanned for .bin and .prb/.json data files.
 # Override this in a local settings file or environment to point at your actual data paths.
-_DEFAULT_DATA_DIRS = ",".join([
-    str(BASE_DIR / "experiments"),
-    str(BASE_DIR / "experiments" / "probes"),
-])
+_DEFAULT_DATA_DIRS = ",".join(
+    [
+        str(BASE_DIR / "experiments"),
+        str(BASE_DIR / "experiments" / "probes"),
+    ]
+)
 DATA_DIRS = os.environ.get("DATA_DIRS", _DEFAULT_DATA_DIRS).split(",")
 
 # CORS — React is built via `npm run build` and served by Django on port 8000.
