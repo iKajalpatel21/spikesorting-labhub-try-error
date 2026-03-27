@@ -1,6 +1,7 @@
 import os
 import sys
 import sqlite3
+from pathlib import Path
 
 from passlib.hash import sha512_crypt
 
@@ -8,7 +9,9 @@ from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
-NAS_DB_PATH = os.environ.get("NAS_DB_PATH", "/nas_db/freenas-v1.db")
+# BASE_DIR = project root (two levels up from this file: labhub/backends.py → labhub/ → project root)
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent
+NAS_DB_PATH = os.environ.get("NAS_DB_PATH", str(_PROJECT_ROOT / "NAS_Database" / "freenas-v1.db"))
 
 
 def _get_nas_admin_credentials():
@@ -20,8 +23,7 @@ def _get_nas_admin_credentials():
         conn = sqlite3.connect(f"file:{NAS_DB_PATH}?mode=ro", uri=True)
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT bsdusr_username, bsdusr_unixhash "
-            "FROM account_bsdusers LIMIT 1"
+            "SELECT bsdusr_username, bsdusr_unixhash " "FROM account_bsdusers LIMIT 1"
         )
         result = cursor.fetchone()
         conn.close()

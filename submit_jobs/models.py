@@ -12,7 +12,9 @@ LOG_STATUS_CHOICES = [
 
 def _validate_pipeline_exists(pipeline_id: int) -> None:
     """Raises RuntimeError if the pipeline does not exist."""
-    from pipeline_factory.models import Pipeline  # Avoid circular imports at module level
+    from pipeline_factory.models import (
+        Pipeline,
+    )  # Avoid circular imports at module level
 
     if not Pipeline.objects.filter(pipeline_id=pipeline_id).exists():
         raise RuntimeError(f"Pipeline {pipeline_id} does not exist")
@@ -20,11 +22,13 @@ def _validate_pipeline_exists(pipeline_id: int) -> None:
 
 def _fetch_pipeline_steps(pipeline_id: int):
     """Returns ordered PipelineStep queryset for the given pipeline."""
-    from pipeline_factory.models import PipelineStep  # Avoid circular imports at module level
+    from pipeline_factory.models import (
+        PipelineStep,
+    )  # Avoid circular imports at module level
 
-    return PipelineStep.objects.filter(
-        pipeline_id=pipeline_id
-    ).order_by("pipeline_step_id")  # Preserve step order defined in pipeline
+    return PipelineStep.objects.filter(pipeline_id=pipeline_id).order_by(
+        "pipeline_step_id"
+    )  # Preserve step order defined in pipeline
 
 
 def build_job_steps_from_pipeline(pipeline_id: int, recording_identifier: str) -> list:
@@ -49,7 +53,9 @@ def build_job_steps_from_pipeline(pipeline_id: int, recording_identifier: str) -
     pipeline_steps = _fetch_pipeline_steps(pipeline_id)
 
     # Recording step is always first — it is the root dependency for all other steps
-    job_steps = [{"function": "recording", "identifier": recording_identifier, "depends": []}]
+    job_steps = [
+        {"function": "recording", "identifier": recording_identifier, "depends": []}
+    ]
 
     # Append each pipeline step, using its pre-existing config_block_hash from StepConfig
     for step in pipeline_steps:
@@ -64,7 +70,9 @@ def build_job_steps_from_pipeline(pipeline_id: int, recording_identifier: str) -
     return job_steps
 
 
-def resolve_placeholder_dependencies(job_steps: list, recording_identifier: str) -> list:
+def resolve_placeholder_dependencies(
+    job_steps: list, recording_identifier: str
+) -> list:
     """
     Resolves placeholder dependency references to real config_block_hash identifiers.
     Replaces the special '_RECORDING_' and 'recording' string placeholders with the
@@ -83,10 +91,15 @@ def resolve_placeholder_dependencies(job_steps: list, recording_identifier: str)
 
         resolved = []
         for dep in job_step["depends"]:
-            if dep in ("_RECORDING_", "recording"):  # Recording placeholder — resolve to real hash
+            if dep in (
+                "_RECORDING_",
+                "recording",
+            ):  # Recording placeholder — resolve to real hash
                 resolved.append(recording_identifier)
             else:
-                resolved.append(dep)  # Already a real identifier — pass through unchanged
+                resolved.append(
+                    dep
+                )  # Already a real identifier — pass through unchanged
         job_step["depends"] = resolved
 
     return job_steps
@@ -130,13 +143,21 @@ class JobCreationLog(models.Model):
         blank=True,
     )
     pipeline_id = models.IntegerField()  # ID of the pipeline selected for this job
-    recording_config = models.JSONField()  # Recording configuration submitted by the researcher
-    job_env_preset = models.JSONField()  # Environment preset submitted by the researcher
-    created_at = models.DateTimeField(auto_now_add=True)  # Timestamp set automatically on creation
+    recording_config = (
+        models.JSONField()
+    )  # Recording configuration submitted by the researcher
+    job_env_preset = (
+        models.JSONField()
+    )  # Environment preset submitted by the researcher
+    created_at = models.DateTimeField(
+        auto_now_add=True
+    )  # Timestamp set automatically on creation
     status = models.CharField(
         max_length=20, choices=LOG_STATUS_CHOICES, default="pending"
     )  # Outcome of the job creation attempt
-    error_message = models.TextField(null=True, blank=True)  # Populated only when status is 'failed'
+    error_message = models.TextField(
+        null=True, blank=True
+    )  # Populated only when status is 'failed'
 
     class Meta:
         db_table = "jobs_jobcreationlog"

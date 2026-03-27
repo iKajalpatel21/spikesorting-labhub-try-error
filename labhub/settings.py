@@ -44,9 +44,8 @@ INSTALLED_APPS = [
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        # "rest_framework.authentication.TokenAuthentication",  # ← ADD THIS
-        # "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
     ],
 }
 
@@ -155,16 +154,26 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",  # Default Django authentication
-    "labhub.backends.FreeNASBackend",  # Only NAS authentication
+    "labhub.backends.FreeNASBackend",  # NAS database authentication
 ]
 
 MEDIA_ROOT = BASE_DIR / "media"
 MEDIA_URL = "/media/"
 
-# CORS — allow React dev server during development
+# Directories on the server that are scanned for .bin and .prb/.json data files.
+# Override this in a local settings file or environment to point at your actual data paths.
+_DEFAULT_DATA_DIRS = ",".join([
+    str(BASE_DIR / "experiments"),
+    str(BASE_DIR / "experiments" / "probes"),
+])
+DATA_DIRS = os.environ.get("DATA_DIRS", _DEFAULT_DATA_DIRS).split(",")
+
+# CORS — React is built via `npm run build` and served by Django on port 8000.
+# No separate React dev server (port 3000) is used. Add origins here only if
+# an external client needs to call the API.
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+    "http://localhost:8000",
+    "http://127.0.0.1:8000",
 ]
 
 # Enable corsheaders only if the package is installed. This avoids import-time

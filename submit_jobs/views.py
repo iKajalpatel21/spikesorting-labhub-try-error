@@ -1,8 +1,11 @@
+import os
+
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.conf import settings
 
 from job_queue.models import Job, get_or_create_step_configs, create_a_job
 from .models import (
@@ -319,3 +322,104 @@ def get_all_jobs(request):
         status: Filter by job status (pending, fetched, running, finished, failed)
     """
     return get_all_jobs_logic(request.query_params.get("status"))
+
+
+# ============================================================================
+# Server File Browser Endpoint
+# ============================================================================
+
+DATA_FILE_EXTENSIONS = {".bin", ".dat", ".data", ".prb", ".json"}
+
+
+def _is_safe_path(requested_path, allowed_roots):
+    """Return True only if requested_path is inside one of the allowed root directories."""
+    requested = os.path.realpath(requested_path)
+    return any(
+        requested.startswith(os.path.realpath(root.strip()) + os.sep)
+        or requested == os.path.realpath(root.strip())
+        for root in allowed_roots
+    )
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def browse_data_files(request):
+    """
+    GET: List the immediate contents of a server directory for file browsing.
+
+    Query params:
+        path: Directory to list. If omitted, lists the DATA_DIRS roots.
+
+    Response:
+        {
+          "current_path": "/data/recordings/2024",
+          "parents": ["/data/recordings", "/data"],   // breadcrumb chain back to a DATA_DIR root
+          "dirs":  [{"name": "session01", "path": "/data/recordings/2024/session01"}, ...],
+          "files": [{"name": "rec.bin",   "path": "/data/recordings/2024/rec.bin",
+                     "ext": ".bin",       "size_mb": 1234.5}, ...]
+        }
+    """
+    data_dirs = [d.strip() for d in getattr(settings, "DATA_DIRS", []) if d.strip()]
+    requested = request.query_params.get("path", "").strip()
+
+    # No path → return the configured root directories as the top level
+    if not requested:
+        roots = []
+        for d in data_dirs:
+            roots.append({"name": os.path.basename(d) or d, "path": d})
+        return Response(
+            {"current_path": None, "parents": [], "dirs": roots, "files": []},
+            status=status.HTTP_200_OK,
+        )
+
+    # Security: reject any path that escapes the allowed roots
+    if not _is_safe_path(requested, data_dirs):
+        return Response(
+            {"error": "Path is outside the allowed data directories."},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    if not os.path.isdir(requested):
+        return Response(
+            {"error": f"Not a directory: {requested}"},
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    dirs = []
+    files = []
+    try:
+        entries = sorted(os.scandir(requested), key=lambda e: (not e.is_dir(), e.name.lower()))
+        for entry in entries:
+            if entry.is_dir(follow_symlinks=False):
+                dirs.append({"name": entry.name, "path": entry.path})
+            elif entry.is_file(follow_symlinks=False):
+                ext = os.path.splitext(entry.name)[1].lower()
+                if ext in DATA_FILE_EXTENSIONS:
+                    try:
+                        size_mb = round(entry.stat().st_size / (1024 * 1024), 2)
+                    except OSError:
+                        size_mb = None
+                    files.append({"name": entry.name, "path": entry.path, "ext": ext, "size_mb": size_mb})
+    except PermissionError:
+        return Response(
+            {"error": f"Permission denied reading {requested}"},
+            status=status.HTTP_403_FORBIDDEN,
+        )
+
+    # Build breadcrumb: walk up until we hit a DATA_DIR root
+    parents = []
+    cursor = os.path.dirname(requested)
+    allowed_reals = {os.path.realpath(d) for d in data_dirs}
+    while cursor and os.path.realpath(cursor) not in allowed_reals and cursor != os.path.dirname(cursor):
+        parents.insert(0, {"name": os.path.basename(cursor) or cursor, "path": cursor})
+        cursor = os.path.dirname(cursor)
+
+    return Response(
+        {
+            "current_path": requested,
+            "parents": parents,
+            "dirs": dirs,
+            "files": files,
+        },
+        status=status.HTTP_200_OK,
+    )
