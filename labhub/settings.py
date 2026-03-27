@@ -45,7 +45,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
-        "rest_framework.authentication.SessionAuthentication",  # Optional: This needs to be commented out if you want to use only token authentication and not session authentication.
+        # "rest_framework.authentication.SessionAuthentication",  # Optional: This needs to be commented out if you want to use only token authentication and not session authentication.
     ],
 }
 
