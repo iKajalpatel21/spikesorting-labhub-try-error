@@ -1,42 +1,15 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useWizard } from '../../context/WizardContext';
+import FileBrowser from '../../components/FileBrowser';
 import '../../styles/WizardSteps.css';
 
 export default function StepRecording() {
     const { wizardState, updateRecording } = useWizard();
-    const binInputRef = useRef();
-    const probeInputRef = useRef();
     const recording = wizardState.recording;
+
+    // Which browser is open: null | 'bin' | 'probe'
+    const [browserOpen, setBrowserOpen] = useState(null);
     const [removeChannels, setRemoveChannels] = useState([]);
-
-    const validateJsonFile = (file) => {
-        const fileName = file.name.toLowerCase();
-        return fileName.endsWith('.json');
-    };
-
-    const handleBinFileSelect = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            if (!validateJsonFile(file)) {
-                alert('Please select a JSON file (.json extension required)');
-                e.target.value = '';
-                return;
-            }
-            updateRecording({ binFile: file });
-        }
-    };
-
-    const handleProbeFileSelect = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            if (!validateJsonFile(file)) {
-                alert('Please select a JSON file (.json extension required)');
-                e.target.value = '';
-                return;
-            }
-            updateRecording({ probeFile: file });
-        }
-    };
 
     const handleParameterChange = (field, value) => {
         if (field === 'numChannels') {
@@ -67,26 +40,36 @@ export default function StepRecording() {
             <h2>Step 1: Create New Recording</h2>
 
             <div className="recording-form">
-                {/* Binfile */}
+
+                {/* Binfile picker */}
                 <div className="form-group recording-form-group">
-                    <label>Binfile (JSON):</label>
-                    <input
-                        ref={binInputRef}
-                        type="file"
-                        accept="application/json,.json"
-                        onChange={handleBinFileSelect}
-                        className="file-input-hidden"
-                        style={{ display: 'none' }}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => binInputRef.current?.click()}
-                        className="file-upload-btn"
-                    >
-                        Choose Binfile (JSON)
-                    </button>
+                    <label>Binfile (.bin / .dat / .data):</label>
+                    <div className="fb-field">
+                        <span className="fb-field-value" title={recording.binFile || ''}>
+                            {recording.binFile
+                                ? recording.binFile.split('/').pop()
+                                : <span className="fb-field-placeholder">No file selected</span>}
+                        </span>
+                        <button
+                            type="button"
+                            className="fb-browse-btn"
+                            onClick={() => setBrowserOpen('bin')}
+                        >
+                            Browse server…
+                        </button>
+                        {recording.binFile && (
+                            <button
+                                type="button"
+                                className="fb-clear-btn"
+                                onClick={() => updateRecording({ binFile: null })}
+                                title="Clear selection"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
                     {recording.binFile && (
-                        <div className="file-info">{recording.binFile.name}</div>
+                        <div className="fb-field-path">{recording.binFile}</div>
                     )}
                 </div>
 
@@ -136,26 +119,35 @@ export default function StepRecording() {
                     />
                 </div>
 
-                {/* Probe */}
+                {/* Probe picker */}
                 <div className="form-group recording-form-group">
-                    <label>Probe (JSON):</label>
-                    <input
-                        ref={probeInputRef}
-                        type="file"
-                        accept="application/json,.json"
-                        onChange={handleProbeFileSelect}
-                        className="file-input-hidden"
-                        style={{ display: 'none' }}
-                    />
-                    <button
-                        type="button"
-                        onClick={() => probeInputRef.current?.click()}
-                        className="file-upload-btn"
-                    >
-                        Choose Probe (JSON)
-                    </button>
+                    <label>Probe file (.prb / .json):</label>
+                    <div className="fb-field">
+                        <span className="fb-field-value" title={recording.probeFile || ''}>
+                            {recording.probeFile
+                                ? recording.probeFile.split('/').pop()
+                                : <span className="fb-field-placeholder">No file selected</span>}
+                        </span>
+                        <button
+                            type="button"
+                            className="fb-browse-btn"
+                            onClick={() => setBrowserOpen('probe')}
+                        >
+                            Browse server…
+                        </button>
+                        {recording.probeFile && (
+                            <button
+                                type="button"
+                                className="fb-clear-btn"
+                                onClick={() => updateRecording({ probeFile: null })}
+                                title="Clear selection"
+                            >
+                                ✕
+                            </button>
+                        )}
+                    </div>
                     {recording.probeFile && (
-                        <div className="file-info">{recording.probeFile.name}</div>
+                        <div className="fb-field-path">{recording.probeFile}</div>
                     )}
                 </div>
 
@@ -205,6 +197,24 @@ export default function StepRecording() {
                     )}
                 </div>
             </div>
+
+            {/* File browser modals */}
+            {browserOpen === 'bin' && (
+                <FileBrowser
+                    title="Select recording file (.bin / .dat / .data)"
+                    accept={['.bin', '.dat', '.data']}
+                    onSelect={(f) => updateRecording({ binFile: f.path })}
+                    onClose={() => setBrowserOpen(null)}
+                />
+            )}
+            {browserOpen === 'probe' && (
+                <FileBrowser
+                    title="Select probe file (.json)"
+                    accept={['.json']}
+                    onSelect={(f) => updateRecording({ probeFile: f.path })}
+                    onClose={() => setBrowserOpen(null)}
+                />
+            )}
         </div>
     );
 }

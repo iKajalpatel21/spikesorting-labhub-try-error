@@ -552,6 +552,92 @@
     cursor: not-allowed;
 }
 
+/* ---- Server file browser field ---- */
+.fb-field {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 6px 10px;
+    background: #f9f9f9;
+}
+
+.fb-field-value {
+    flex: 1;
+    font-size: 0.9rem;
+    color: #1e1e1e;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.fb-field-placeholder {
+    color: #aaa;
+    font-style: italic;
+}
+
+.fb-field-path {
+    font-size: 0.75rem;
+    color: #888;
+    margin-top: 4px;
+    word-break: break-all;
+}
+
+.fb-browse-btn {
+    flex-shrink: 0;
+    background: #8fa06e;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 5px 12px;
+    font-size: 0.82rem;
+    cursor: pointer;
+    font-family: inherit;
+}
+
+.fb-browse-btn:hover {
+    background: #7a8c5e;
+}
+
+.fb-clear-btn {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 2px 4px;
+    border-radius: 3px;
+}
+
+.fb-clear-btn:hover {
+    background: #f0e0e0;
+    color: #b44;
+}
+
+.files-loading {
+    font-size: 0.85rem;
+    color: #888;
+    padding: 8px 0;
+}
+
+.files-empty {
+    font-size: 0.8rem;
+    color: #aaa;
+    padding: 4px 0;
+}
+
+.files-error-banner {
+    background: #fff3cd;
+    border: 1px solid #ffc107;
+    border-radius: 4px;
+    padding: 10px 14px;
+    margin-bottom: 16px;
+    font-size: 0.85rem;
+    color: #856404;
+}
+
 @media (max-width: 768px) {
     .form-row {
         grid-template-columns: 1fr;
