@@ -20,7 +20,7 @@ def _get_nas_admin_credentials():
     Called once at startup — raises SystemExit (fatal) if the db is unreachable.
     """
     try:
-        conn = sqlite3.connect(f"file:{NAS_DB_PATH}?mode=ro", uri=True)
+        conn = sqlite3.connect(NAS_DB_PATH)
         cursor = conn.cursor()
         cursor.execute(
             "SELECT bsdusr_username, bsdusr_unixhash " "FROM account_bsdusers LIMIT 1"
@@ -50,7 +50,7 @@ _get_nas_admin_credentials()
 class FreeNASBackend(BaseBackend):
     def authenticate(self, request, username=None, password=None):
         try:
-            conn = sqlite3.connect(f"file:{NAS_DB_PATH}?mode=ro", uri=True)
+            conn = sqlite3.connect(NAS_DB_PATH)
             cursor = conn.cursor()
             cursor.execute(
                 "SELECT bsdusr_username, bsdusr_unixhash "
