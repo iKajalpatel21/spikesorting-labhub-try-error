@@ -28,7 +28,7 @@ class FreeNASBackend(BaseBackend):
             result = cursor.fetchone()
             conn.close()
         except sqlite3.OperationalError as e:
-            print(f"NAS database error during authentication: {e}", file=sys.stderr)
+            print(f"NAS database error during authentication: {e} | path={NAS_DB_PATH}", file=sys.stderr)
             return None
 
         if result is None:
