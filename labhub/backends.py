@@ -1,5 +1,4 @@
 import os
-import sys
 import sqlite3
 from pathlib import Path
 
@@ -9,42 +8,9 @@ from django.contrib.auth.backends import BaseBackend
 from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 
-# BASE_DIR = project root (two levels up from this file: labhub/backends.py → labhub/ → project root)
+# Absolute path to the NAS database, overridable via environment variable
 _PROJECT_ROOT = Path(__file__).resolve().parent.parent
 NAS_DB_PATH = os.environ.get("NAS_DB_PATH", str(_PROJECT_ROOT / "NAS_Database" / "freenas-v1.db"))
-
-
-def _get_nas_admin_credentials():
-    """
-    Read admin credentials from the NAS database.
-    Called once at startup — raises SystemExit (fatal) if the db is unreachable.
-    """
-    try:
-        conn = sqlite3.connect(NAS_DB_PATH)
-        cursor = conn.cursor()
-        cursor.execute(
-            "SELECT bsdusr_username, bsdusr_unixhash " "FROM account_bsdusers LIMIT 1"
-        )
-        result = cursor.fetchone()
-        conn.close()
-        if not result:
-            print(
-                f"FATAL: NAS database at {NAS_DB_PATH} has no admin users.",
-                file=sys.stderr,
-            )
-            sys.exit(1)
-        return result
-    except sqlite3.OperationalError as e:
-        print(
-            f"FATAL: Cannot read admin credentials from NAS database "
-            f"at {NAS_DB_PATH}: {e}",
-            file=sys.stderr,
-        )
-        sys.exit(1)
-
-
-# Fail fast at import time if the NAS db is not accessible
-_get_nas_admin_credentials()
 
 
 class FreeNASBackend(BaseBackend):
