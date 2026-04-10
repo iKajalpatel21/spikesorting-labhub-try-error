@@ -7,6 +7,27 @@ from rest_framework.permissions import IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.conf import settings
 
+
+def strip_nas_root(path: str) -> str:
+    """
+    Convert an absolute server path to a path relative to NAS_ROOT.
+
+    The worker's sslh-cli prepends its own NAS mount path to every file path
+    it receives, so paths in the database must be relative to the NAS root.
+
+    Example:
+        NAS_ROOT = "/mnt/nas"
+        Input:  "/mnt/nas/experiments/mouse1/rec.bin"
+        Output: "experiments/mouse1/rec.bin"
+
+    If NAS_ROOT is not set or the path does not start with it, the path is
+    returned unchanged (safe fallback for local dev).
+    """
+    nas_root = getattr(settings, "NAS_ROOT", "").rstrip("/")
+    if nas_root and path and path.startswith(nas_root + "/"):
+        return path[len(nas_root) + 1:]
+    return path
+
 from job_queue.models import Job, get_or_create_step_configs, create_a_job
 from .models import (
     build_job_steps_from_pipeline,
@@ -76,12 +97,12 @@ def create_sorting_job_logic(validated_data: dict) -> Response:
     """
     raw = dict(validated_data["recording"])  # Convert OrderedDict to plain dict for JSON serialization
     recording = {
-        "binfile":            raw["binfile"],
+        "binfile":            strip_nas_root(raw["binfile"]),
         "sampling rate":      raw["sampling_rate"],
         "number of channels": raw["num_channels"],
         "gain_to_uV":         raw["gain_to_uV"],
         "offset_to_uV":       raw["offset_to_uV"],
-        "probe":              raw.get("probe", ""),
+        "probe":              strip_nas_root(raw.get("probe", "")),
         "bad_channels":       raw.get("bad_channels", []),
     }
     pipeline_id = validated_data["pipeline_id"]
