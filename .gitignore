@@ -27,13 +27,16 @@ local_settings.py
 db.sqlite3
 db.sqlite3-journal
 
-# SSL/TLS Certificates (keep locally, don't commit)
+# SSL/TLS Certificates — never commit private keys
 cert.pem
 key.pem
+cert.crt
+cert.key
 
 # Build artifacts
 node_modules/
 static/
+staticfiles/
 my-app/build/
 .qodo/
 
@@ -62,6 +65,3 @@ venv.bak/
 ehthumbs.db
 Thumbs.db
 
-# SSL certificates (optional - you might want to keep these for local dev)
-# cert.pem
-# key.pem

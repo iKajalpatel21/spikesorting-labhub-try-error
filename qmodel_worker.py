@@ -1,6 +1,7 @@
 import os
 import time
 import requests
+import urllib3
 from datetime import datetime
 import json
 import logging
@@ -14,10 +15,27 @@ logging.basicConfig(
 # -----------------------------------------------------------------------------
 # 1. Worker Configuration
 # -----------------------------------------------------------------------------
+# Set BASE_URL to https://localhost:8443 when running Gunicorn with SSL.
+# Defaults to plain HTTP for local development with manage.py runserver.
+BASE_URL = os.environ.get("LABHUB_BASE_URL", "http://localhost:8000")
+
 # Separate endpoints: one for fetching the next job, one for updating status
-API_URL = "http://localhost:8000/job-queue/next-job/"
-UPDATE_STATUS_URL = "http://localhost:8000/job-queue/update-status/"
+API_URL = f"{BASE_URL}/job-queue/next-job/"
+UPDATE_STATUS_URL = f"{BASE_URL}/job-queue/update-status/"
 POLLING_INTERVAL_SECONDS = 5
+
+# SSL verification.
+# - True  (default): verify the server certificate (use for real certs / Let's Encrypt)
+# - False           : skip verification (safe for self-signed localhost certs only)
+# - "/path/to/cert.pem": path to the CA bundle for a self-signed cert
+_ssl_verify_env = os.environ.get("LABHUB_SSL_VERIFY", "true").lower()
+if _ssl_verify_env == "false":
+    SSL_VERIFY = False
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+elif _ssl_verify_env == "true":
+    SSL_VERIFY = True
+else:
+    SSL_VERIFY = _ssl_verify_env  # treat as file path to CA bundle
 
 # Security token from the user for API authentication
 TOKEN = "7043591ad29f88607f2b109bfba5044eac892785"
@@ -48,7 +66,7 @@ def update_the_status(job_id, status, step_id=None):
 
     try:
         # Use the same API_URL for POST requests
-        response = requests.post(UPDATE_STATUS_URL, json=payload, headers=HEADERS)
+        response = requests.post(UPDATE_STATUS_URL, json=payload, headers=HEADERS, verify=SSL_VERIFY)
         response.raise_for_status()  # Raise an exception for bad status codes (4xx or 5xx)
 
         # Log the appropriate success message based on whether we're updating a job or step
@@ -77,7 +95,7 @@ def run_worker():
     while True:
         try:
             # Send a GET request to the API to fetch a pending job
-            response = requests.get(API_URL, headers=HEADERS)
+            response = requests.get(API_URL, headers=HEADERS, verify=SSL_VERIFY)
 
             # Check if the response was successful
             if response.status_code == 200:

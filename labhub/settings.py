@@ -51,6 +51,7 @@ REST_FRAMEWORK = {
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # serves static files via Gunicorn
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -136,16 +137,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = "/static/"
-# In development, Django serves static files from STATICFILES_DIRS
-# In production, use collectstatic to gather files to STATIC_ROOT
-if DEBUG:
-    STATICFILES_DIRS = [
-        BASE_DIR / "static",
-        BASE_DIR / "my-app" / "build",
-        BASE_DIR / "labhub" / "templates" / "static",
-    ]
-else:
-    STATIC_ROOT = BASE_DIR / "staticfiles"
+# WhiteNoise serves from STATIC_ROOT in all modes (dev and production).
+# collectstatic copies files from STATICFILES_DIRS → STATIC_ROOT.
+STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "my-app" / "build",
+    BASE_DIR / "labhub" / "templates" / "static",
+]
+# Compress and cache static files (adds .gz / .br alongside each file)
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -176,7 +176,40 @@ DATA_DIRS = os.environ.get("DATA_DIRS", _DEFAULT_DATA_DIRS).split(",")
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:8000",
     "http://127.0.0.1:8000",
+    "https://localhost:8443",
+    "https://127.0.0.1:8443",
 ]
+
+# -----------------------------------------------------------------------------
+# SSL / HTTPS security settings
+# Only active in production (DEBUG=False).  In development Django's runserver
+# does not support SSL and these headers would break the plain-HTTP workflow.
+# -----------------------------------------------------------------------------
+if not DEBUG:
+    # Redirect all plain-HTTP requests to HTTPS at the application layer.
+    # When Gunicorn/Nginx terminates SSL upstream, set this to False and use
+    # SECURE_PROXY_SSL_HEADER instead so Django trusts the forwarded protocol.
+    SECURE_SSL_REDIRECT = True
+
+    # Tell the browser: "only talk to this site over HTTPS for the next hour"
+    # Increase max_age to 31536000 (1 year) once HTTPS is proven stable.
+    SECURE_HSTS_SECONDS = 3600
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = False  # Flip to True only after testing HSTS fully
+
+    # Cookies must only be sent over HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+
+    # Prevent the browser from MIME-sniffing the content type
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+
+    # Enable the browser's XSS filter
+    SECURE_BROWSER_XSS_FILTER = True
+
+    # If Gunicorn sits behind a reverse proxy (e.g., Nginx) that sets this
+    # header, Django will trust the forwarded protocol rather than the raw one.
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 
 # Enable corsheaders only if the package is installed. This avoids import-time
 # errors in environments where django-cors-headers isn't available.

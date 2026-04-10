@@ -193,16 +193,23 @@ fi
 # =============================================================================
 print_status "Checking SSL certificates..."
 
-if [ ! -f "cert.pem" ] || [ ! -f "key.pem" ]; then
-    print_status "Generating SSL certificates for HTTPS..."
-    openssl req -x509 -newkey rsa:4096 -keyout key.pem -out cert.pem -days 365 -nodes \
-        -subj "/C=US/ST=CA/L=San Francisco/O=Development/CN=localhost" || {
+if [ ! -f "cert.crt" ] || [ ! -f "cert.key" ]; then
+    print_status "Generating self-signed SSL certificate..."
+    # Use the machine's actual IP/hostname as CN so clients can verify it.
+    # SAN (subjectAltName) covers both the hostname and IP address.
+    SERVER_HOST=$(hostname -f 2>/dev/null || hostname)
+    SERVER_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
+    print_status "Certificate CN: ${SERVER_HOST} (IP: ${SERVER_IP})"
+
+    openssl req -x509 -newkey rsa:4096 -keyout cert.key -out cert.crt -days 365 -nodes \
+        -subj "/CN=${SERVER_HOST}" \
+        -addext "subjectAltName=DNS:${SERVER_HOST},IP:${SERVER_IP},DNS:localhost,IP:127.0.0.1" || {
         print_error "Failed to generate SSL certificates"
         exit 1
     }
-    print_success "SSL certificates generated."
+    print_success "SSL certificate generated: cert.crt / cert.key (CN=${SERVER_HOST})"
 else
-    print_success "SSL certificates already exist."
+    print_success "SSL certificates already exist (cert.crt / cert.key)."
 fi
 
 # =============================================================================
@@ -238,21 +245,22 @@ case $REPLY in
         ;;
     2)
         print_status "Starting Gunicorn HTTP server..."
-        gunicorn --bind 127.0.0.1:8000 labhub.wsgi:application
+        gunicorn -c gunicorn.conf.py labhub.wsgi:application
         ;;
     3)
-        print_status "Starting Gunicorn HTTPS server..."
-        gunicorn --bind 127.0.0.1:8443 \
-                 --certfile=cert.pem \
-                 --keyfile=key.pem \
+        print_status "Starting Gunicorn HTTPS server (port 443)..."
+        gunicorn -c gunicorn.conf.py \
+                 --certfile=cert.crt \
+                 --keyfile=cert.key \
+                 -b 0.0.0.0:443 \
                  labhub.wsgi:application
         ;;
     4)
         print_success "Setup complete. You can manually start the server when ready."
         echo
         echo "To start the development server: python manage.py runserver"
-        echo "To start Gunicorn HTTP: gunicorn --bind 127.0.0.1:8000 labhub.wsgi:application"
-        echo "To start Gunicorn HTTPS: gunicorn --bind 127.0.0.1:8443 --certfile=cert.pem --keyfile=key.pem labhub.wsgi:application"
+        echo "To start Gunicorn HTTP:  gunicorn -c gunicorn.conf.py labhub.wsgi:application"
+        echo "To start Gunicorn HTTPS: gunicorn -c gunicorn.conf.py --certfile=cert.crt --keyfile=cert.key -b 0.0.0.0:443 labhub.wsgi:application"
         echo "To start worker: python qmodel_worker.py"
         ;;
     5)
@@ -276,10 +284,12 @@ echo "Database: SQLite (db.sqlite3)"
 echo "SSL Certificates: cert.pem, key.pem"
 echo
 echo "=== Usage Instructions ==="
-echo "• Access Django admin: http://localhost:8000/admin/ (or https://localhost:8443/admin/)"
-echo "• Submit jobs: http://localhost:8000/qmodel/submit/ (or https://localhost:8443/qmodel/submit/)"
-echo "• API endpoint: http://localhost:8000/qmodel/getthenextjob/ (or https://localhost:8443/qmodel/getthenextjob/)"
-echo "• Worker script: python qmodel_worker.py"
+echo "• HTTP  — Django admin:  http://localhost:8000/admin/"
+echo "• HTTPS — Django admin:  https://localhost:443/admin/"
+echo "• HTTP  — Worker fetch:  http://localhost:8000/job-queue/next-job/"
+echo "• HTTPS — Worker fetch:  https://localhost:443/job-queue/next-job/"
+echo "• Worker (HTTP):  python qmodel_worker.py"
+echo "• Worker (HTTPS): LABHUB_BASE_URL=https://localhost LABHUB_SSL_VERIFY=false python qmodel_worker.py"
 echo
 echo "=== Multiple Terminal Setup ==="
 echo "Terminal 1 (Server): ./deploy.sh (choose option 2 or 3)"

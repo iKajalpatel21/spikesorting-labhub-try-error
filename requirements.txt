@@ -5,6 +5,7 @@ psycopg2-binary>=2.9.7
 
 # Production server
 gunicorn>=21.2.0
+whitenoise>=6.6.0
 
 # Core worker dependencies
 requests>=2.31.0
