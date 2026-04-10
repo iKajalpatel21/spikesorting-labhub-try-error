@@ -31,6 +31,19 @@ class JobViewSet(viewsets.ModelViewSet):
 # ============================================================================
 
 
+# Endpoint: update_status (POST only)
+# Dedicated endpoint for the worker to report job/step status changes
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def update_status(request: HttpRequest):
+    """
+    Worker API Endpoint - Update job or job step status.
+
+    POST: { "job_id": "...", "status": "...", "step_id": "..." (optional) }
+    """
+    return next_job_post_logic(request)
+
+
 def get_job() -> dict:
     job_to_process = get_next_job_id()
     if job_to_process is None:

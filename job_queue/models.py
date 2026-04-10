@@ -8,7 +8,7 @@ JOB_STATUS_CHOICES = [
     ("pending", "Pending"),
     ("fetched", "Fetched"),
     ("running", "Running"),
-    ("finished", "Finished"),
+    ("completed", "Completed"),
     ("failed", "Failed"),
 ]
 
