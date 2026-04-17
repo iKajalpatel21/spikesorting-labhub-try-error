@@ -30,12 +30,12 @@ export default function StepReview({ onComplete }) {
             const payload = {
                 pipeline_id: selectedPipeline,
                 recording: {
-                    binfile: recording.binFile?.name || '/local/rth/recording.dat',
+                    binfile: recording.binFile || '/local/rth/recording.dat',
                     sampling_rate: parseInt(recording.samplingRate),
                     num_channels: parseInt(recording.numChannels),
                     gain_to_uV: parseFloat(recording.gainToMicroVolts),
                     offset_to_uV: parseFloat(recording.offsetToMicroVolts),
-                    probe: recording.probeFile?.name || '/local/probes/probe.json',
+                    probe: recording.probeFile || '/local/probes/probe.json',
                     remove_channels: recording.removeChannels.map(ch => parseInt(ch)),
                     bad_channels: recording.badChannels.map(ch => parseInt(ch)),
                 },
@@ -90,13 +90,13 @@ export default function StepReview({ onComplete }) {
                         {recording.binFile && (
                             <div className="review-item">
                                 <span className="label">Bin File:</span>
-                                <span className="value">{recording.binFile.name}</span>
+                                <span className="value">{recording.binFile}</span>
                             </div>
                         )}
                         {recording.probeFile && (
                             <div className="review-item">
                                 <span className="label">Probe File:</span>
-                                <span className="value">{recording.probeFile.name}</span>
+                                <span className="value">{recording.probeFile}</span>
                             </div>
                         )}
                         <div className="review-item">
