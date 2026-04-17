@@ -103,6 +103,7 @@ def create_sorting_job_logic(validated_data: dict) -> Response:
         "gain_to_uV":         raw["gain_to_uV"],
         "offset_to_uV":       raw["offset_to_uV"],
         "probe":              strip_nas_root(raw.get("probe", "")),
+        "remove_channels":    raw.get("remove_channels", []),
         "bad_channels":       raw.get("bad_channels", []),
     }
     pipeline_id = validated_data["pipeline_id"]

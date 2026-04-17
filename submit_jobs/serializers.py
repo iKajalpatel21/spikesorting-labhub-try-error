@@ -16,6 +16,9 @@ class RecordingConfigSerializer(serializers.Serializer):
     gain_to_uV = serializers.FloatField(required=True)
     offset_to_uV = serializers.FloatField(required=True)
     probe = serializers.CharField(required=False, allow_blank=True)
+    remove_channels = serializers.ListField(
+        child=serializers.IntegerField(), required=False, default=list
+    )
     bad_channels = serializers.ListField(
         child=serializers.IntegerField(), required=False, default=list
     )
