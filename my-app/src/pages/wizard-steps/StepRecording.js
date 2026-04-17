@@ -9,8 +9,6 @@ export default function StepRecording() {
 
     // Which browser is open: null | 'bin' | 'probe'
     const [browserOpen, setBrowserOpen] = useState(null);
-    const [removeChannels, setRemoveChannels] = useState([]);
-
     const handleParameterChange = (field, value) => {
         if (field === 'numChannels') {
             const intValue = parseInt(value, 10);
@@ -22,10 +20,10 @@ export default function StepRecording() {
     };
 
     const handleRemoveChannelToggle = (channel) => {
-        const updated = removeChannels.includes(channel)
-            ? removeChannels.filter(c => c !== channel)
-            : [...removeChannels, channel];
-        setRemoveChannels(updated);
+        const updated = recording.removeChannels.includes(channel)
+            ? recording.removeChannels.filter(c => c !== channel)
+            : [...recording.removeChannels, channel];
+        updateRecording({ removeChannels: updated });
     };
 
     const handleBadChannelToggle = (channel) => {
@@ -159,7 +157,7 @@ export default function StepRecording() {
                             <label key={`remove-${idx}`} className="checkbox-label">
                                 <input
                                     type="checkbox"
-                                    checked={removeChannels.includes(idx)}
+                                    checked={recording.removeChannels.includes(idx)}
                                     onChange={() => handleRemoveChannelToggle(idx)}
                                     className="checkbox-input"
                                 />
@@ -167,9 +165,9 @@ export default function StepRecording() {
                             </label>
                         ))}
                     </div>
-                    {removeChannels.length > 0 && (
+                    {recording.removeChannels.length > 0 && (
                         <div className="selected-text">
-                            Selected: {removeChannels.join(', ')}
+                            Selected: {recording.removeChannels.join(', ')}
                         </div>
                     )}
                 </div>

@@ -80,10 +80,10 @@ class JobAdmin(admin.ModelAdmin):
     mark_as_running.short_description = "Mark selected as Running"
 
     def mark_as_finished(self, request, queryset):
-        updated = queryset.update(status="finished")
-        self.message_user(request, f"{updated} job(s) marked as finished.")
+        updated = queryset.update(status="completed")
+        self.message_user(request, f"{updated} job(s) marked as completed.")
 
-    mark_as_finished.short_description = "Mark selected as Finished"
+    mark_as_finished.short_description = "Mark selected as Completed"
 
     def mark_as_failed(self, request, queryset):
         updated = queryset.update(status="failed")

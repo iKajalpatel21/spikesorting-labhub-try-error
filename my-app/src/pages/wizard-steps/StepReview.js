@@ -36,6 +36,7 @@ export default function StepReview({ onComplete }) {
                     gain_to_uV: parseFloat(recording.gainToMicroVolts),
                     offset_to_uV: parseFloat(recording.offsetToMicroVolts),
                     probe: recording.probeFile?.name || '/local/probes/probe.json',
+                    remove_channels: recording.removeChannels.map(ch => parseInt(ch)),
                     bad_channels: recording.badChannels.map(ch => parseInt(ch)),
                 },
                 environment: jobEnvironment?.environment || "local"
@@ -114,6 +115,12 @@ export default function StepReview({ onComplete }) {
                             <span className="label">Offset to µV:</span>
                             <span className="value">{recording.offsetToMicroVolts}</span>
                         </div>
+                        {recording.removeChannels.length > 0 && (
+                            <div className="review-item">
+                                <span className="label">Remove Channels:</span>
+                                <span className="value">{recording.removeChannels.join(', ')}</span>
+                            </div>
+                        )}
                         {recording.badChannels.length > 0 && (
                             <div className="review-item">
                                 <span className="label">Bad Channels:</span>
