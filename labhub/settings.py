@@ -170,11 +170,11 @@ _DEFAULT_DATA_DIRS = ",".join(
 )
 DATA_DIRS = os.environ.get("DATA_DIRS", _DEFAULT_DATA_DIRS).split(",")
 
-# NAS root — the base path the worker's sslh-cli prepends to every file path.
-# Paths stored in the DB are RELATIVE to this root.
-# On the Linux server: export NAS_ROOT=/mnt/your_nas_mount_path
-# On a local dev machine: leave unset — defaults to BASE_DIR so paths still resolve locally.
-NAS_ROOT = os.environ.get("NAS_ROOT", str(BASE_DIR))
+# NAS root — files under this path are stored as $NAS$/<relative> in the DB.
+# The worker substitutes $NAS$ with its own mount path at runtime.
+# On the Linux server: export NAS_ROOT=/path/to/nas/mount
+# Locally defaults to the experiments/ subfolder so browse-selected paths resolve correctly.
+NAS_ROOT = os.environ.get("NAS_ROOT", str(BASE_DIR / "experiments"))
 
 # CORS — React is built via `npm run build` and served by Django on port 8000.
 # No separate React dev server (port 3000) is used. Add origins here only if

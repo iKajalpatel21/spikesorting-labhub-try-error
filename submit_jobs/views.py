@@ -10,22 +10,22 @@ from django.conf import settings
 
 def strip_nas_root(path: str) -> str:
     """
-    Convert an absolute server path to a path relative to NAS_ROOT.
+    Convert an absolute server path to a $NAS$-prefixed relative path.
 
-    The worker's sslh-cli prepends its own NAS mount path to every file path
-    it receives, so paths in the database must be relative to the NAS root.
+    NAS_ROOT marks the NAS mount boundary. Paths under it are stored as
+    $NAS$/<relative> so the worker can substitute its own mount prefix.
 
     Example:
-        NAS_ROOT = "/mnt/nas"
-        Input:  "/mnt/nas/experiments/mouse1/rec.bin"
-        Output: "experiments/mouse1/rec.bin"
+        NAS_ROOT = "/mnt/nas/experiments"
+        Input:  "/mnt/nas/experiments/recordings/mouse1/rec.bin"
+        Output: "$NAS$/recordings/mouse1/rec.bin"
 
     If NAS_ROOT is not set or the path does not start with it, the path is
-    returned unchanged (safe fallback for local dev).
+    returned unchanged (safe fallback).
     """
     nas_root = getattr(settings, "NAS_ROOT", "").rstrip("/")
     if nas_root and path and path.startswith(nas_root + "/"):
-        return path[len(nas_root) + 1:]
+        return "$NAS$/" + path[len(nas_root) + 1:]
     return path
 
 from job_queue.models import Job, get_or_create_step_configs, create_a_job
