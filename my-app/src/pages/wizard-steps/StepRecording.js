@@ -3,6 +3,14 @@ import { useWizard } from '../../context/WizardContext';
 import FileBrowser from '../../components/FileBrowser';
 import '../../styles/WizardSteps.css';
 
+// Convert absolute server path to $NAS$-relative path.
+// Everything under the experiments/ folder is on the NAS mount.
+function toNasPath(path) {
+    const marker = '/experiments/';
+    const idx = path.indexOf(marker);
+    return idx !== -1 ? '$NAS$/' + path.slice(idx + marker.length) : path;
+}
+
 export default function StepRecording() {
     const { wizardState, updateRecording } = useWizard();
     const recording = wizardState.recording;
@@ -201,7 +209,7 @@ export default function StepRecording() {
                 <FileBrowser
                     title="Select recording file (.bin / .dat / .data)"
                     accept={['.bin', '.dat', '.data']}
-                    onSelect={(f) => updateRecording({ binFile: f.path })}
+                    onSelect={(f) => updateRecording({ binFile: toNasPath(f.path) })}
                     onClose={() => setBrowserOpen(null)}
                 />
             )}
@@ -209,7 +217,7 @@ export default function StepRecording() {
                 <FileBrowser
                     title="Select probe file (.json)"
                     accept={['.json']}
-                    onSelect={(f) => updateRecording({ probeFile: f.path })}
+                    onSelect={(f) => updateRecording({ probeFile: toNasPath(f.path) })}
                     onClose={() => setBrowserOpen(null)}
                 />
             )}
