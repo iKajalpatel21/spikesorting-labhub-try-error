@@ -116,13 +116,18 @@ def build_job_env_config(environment: str) -> dict:
         dict: Job environment config with base_directory, job_kwargs, log_level, and REDIRECT
     """
     return {
-        "base directory": "/tmp/spike_sorting",
-        "job_kwargs": {},  # Valid keys: n_jobs, total_memory, chunk_duration, progress_bar
-        "log_level": "INFO",
+        "base directory": "$LOCAL$/$JOB_ID$",
+        "job_kwargs": {
+            "n_jobs": 40,
+            "total_memory": "128G",
+            "chunk_duration": "60s",
+            "progress_bar": True,
+        },
+        "log_level": "DEBUG",
         "REDIRECT": {
-            "log": "$NAS$/logs/job.log",
-            "out": "$NAS$/logs/job.out",
-            "err": "$NAS$/logs/job.err",
+            "log": "$NAS$/SORTING_LOGS/$JOB_ID$/run.log",
+            "out": "$NAS$/SORTING_LOGS/$JOB_ID$/run.out",
+            "err": "$NAS$/SORTING_LOGS/$JOB_ID$/run.err",
         },
     }
 
