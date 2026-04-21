@@ -151,7 +151,7 @@ export default function StepReview({ onComplete }) {
                     <div className="review-items">
                         <div className="review-item">
                             <span className="label">Base Directory:</span>
-                            <span className="value">$LOCAL$/c7df2f67-b3f6-460b</span>
+                            <span className="value">$LOCAL$/$JOB_ID$</span>
                         </div>
                         <div className="review-item">
                             <span className="label">Number of Jobs:</span>
@@ -178,15 +178,15 @@ export default function StepReview({ onComplete }) {
                         <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem', fontWeight: '600' }}>Output Redirects</h4>
                         <div className="review-item">
                             <span className="label">Log:</span>
-                            <span className="value">$NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.log</span>
+                            <span className="value">$NAS$/SORTING_LOGS/$JOB_ID$/run.log</span>
                         </div>
                         <div className="review-item">
                             <span className="label">Out:</span>
-                            <span className="value">$NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.out</span>
+                            <span className="value">$NAS$/SORTING_LOGS/$JOB_ID$/run.out</span>
                         </div>
                         <div className="review-item">
                             <span className="label">Error:</span>
-                            <span className="value">$NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.err</span>
+                            <span className="value">$NAS$/SORTING_LOGS/$JOB_ID$/run.err</span>
                         </div>
                     </div>
                 </div>

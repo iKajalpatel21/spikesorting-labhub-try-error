@@ -31,7 +31,7 @@ export default function StepEnvironment() {
                 <h3>Environment Configuration</h3>
                 <div className="env-details">
                     <div className="detail-item">
-                        <strong>Base Directory:</strong> $LOCAL$/c7df2f67-b3f6-460b
+                        <strong>Base Directory:</strong> $LOCAL$/$JOB_ID$
                     </div>
                     <div className="detail-item">
                         <strong>Number of Jobs:</strong> 40
@@ -52,13 +52,13 @@ export default function StepEnvironment() {
                 <div className="env-details" style={{ marginTop: '1rem' }}>
                     <h4 style={{ marginBottom: '0.5rem', fontSize: '0.95rem' }}>Output Redirects</h4>
                     <div className="detail-item">
-                        <strong>Log:</strong> $NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.log
+                        <strong>Log:</strong> $NAS$/SORTING_LOGS/$JOB_ID$/run.log
                     </div>
                     <div className="detail-item">
-                        <strong>Out:</strong> $NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.out
+                        <strong>Out:</strong> $NAS$/SORTING_LOGS/$JOB_ID$/run.out
                     </div>
                     <div className="detail-item">
-                        <strong>Error:</strong> $NAS$/__RECORDING_DIRECTORY__/c7df2f67-b3f6-460b/run.err
+                        <strong>Error:</strong> $NAS$/SORTING_LOGS/$JOB_ID$/run.err
                     </div>
                 </div>
             </div>
