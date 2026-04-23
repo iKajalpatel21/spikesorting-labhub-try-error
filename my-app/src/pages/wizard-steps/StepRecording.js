@@ -31,7 +31,10 @@ export default function StepRecording() {
         const updated = recording.removeChannels.includes(channel)
             ? recording.removeChannels.filter(c => c !== channel)
             : [...recording.removeChannels, channel];
-        updateRecording({ removeChannels: updated });
+        updateRecording({
+            removeChannels: updated,
+            badChannels: recording.badChannels.filter(c => !updated.includes(c)),
+        });
     };
 
     const handleBadChannelToggle = (channel) => {
@@ -184,7 +187,10 @@ export default function StepRecording() {
                 <div className="channels-section">
                     <label className="channels-label">Bad Channels</label>
                     <div className="channels-grid">
-                        {Array.from({ length: Math.max(0, recording.numChannels) }).map((_, idx) => (
+                        {Array.from({ length: Math.max(0, recording.numChannels) })
+                            .map((_, idx) => idx)
+                            .filter(idx => !recording.removeChannels.includes(idx))
+                            .map(idx => (
                             <label key={`bad-${idx}`} className="checkbox-label">
                                 <input
                                     type="checkbox"

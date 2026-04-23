@@ -9,6 +9,24 @@ export default function ManageJobs({ onBack }) {
     const [selectedJob, setSelectedJob] = useState(null);
     const [statusFilter, setStatusFilter] = useState('');
 
+    // Push a history entry when opening job details so browser back works
+    const openJobDetail = (job) => {
+        window.history.pushState({ jobDetail: true }, '');
+        setSelectedJob(job);
+    };
+
+    const closeJobDetail = () => {
+        setSelectedJob(null);
+    };
+
+    useEffect(() => {
+        const handlePopState = () => {
+            if (selectedJob) setSelectedJob(null);
+        };
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, [selectedJob]);
+
     useEffect(() => {
         fetchJobs();
         fetchStatistics();
@@ -192,7 +210,7 @@ export default function ManageJobs({ onBack }) {
         return (
             <div className="manage-jobs-container">
                 <div className="jobs-header">
-                    <button className="back-btn" onClick={() => setSelectedJob(null)}>← Back</button>
+                    <button className="back-btn" onClick={closeJobDetail}>← Back</button>
                     <h1>Job Details</h1>
                 </div>
 
@@ -239,22 +257,6 @@ export default function ManageJobs({ onBack }) {
                             </button>
                         </div>
 
-                        {/* Admin status override */}
-                        <div className="status-update-section">
-                            <h4>Update Job Status:</h4>
-                            <div className="status-buttons">
-                                {['pending','fetched','running','completed','failed'].map(s => (
-                                    <button
-                                        key={s}
-                                        className={`status-btn ${s}`}
-                                        onClick={() => updateJobStatus(selectedJob.job_id, s)}
-                                        disabled={selectedJob.status === s}
-                                    >
-                                        {getStatusIcon(s)} {s.charAt(0).toUpperCase() + s.slice(1)}
-                                    </button>
-                                ))}
-                            </div>
-                        </div>
                     </div>
 
                     <div className="detail-section">
@@ -288,19 +290,6 @@ export default function ManageJobs({ onBack }) {
                                         {step.depends_on && step.depends_on.length > 0 && (
                                             <div className="step-deps">Depends on: {step.depends_on.join(', ')}</div>
                                         )}
-                                    </div>
-                                    <div className="step-status-buttons">
-                                        {['pending','running','completed','failed'].map(s => (
-                                            <button
-                                                key={s}
-                                                className={`small-status-btn ${s}`}
-                                                onClick={() => updateStepStatus(selectedJob.job_id, step.identifier, s)}
-                                                disabled={step.status === s}
-                                                title={`Mark as ${s}`}
-                                            >
-                                                {getStatusIcon(s)}
-                                            </button>
-                                        ))}
                                     </div>
                                 </div>
                             ))}
@@ -384,7 +373,7 @@ export default function ManageJobs({ onBack }) {
                         const isPending  = job.status === 'pending';
                         const isCanceled = job.status === 'canceled';
                         return (
-                            <div key={job.job_id} className="job-card" onClick={() => setSelectedJob(job)}>
+                            <div key={job.job_id} className="job-card" onClick={() => openJobDetail(job)}>
                                 <div className="job-header">
                                     <span className="job-id-text">{job.job_id.substring(0, 8)}…</span>
                                     <span
@@ -438,7 +427,7 @@ export default function ManageJobs({ onBack }) {
                                     >
                                         ↺ Resume
                                     </button>
-                                    <button className="view-details-btn" onClick={() => setSelectedJob(job)}>
+                                    <button className="view-details-btn" onClick={() => openJobDetail(job)}>
                                         Details →
                                     </button>
                                 </div>
