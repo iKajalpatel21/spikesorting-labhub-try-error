@@ -109,7 +109,7 @@
 /* Jobs grid */
 .jobs-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
     gap: 16px;
     max-width: 1300px;
 }
@@ -120,39 +120,47 @@
     padding: 22px;
     border: 1px solid #e8e7e0;
     cursor: pointer;
-    transition: border-color 0.15s, transform 0.15s;
+    transition: border-color 0.15s, box-shadow 0.15s;
 }
 
 .job-card:hover {
     border-color: #c0bfb8;
-    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.06);
 }
 
+/* Card header: job ID + status badge */
 .job-header {
     display: flex;
     justify-content: space-between;
-    align-items: flex-start;
+    align-items: center;
     margin-bottom: 14px;
     padding-bottom: 14px;
     border-bottom: 1px solid #f0efe8;
 }
 
-.job-header h3 {
-    margin: 0;
-    color: #1e1e1e;
-    font-size: 1em;
+.job-id-text {
+    font-size: 0.95em;
     font-weight: 500;
+    color: #1e1e1e;
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    letter-spacing: -0.3px;
 }
 
 .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
     padding: 4px 10px;
     border-radius: 20px;
     color: white;
-    font-size: 0.75em;
-    font-weight: 500;
+    font-size: 0.72em;
+    font-weight: 600;
     white-space: nowrap;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
 }
 
+/* Job info rows */
 .job-info {
     margin-bottom: 14px;
 }
@@ -177,8 +185,9 @@
     text-overflow: ellipsis;
 }
 
+/* Progress */
 .job-progress {
-    margin-bottom: 14px;
+    margin-bottom: 16px;
 }
 
 .progress-label {
@@ -188,7 +197,7 @@
 }
 
 .progress-bar {
-    height: 6px;
+    height: 5px;
     background: #f0efe8;
     border-radius: 3px;
     overflow: hidden;
@@ -197,9 +206,8 @@
 
 .progress-fill {
     height: 100%;
-    background: #8fa06e;
     border-radius: 3px;
-    transition: width 0.3s ease;
+    transition: width 0.3s ease, background-color 0.3s ease;
 }
 
 .progress-text {
@@ -207,14 +215,64 @@
     color: #aaa;
 }
 
+/* Card action buttons row */
+.card-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 4px;
+}
+
+.card-action-btn {
+    flex: 1;
+    padding: 7px 6px;
+    border-radius: 8px;
+    font-size: 0.8em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+}
+
+.card-action-btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+/* Cancel button */
+.cancel-btn {
+    background: #fff0f0;
+    color: #c0392b;
+    border-color: #f5c6c6;
+}
+
+.cancel-btn:hover:not(:disabled) {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+/* Resume button */
+.resume-btn {
+    background: #f0faf3;
+    color: #1a7a3a;
+    border-color: #b8dfc5;
+}
+
+.resume-btn:hover:not(:disabled) {
+    background: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+/* View details button */
 .view-details-btn {
-    width: 100%;
-    padding: 9px;
+    flex: 1;
+    padding: 7px 6px;
     background: transparent;
     color: #666;
     border: 1px solid #d4d3cc;
     border-radius: 8px;
-    font-size: 0.85em;
+    font-size: 0.8em;
     font-weight: 500;
     cursor: pointer;
     transition: all 0.15s;
@@ -226,7 +284,7 @@
     color: #fff;
 }
 
-/* Job details */
+/* ── Job Detail View ─────────────────────────────────────────────────────── */
 .job-details {
     background: #fff;
     border-radius: 14px;
@@ -249,11 +307,10 @@
 
 .detail-section h3 {
     margin: 0 0 14px 0;
-    color: #1e1e1e;
-    font-size: 0.95em;
-    font-weight: 500;
+    font-size: 0.78em;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.8px;
     color: #aaa;
 }
 
@@ -264,6 +321,7 @@
     padding: 9px 0;
     border-bottom: 1px solid #f5f4ef;
     font-size: 0.88em;
+    align-items: center;
 }
 
 .detail-row:last-child {
@@ -280,8 +338,120 @@
     word-break: break-word;
 }
 
-.detail-row .status {
+.detail-row .mono {
+    font-family: 'SF Mono', 'Fira Code', monospace;
+    font-size: 0.95em;
+    color: #444;
+}
+
+/* Inline status with dot */
+.status-inline {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-weight: 600;
+    font-size: 0.92em;
+}
+
+.status-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+/* Cancel / Resume action row in detail */
+.action-buttons-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #f0efe8;
+}
+
+.action-btn {
+    padding: 9px 20px;
+    border-radius: 9px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+}
+
+.action-btn:disabled {
+    opacity: 0.32;
+    cursor: not-allowed;
+}
+
+.action-btn.cancel-btn {
+    background: #fff0f0;
+    color: #c0392b;
+    border-color: #f5c6c6;
+}
+
+.action-btn.cancel-btn:hover:not(:disabled) {
+    background: #dc3545;
+    border-color: #dc3545;
+    color: #fff;
+}
+
+.action-btn.resume-btn {
+    background: #f0faf3;
+    color: #1a7a3a;
+    border-color: #b8dfc5;
+}
+
+.action-btn.resume-btn:hover:not(:disabled) {
+    background: #28a745;
+    border-color: #28a745;
+    color: #fff;
+}
+
+/* Admin status override section */
+.status-update-section {
+    margin-top: 20px;
+    padding-top: 18px;
+    border-top: 1px solid #f0efe8;
+}
+
+.status-update-section h4 {
+    color: #aaa;
+    margin: 0 0 12px 0;
+    font-size: 0.75em;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    font-weight: 600;
+}
+
+.status-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.status-btn {
+    padding: 7px 14px;
+    border: 1px solid #d4d3cc;
+    background: transparent;
+    color: #555;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.82em;
     font-weight: 500;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+
+.status-btn:hover:not(:disabled) {
+    background: #1e1e1e;
+    border-color: #1e1e1e;
+    color: #fff;
+}
+
+.status-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
 }
 
 /* Steps list */
@@ -345,52 +515,6 @@
     font-size: 0.78em;
     color: #bbb;
     margin-top: 2px;
-}
-
-/* Status update buttons */
-.status-update-section {
-    margin-top: 20px;
-    padding-top: 18px;
-    border-top: 1px solid #f0efe8;
-}
-
-.status-update-section h4 {
-    color: #aaa;
-    margin: 0 0 12px 0;
-    font-size: 0.78em;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    font-weight: 500;
-}
-
-.status-buttons {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-}
-
-.status-btn {
-    padding: 7px 14px;
-    border: 1px solid #d4d3cc;
-    background: transparent;
-    color: #555;
-    border-radius: 8px;
-    cursor: pointer;
-    font-size: 0.82em;
-    font-weight: 500;
-    transition: all 0.15s;
-    white-space: nowrap;
-}
-
-.status-btn:hover:not(:disabled) {
-    background: #1e1e1e;
-    border-color: #1e1e1e;
-    color: #fff;
-}
-
-.status-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
 }
 
 /* Small step status buttons */
@@ -490,5 +614,9 @@
 
     .info-item {
         grid-template-columns: 1fr;
+    }
+
+    .card-actions {
+        flex-wrap: wrap;
     }
 }

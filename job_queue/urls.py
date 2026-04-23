@@ -1,7 +1,7 @@
 # qmodel/urls.py
 from rest_framework.routers import DefaultRouter
 from django.urls import path, include
-from .views import JobViewSet, login, update_status
+from .views import JobViewSet, login, update_status, cancel_job, resume_job
 from . import views
 
 app_name = "job_queue"
@@ -14,6 +14,8 @@ urlpatterns = [
     # path("getthenextjob/", views.get_next_job, name="get_next_job"),
     path("next-job/", views.get_next_job, name="get_next_job"),
     path("update-status/", update_status, name="update_status"),
+    path("cancel-job/", cancel_job, name="cancel_job"),
+    path("resume-job/", resume_job, name="resume_job"),
     # Authentication endpoint
     path("auth/login/", login, name="login"),
     path("", include(router.urls)),  # REST API routes

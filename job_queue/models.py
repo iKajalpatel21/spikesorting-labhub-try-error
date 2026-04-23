@@ -10,6 +10,7 @@ JOB_STATUS_CHOICES = [
     ("running", "Running"),
     ("completed", "Completed"),
     ("failed", "Failed"),
+    ("canceled", "Canceled"),
 ]
 
 # Choices for the 'status' field in JobStep model

@@ -23,20 +23,15 @@ export default function ManageJobs({ onBack }) {
                 : `/submit-jobs/list/`;
 
             const response = await fetch(url, {
-                headers: {
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                },
+                headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
             });
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch jobs');
-            }
+            if (!response.ok) throw new Error('Failed to fetch jobs');
 
             const data = await response.json();
             setJobs(data.jobs || []);
         } catch (err) {
             setError(err.message || 'Failed to load jobs');
-            console.error('Error fetching jobs:', err);
         } finally {
             setIsLoading(false);
         }
@@ -45,15 +40,9 @@ export default function ManageJobs({ onBack }) {
     const fetchStatistics = async () => {
         try {
             const response = await fetch('/submit-jobs/statistics/', {
-                headers: {
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                },
+                headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to fetch statistics');
-            }
-
+            if (!response.ok) return;
             const data = await response.json();
             setStatistics(data);
         } catch (err) {
@@ -61,127 +50,128 @@ export default function ManageJobs({ onBack }) {
         }
     };
 
-    const getStatusColor = (status) => {
-        switch (status) {
-            case 'finished':
-                return '#28a745';
-            case 'running':
-                return '#ffc107';
-            case 'pending':
-                return '#6c757d';
-            case 'fetched':
-                return '#0dcaf0';
-            case 'failed':
-                return '#dc3545';
-            default:
-                return '#6c757d';
-        }
+    const STATUS_COLORS = {
+        finished:  '#28a745',
+        completed: '#28a745',
+        running:   '#2b7de9',
+        pending:   '#e0a800',
+        fetched:   '#0dcaf0',
+        failed:    '#dc3545',
+        canceled:  '#6c757d',
     };
 
-    const getStatusIcon = (status) => {
-        switch (status) {
-            case 'finished':
-                return '✓';
-            case 'running':
-                return '⟳';
-            case 'pending':
-                return '⋯';
-            case 'fetched':
-                return '↓';
-            case 'failed':
-                return '✗';
-            default:
-                return '?';
-        }
+    const STATUS_ICONS = {
+        finished:  '✓',
+        completed: '✓',
+        running:   '⟳',
+        pending:   '⋯',
+        fetched:   '↓',
+        failed:    '✗',
+        canceled:  '⊘',
     };
+
+    const getStatusColor = (status) => STATUS_COLORS[status] || '#6c757d';
+    const getStatusIcon  = (status) => STATUS_ICONS[status]  || '?';
 
     const getProgressPercentage = (job) => {
         if (!job.step_count || job.step_count === 0) return 0;
         return Math.round((job.completed_steps / job.step_count) * 100);
     };
 
-    const formatDate = (dateString) => {
-        const date = new Date(dateString);
-        return date.toLocaleString();
-    };
+    const formatDate = (dateString) => new Date(dateString).toLocaleString();
 
     const formatRecordingConfig = (step) => {
         if (!step.config_block) return '';
         const cfg = step.config_block;
-        if (cfg.binfile) {
-            return `${cfg.binfile.split('/').pop()} (${cfg.sampling_rate}Hz)`;
-        }
+        if (cfg.binfile) return `${cfg.binfile.split('/').pop()} (${cfg.sampling_rate}Hz)`;
         return JSON.stringify(cfg).substring(0, 50) + '...';
+    };
+
+    const authHeaders = () => ({
+        'Content-Type': 'application/json',
+        'Authorization': `Token ${localStorage.getItem('token')}`,
+    });
+
+    const cancelJob = async (e, jobId) => {
+        e.stopPropagation();
+        if (!window.confirm('Cancel this job?')) return;
+        try {
+            const res = await fetch('/job-queue/cancel-job/', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({ job_id: jobId }),
+            });
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Failed to cancel job');
+            }
+            if (selectedJob?.job_id === jobId) setSelectedJob({ ...selectedJob, status: 'canceled' });
+            fetchJobs();
+            fetchStatistics();
+        } catch (err) {
+            alert(err.message);
+        }
+    };
+
+    const resumeJob = async (e, jobId) => {
+        e.stopPropagation();
+        if (!window.confirm('Resume this job?')) return;
+        try {
+            const res = await fetch('/job-queue/resume-job/', {
+                method: 'POST',
+                headers: authHeaders(),
+                body: JSON.stringify({ job_id: jobId }),
+            });
+            if (!res.ok) {
+                const err = await res.json();
+                throw new Error(err.error || 'Failed to resume job');
+            }
+            if (selectedJob?.job_id === jobId) setSelectedJob({ ...selectedJob, status: 'pending' });
+            fetchJobs();
+            fetchStatistics();
+        } catch (err) {
+            alert(err.message);
+        }
     };
 
     const updateJobStatus = async (jobId, newStatus) => {
         try {
-            const response = await fetch('/job-queue/getthenextjob/', {
+            const res = await fetch('/job-queue/update-status/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({
-                    job_id: jobId,
-                    status: newStatus,
-                }),
+                headers: authHeaders(),
+                body: JSON.stringify({ job_id: jobId, status: newStatus }),
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to update job status');
-            }
-
-            // Refresh the selected job to show updated status
-            const updatedJob = { ...selectedJob, status: newStatus };
-            setSelectedJob(updatedJob);
-
-            // Refresh jobs list
+            if (!res.ok) throw new Error('Failed to update job status');
+            setSelectedJob({ ...selectedJob, status: newStatus });
             fetchJobs();
             fetchStatistics();
         } catch (err) {
-            console.error('Error updating job status:', err);
             alert('Failed to update job status: ' + err.message);
         }
     };
 
     const updateStepStatus = async (jobId, stepId, newStatus) => {
         try {
-            const response = await fetch('/job-queue/getthenextjob/', {
+            const res = await fetch('/job-queue/update-status/', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Token ${localStorage.getItem('token')}`,
-                },
-                body: JSON.stringify({
-                    job_id: jobId,
-                    step_id: stepId,
-                    status: newStatus,
-                }),
+                headers: authHeaders(),
+                body: JSON.stringify({ job_id: jobId, step_id: stepId, status: newStatus }),
             });
-
-            if (!response.ok) {
-                throw new Error('Failed to update step status');
-            }
-
-            // Update the step in selectedJob
-            const updatedJob = {
+            if (!res.ok) throw new Error('Failed to update step status');
+            setSelectedJob({
                 ...selectedJob,
                 job_steps: selectedJob.job_steps.map(s =>
                     s.identifier === stepId ? { ...s, status: newStatus } : s
                 ),
-            };
-            setSelectedJob(updatedJob);
-
-            // Refresh jobs list
+            });
             fetchJobs();
             fetchStatistics();
         } catch (err) {
-            console.error('Error updating step status:', err);
             alert('Failed to update step status: ' + err.message);
         }
     };
 
+    // ── Loading state ──────────────────────────────────────────────────────────
     if (isLoading) {
         return (
             <div className="manage-jobs-container">
@@ -194,12 +184,16 @@ export default function ManageJobs({ onBack }) {
         );
     }
 
+    // ── Detail view ────────────────────────────────────────────────────────────
     if (selectedJob) {
+        const isPending  = selectedJob.status === 'pending';
+        const isCanceled = selectedJob.status === 'canceled';
+
         return (
             <div className="manage-jobs-container">
                 <div className="jobs-header">
                     <button className="back-btn" onClick={() => setSelectedJob(null)}>← Back</button>
-                    <h1>Job Details: {selectedJob.job_id}</h1>
+                    <h1>Job Details</h1>
                 </div>
 
                 <div className="job-details">
@@ -207,12 +201,13 @@ export default function ManageJobs({ onBack }) {
                         <h3>Job Information</h3>
                         <div className="detail-row">
                             <span className="label">Job ID:</span>
-                            <span className="value">{selectedJob.job_id}</span>
+                            <span className="value mono">{selectedJob.job_id}</span>
                         </div>
                         <div className="detail-row">
                             <span className="label">Status:</span>
-                            <span className="value status" style={{ color: getStatusColor(selectedJob.status) }}>
-                                {getStatusIcon(selectedJob.status)} {selectedJob.status.toUpperCase()}
+                            <span className="status-inline" style={{ color: getStatusColor(selectedJob.status) }}>
+                                <span className="status-dot" style={{ backgroundColor: getStatusColor(selectedJob.status) }} />
+                                {selectedJob.status.toUpperCase()}
                             </span>
                         </div>
                         <div className="detail-row">
@@ -224,45 +219,40 @@ export default function ManageJobs({ onBack }) {
                             <span className="value">{selectedJob.completed_steps}/{selectedJob.step_count} steps completed</span>
                         </div>
 
-                        {/* Status Update Buttons */}
+                        {/* Cancel / Resume */}
+                        <div className="action-buttons-row">
+                            <button
+                                className="action-btn cancel-btn"
+                                onClick={(e) => cancelJob(e, selectedJob.job_id)}
+                                disabled={!isPending}
+                                title={isPending ? 'Cancel this job' : 'Can only cancel pending jobs'}
+                            >
+                                ✕ Cancel Job
+                            </button>
+                            <button
+                                className="action-btn resume-btn"
+                                onClick={(e) => resumeJob(e, selectedJob.job_id)}
+                                disabled={!isCanceled}
+                                title={isCanceled ? 'Resume this job' : 'Can only resume canceled jobs'}
+                            >
+                                ↺ Resume Job
+                            </button>
+                        </div>
+
+                        {/* Admin status override */}
                         <div className="status-update-section">
                             <h4>Update Job Status:</h4>
                             <div className="status-buttons">
-                                <button
-                                    className="status-btn pending"
-                                    onClick={() => updateJobStatus(selectedJob.job_id, 'pending')}
-                                    disabled={selectedJob.status === 'pending'}
-                                >
-                                    ⋯ Pending
-                                </button>
-                                <button
-                                    className="status-btn fetched"
-                                    onClick={() => updateJobStatus(selectedJob.job_id, 'fetched')}
-                                    disabled={selectedJob.status === 'fetched'}
-                                >
-                                    ↓ Fetched
-                                </button>
-                                <button
-                                    className="status-btn running"
-                                    onClick={() => updateJobStatus(selectedJob.job_id, 'running')}
-                                    disabled={selectedJob.status === 'running'}
-                                >
-                                    ⟳ Running
-                                </button>
-                                <button
-                                    className="status-btn finished"
-                                    onClick={() => updateJobStatus(selectedJob.job_id, 'finished')}
-                                    disabled={selectedJob.status === 'finished'}
-                                >
-                                    ✓ Finished
-                                </button>
-                                <button
-                                    className="status-btn failed"
-                                    onClick={() => updateJobStatus(selectedJob.job_id, 'failed')}
-                                    disabled={selectedJob.status === 'failed'}
-                                >
-                                    ✗ Failed
-                                </button>
+                                {['pending','fetched','running','completed','failed'].map(s => (
+                                    <button
+                                        key={s}
+                                        className={`status-btn ${s}`}
+                                        onClick={() => updateJobStatus(selectedJob.job_id, s)}
+                                        disabled={selectedJob.status === s}
+                                    >
+                                        {getStatusIcon(s)} {s.charAt(0).toUpperCase() + s.slice(1)}
+                                    </button>
+                                ))}
                             </div>
                         </div>
                     </div>
@@ -296,45 +286,21 @@ export default function ManageJobs({ onBack }) {
                                             {getStatusIcon(step.status)} {step.status}
                                         </div>
                                         {step.depends_on && step.depends_on.length > 0 && (
-                                            <div className="step-deps">
-                                                Depends on: {step.depends_on.join(', ')}
-                                            </div>
+                                            <div className="step-deps">Depends on: {step.depends_on.join(', ')}</div>
                                         )}
                                     </div>
-                                    {/* Step Status Update Buttons */}
                                     <div className="step-status-buttons">
-                                        <button
-                                            className="small-status-btn pending"
-                                            onClick={() => updateStepStatus(selectedJob.job_id, step.identifier, 'pending')}
-                                            disabled={step.status === 'pending'}
-                                            title="Mark as pending"
-                                        >
-                                            ⋯
-                                        </button>
-                                        <button
-                                            className="small-status-btn running"
-                                            onClick={() => updateStepStatus(selectedJob.job_id, step.identifier, 'running')}
-                                            disabled={step.status === 'running'}
-                                            title="Mark as running"
-                                        >
-                                            ⟳
-                                        </button>
-                                        <button
-                                            className="small-status-btn completed"
-                                            onClick={() => updateStepStatus(selectedJob.job_id, step.identifier, 'completed')}
-                                            disabled={step.status === 'completed'}
-                                            title="Mark as completed"
-                                        >
-                                            ✓
-                                        </button>
-                                        <button
-                                            className="small-status-btn failed"
-                                            onClick={() => updateStepStatus(selectedJob.job_id, step.identifier, 'failed')}
-                                            disabled={step.status === 'failed'}
-                                            title="Mark as failed"
-                                        >
-                                            ✗
-                                        </button>
+                                        {['pending','running','completed','failed'].map(s => (
+                                            <button
+                                                key={s}
+                                                className={`small-status-btn ${s}`}
+                                                onClick={() => updateStepStatus(selectedJob.job_id, step.identifier, s)}
+                                                disabled={step.status === s}
+                                                title={`Mark as ${s}`}
+                                            >
+                                                {getStatusIcon(s)}
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             ))}
@@ -344,6 +310,16 @@ export default function ManageJobs({ onBack }) {
             </div>
         );
     }
+
+    // ── List view ──────────────────────────────────────────────────────────────
+    const FILTER_TABS = [
+        { label: 'All Jobs',  value: '' },
+        { label: 'Pending',   value: 'pending' },
+        { label: 'Running',   value: 'running' },
+        { label: 'Completed', value: 'completed' },
+        { label: 'Failed',    value: 'failed' },
+        { label: 'Canceled',  value: 'canceled' },
+    ];
 
     return (
         <div className="manage-jobs-container">
@@ -358,59 +334,42 @@ export default function ManageJobs({ onBack }) {
                 <div className="statistics-bar">
                     <div className="stat-item">
                         <div className="stat-value">{statistics.total_jobs}</div>
-                        <div className="stat-label">Total Jobs</div>
+                        <div className="stat-label">Total</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-value" style={{ color: '#28a745' }}>{statistics.status_breakdown.finished}</div>
-                        <div className="stat-label">Finished</div>
+                        <div className="stat-value" style={{ color: STATUS_COLORS.completed }}>{statistics.status_breakdown.completed}</div>
+                        <div className="stat-label">Completed</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-value" style={{ color: '#ffc107' }}>{statistics.status_breakdown.running}</div>
+                        <div className="stat-value" style={{ color: STATUS_COLORS.running }}>{statistics.status_breakdown.running}</div>
                         <div className="stat-label">Running</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-value" style={{ color: '#6c757d' }}>{statistics.status_breakdown.pending}</div>
+                        <div className="stat-value" style={{ color: STATUS_COLORS.pending }}>{statistics.status_breakdown.pending}</div>
                         <div className="stat-label">Pending</div>
                     </div>
                     <div className="stat-item">
-                        <div className="stat-value" style={{ color: '#dc3545' }}>{statistics.status_breakdown.failed}</div>
+                        <div className="stat-value" style={{ color: STATUS_COLORS.failed }}>{statistics.status_breakdown.failed}</div>
                         <div className="stat-label">Failed</div>
+                    </div>
+                    <div className="stat-item">
+                        <div className="stat-value" style={{ color: STATUS_COLORS.canceled }}>{statistics.status_breakdown.canceled}</div>
+                        <div className="stat-label">Canceled</div>
                     </div>
                 </div>
             )}
 
-            {/* Status Filter */}
+            {/* Filter tabs */}
             <div className="filter-bar">
-                <button
-                    className={`filter-btn ${statusFilter === '' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('')}
-                >
-                    All Jobs
-                </button>
-                <button
-                    className={`filter-btn ${statusFilter === 'pending' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('pending')}
-                >
-                    Pending
-                </button>
-                <button
-                    className={`filter-btn ${statusFilter === 'running' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('running')}
-                >
-                    Running
-                </button>
-                <button
-                    className={`filter-btn ${statusFilter === 'finished' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('finished')}
-                >
-                    Finished
-                </button>
-                <button
-                    className={`filter-btn ${statusFilter === 'failed' ? 'active' : ''}`}
-                    onClick={() => setStatusFilter('failed')}
-                >
-                    Failed
-                </button>
+                {FILTER_TABS.map(tab => (
+                    <button
+                        key={tab.value}
+                        className={`filter-btn ${statusFilter === tab.value ? 'active' : ''}`}
+                        onClick={() => setStatusFilter(tab.value)}
+                    >
+                        {tab.label}
+                    </button>
+                ))}
             </div>
 
             {error && <div className="error-message">{error}</div>}
@@ -421,49 +380,71 @@ export default function ManageJobs({ onBack }) {
                 </div>
             ) : (
                 <div className="jobs-grid">
-                    {jobs.map(job => (
-                        <div
-                            key={job.job_id}
-                            className="job-card"
-                            onClick={() => setSelectedJob(job)}
-                        >
-                            <div className="job-header">
-                                <h3>{job.job_id.substring(0, 8)}...</h3>
-                                <div
-                                    className="status-badge"
-                                    style={{ backgroundColor: getStatusColor(job.status) }}
-                                >
-                                    {getStatusIcon(job.status)} {job.status}
+                    {jobs.map(job => {
+                        const isPending  = job.status === 'pending';
+                        const isCanceled = job.status === 'canceled';
+                        return (
+                            <div key={job.job_id} className="job-card" onClick={() => setSelectedJob(job)}>
+                                <div className="job-header">
+                                    <span className="job-id-text">{job.job_id.substring(0, 8)}…</span>
+                                    <span
+                                        className="status-badge"
+                                        style={{ backgroundColor: getStatusColor(job.status) }}
+                                    >
+                                        <span className="badge-dot" />
+                                        {job.status}
+                                    </span>
+                                </div>
+
+                                <div className="job-info">
+                                    <div className="info-item">
+                                        <span className="label">Created:</span>
+                                        <span className="value">{formatDate(job.created_at)}</span>
+                                    </div>
+                                    <div className="info-item">
+                                        <span className="label">Environment:</span>
+                                        <span className="value">{job.job_env.environment}</span>
+                                    </div>
+                                </div>
+
+                                <div className="job-progress">
+                                    <div className="progress-label">Steps: {job.completed_steps}/{job.step_count}</div>
+                                    <div className="progress-bar">
+                                        <div
+                                            className="progress-fill"
+                                            style={{
+                                                width: `${getProgressPercentage(job)}%`,
+                                                backgroundColor: getStatusColor(job.status),
+                                            }}
+                                        />
+                                    </div>
+                                    <div className="progress-text">{getProgressPercentage(job)}%</div>
+                                </div>
+
+                                <div className="card-actions" onClick={e => e.stopPropagation()}>
+                                    <button
+                                        className="card-action-btn cancel-btn"
+                                        onClick={(e) => cancelJob(e, job.job_id)}
+                                        disabled={!isPending}
+                                        title={isPending ? 'Cancel job' : 'Can only cancel pending jobs'}
+                                    >
+                                        ✕ Cancel
+                                    </button>
+                                    <button
+                                        className="card-action-btn resume-btn"
+                                        onClick={(e) => resumeJob(e, job.job_id)}
+                                        disabled={!isCanceled}
+                                        title={isCanceled ? 'Resume job' : 'Can only resume canceled jobs'}
+                                    >
+                                        ↺ Resume
+                                    </button>
+                                    <button className="view-details-btn" onClick={() => setSelectedJob(job)}>
+                                        Details →
+                                    </button>
                                 </div>
                             </div>
-
-                            <div className="job-info">
-                                <div className="info-item">
-                                    <span className="label">Created:</span>
-                                    <span className="value">{formatDate(job.created_at)}</span>
-                                </div>
-                                <div className="info-item">
-                                    <span className="label">Environment:</span>
-                                    <span className="value">{job.job_env.environment}</span>
-                                </div>
-                            </div>
-
-                            <div className="job-progress">
-                                <div className="progress-label">
-                                    Steps: {job.completed_steps}/{job.step_count}
-                                </div>
-                                <div className="progress-bar">
-                                    <div
-                                        className="progress-fill"
-                                        style={{ width: `${getProgressPercentage(job)}%` }}
-                                    />
-                                </div>
-                                <div className="progress-text">{getProgressPercentage(job)}%</div>
-                            </div>
-
-                            <button className="view-details-btn">View Details →</button>
-                        </div>
-                    ))}
+                        );
+                    })}
                 </div>
             )}
         </div>

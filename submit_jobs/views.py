@@ -282,7 +282,7 @@ def job_statistics_logic() -> Response:
 
         status_breakdown = {
             s: Job.objects.filter(status=s).count()
-            for s in ["pending", "fetched", "running", "finished", "failed"]
+            for s in ["pending", "fetched", "running", "completed", "failed", "canceled"]
         }  # Count each status in a single comprehension
 
         return Response(

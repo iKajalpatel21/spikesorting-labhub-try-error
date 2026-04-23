@@ -8,6 +8,7 @@ from rest_framework.permissions import AllowAny
 from rest_framework.permissions import IsAuthenticated
 from .models import Job, JobStep, StepConfig, get_next_job_id
 from .serializers import JobSerializer
+from django.http import JsonResponse as DjangoJsonResponse
 
 
 # ============================================================================
@@ -24,6 +25,55 @@ class JobViewSet(viewsets.ModelViewSet):
     queryset = Job.objects.all().order_by("-created_at")
     serializer_class = JobSerializer
     permission_classes = [IsAuthenticated]
+
+
+# ============================================================================
+# Cancel / Resume Endpoints
+# ============================================================================
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def cancel_job(request: HttpRequest):
+    """
+    POST: Cancel a pending job.
+    Body: { "job_id": "..." }
+    Only jobs with status='pending' can be canceled.
+    """
+    job_id = request.data.get("job_id")
+    if not job_id:
+        return JsonResponse({"error": "job_id is required."}, status=400)
+    job = get_object_or_404(Job, job_id=job_id)
+    if job.status != "pending":
+        return JsonResponse(
+            {"error": f"Only pending jobs can be canceled. Current status: {job.status}."},
+            status=400,
+        )
+    job.status = "canceled"
+    job.save()
+    return JsonResponse({"message": f"Job {job_id} has been canceled."})
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def resume_job(request: HttpRequest):
+    """
+    POST: Resume a canceled job by resetting it to pending.
+    Body: { "job_id": "..." }
+    Only jobs with status='canceled' can be resumed.
+    """
+    job_id = request.data.get("job_id")
+    if not job_id:
+        return JsonResponse({"error": "job_id is required."}, status=400)
+    job = get_object_or_404(Job, job_id=job_id)
+    if job.status != "canceled":
+        return JsonResponse(
+            {"error": f"Only canceled jobs can be resumed. Current status: {job.status}."},
+            status=400,
+        )
+    job.status = "pending"
+    job.save()
+    return JsonResponse({"message": f"Job {job_id} has been resumed."})
 
 
 # ============================================================================
@@ -91,6 +141,13 @@ def update_job_status(data: dict) -> JsonResponse:
         job_step = get_object_or_404(JobStep, identifier=step_id, job__job_id=job_id)
         job_step.status = status
         job_step.save()
+
+        # Cascade step failure to the parent job
+        if status == "failed":
+            job = get_object_or_404(Job, job_id=job_id)
+            job.status = "failed"
+            job.save()
+
         return JsonResponse(
             {"message": f"Job step {step_id} status updated to {status}."}
         )
