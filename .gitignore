@@ -37,8 +37,6 @@ cert.key
 node_modules/
 static/
 staticfiles/
-!my-app/build/
-!my-app/build/**
 .qodo/
 
 # Environment variables
