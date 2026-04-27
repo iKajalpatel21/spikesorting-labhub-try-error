@@ -415,8 +415,8 @@ def browse_data_files(request):
             if entry.is_dir(follow_symlinks=False):
                 dirs.append({"name": entry.name, "path": entry.path})
             elif entry.is_file(follow_symlinks=False):
-                ext = os.path.splitext(entry.name)[1].lower()
-                if ext in DATA_FILE_EXTENSIONS:
+                filename_and_ext = os.path.splitext(entry.name)
+                if len(filename_and_ext) == 2 and filename_and_ext[1].lower() in DATA_FILE_EXTENSIONS:
                     try:
                         size_mb = round(entry.stat().st_size / (1024 * 1024), 2)
                     except OSError:
