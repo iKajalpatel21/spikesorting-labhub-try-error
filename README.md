@@ -167,3 +167,6 @@ Deploy with Gunicorn behind Nginx (recommended for SSL termination).
 | Step status not updating | Verify status choices in model (`completed`, not `finished`) |
 | Dependencies broken | Check `depends_on` contains real `config_block_hash` values |
 | Deduplication not working | Ensure `compute_fingerprint()` uses `sort_keys=True` |
+
+
+Just added something
