@@ -2,136 +2,18 @@
 Step Dependencies and Parameters Configuration
 Based on the original qmodel project specification
 """
+import importlib
+# importing sslh-cli
+sslh = importlib.import_module("sslh-cli")
 
 # Defines the dependency structure for each step function
 # Each step maps to a list of required dependency slots
 # Each slot can be satisfied by one of multiple acceptable function types
-STEP_DEPENDENCIES = {
-    "combined_recording": [],
-    "recording": [],
-    "load_recording": [],
-    # Preprocessing needs only a recording
-    "preprocessing": [("recording", "combined_recording")],
-    # Loading a previously done preprocessing doesn't need anything
-    "load_preprocessing": [],
-    # Sorting needs one of: recording, combined_recording, preprocessing, load_preprocessing
-    "sorting": [
-        ("recording", "combined_recording", "preprocessing", "load_preprocessing")
-    ],
-    # Load a previously done sorting
-    "load_sorting": [],
-    # Analyzer: first arg is preprocessing/recording, second is sorting
-    "analyzer": [
-        ("recording", "combined_recording", "preprocessing", "load_preprocessing"),
-        ("sorting", "load_sorting", "import_from_phy"),
-    ],
-    # Load a previously done analyzer
-    "load_analyzer": [],
-    # Phy export: first arg is preprocessing/recording, second is sorting
-    "phy_export": [
-        ("recording", "combined_recording", "preprocessing", "load_preprocessing"),
-        ("sorting", "load_sorting"),
-    ],
-    # Importing from phy
-    "import_from_phy": [],
-    # Report requires analyzer
-    "report": [("analyzer", "load_analyzer")],
-    # Export to MatLab requires recording, sorting, analyzer, phy_export
-    "export2matlab": [
-        ("recording", "combined_recording"),
-        ("sorting", "load_sorting", "import_from_phy"),
-        ("analyzer", "load_analyzer"),
-        ("phy_export", "import_from_phy"),
-    ],
-    # Upload everything
-    "upload": [],
-}
+STEP_DEPENDENCIES = sslh.__sanitizer.STEP_DEPENDENCIES
 
 # Defines the parameter schema for each step function
 # (Used for validation - not needed for job creation)
-STEP_PARAMETERS = {
-    "recording": {
-        "*binfile": str,
-        "*probe": str,
-        "*sampling rate": (int, float),
-        "*number of channels": int,
-        ">remove": [int],
-        ">bad_channels": [int],
-        ">location": str,
-        ">gain_to_uV": (int, float),
-        ">offset_to_uV": (int, float),
-        ">save": (bool, str),
-    },
-    "load_recording": {
-        ">file": str,
-    },
-    "preprocessing": {
-        "*methods": [
-            (
-                "centering",
-                "highpass or band filtering",
-                "referensing",
-                "whitening",
-                "zscore",
-            )
-        ],
-        ">centering": {">mode": ("median", "mean")},
-        ">highpass or band filtering": {
-            "*btype": str,
-            "*band": (list, float),
-        },
-        ">referensing": {
-            ">reference": ("global", "single", "local"),
-            ">operator": ("median", "average"),
-            ">groups": (list, type(None)),
-            ">local_radius": [int, int],
-            ">ref_channel_ids": [int],
-        },
-        ">whitening": {
-            ">mode": ("global", "local"),
-            ">radius_um": (float, type(None)),
-            ">apply_mean": bool,
-            ">int_scale": (float, type(None)),
-            ">eps": (float, type(None)),
-        },
-        ">zscore": {">mode": ("median+mad", "mean+std")},
-        ">folder": str,
-    },
-    "load_preprocessing": {"*folder": str},
-    "sorting": {
-        "*name": str,
-        "*parameters": dict,
-        ">folder": str,
-        ">image": str,
-    },
-    "load_sorting": {"*folder": str},
-    "analyzer": {
-        "*metrics": dict,
-        ">folder": str,
-    },
-    "load_analyzer": {"*folder": str},
-    "phy_export": {
-        ">folder": str,
-        ">do_not_update_config": bool,
-    },
-    "import_from_phy": {
-        "*phy_folder": str,
-        ">folder": str,
-    },
-    "report": {
-        ">folder": str,
-    },
-    "export2matlab": {
-        ">filename": str,
-        ">marks": [str],
-    },
-    "upload": {
-        "*destination": str,
-        ">keep_base_directory": bool,
-        ">suffix": (str, bool),
-    },
-}
-
+STEP_PARAMETERS = sslh.__sanitizer.STEP_PARAMETERS
 
 def get_step_dependencies(function_name: str) -> list:
     """
