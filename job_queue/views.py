@@ -2,13 +2,12 @@ import json
 from django.shortcuts import render, get_object_or_404
 from django.http import JsonResponse, HttpRequest
 from django.contrib.auth import authenticate
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.response import Response
 from .models import Job, JobStep, StepConfig, get_next_job_id
-from .serializers import JobSerializer
-from django.http import JsonResponse as DjangoJsonResponse
+from .serializers import JobSerializer, JobListSerializer
 
 
 # ============================================================================
@@ -279,6 +278,77 @@ def login(request):
         },
         status=200,
     )
+
+
+# ============================================================================
+# Job List, Detail, Statistics
+# ============================================================================
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def list_jobs(request):
+    """GET: List jobs with optional status filter and limit/offset pagination."""
+    status_filter = request.query_params.get("status", None)
+    limit = int(request.query_params.get("limit", 100))
+    offset = int(request.query_params.get("offset", 0))
+    try:
+        jobs_query = Job.objects.all().order_by("-created_at")
+        if status_filter:
+            jobs_query = jobs_query.filter(status=status_filter)
+        total_count = jobs_query.count()
+        jobs = jobs_query[offset: offset + limit]
+        serializer = JobListSerializer(jobs, many=True)
+        return Response(
+            {"total_count": total_count, "count": len(jobs), "limit": limit, "offset": offset, "jobs": serializer.data},
+            status=status.HTTP_200_OK,
+        )
+    except Exception as e:
+        return Response({"error": f"Failed to fetch jobs: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def job_detail(request, job_id):
+    """GET: Retrieve full details for a specific job."""
+    try:
+        job = Job.objects.get(job_id=job_id)
+        serializer = JobListSerializer(job)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Job.DoesNotExist:
+        return Response({"error": f"Job {job_id} not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": f"Failed to fetch job: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def job_statistics(request):
+    """GET: Total job count broken down by status."""
+    try:
+        total_jobs = Job.objects.count()
+        status_breakdown = {
+            s: Job.objects.filter(status=s).count()
+            for s in ["pending", "fetched", "running", "completed", "failed", "canceled"]
+        }
+        return Response({"total_jobs": total_jobs, "status_breakdown": status_breakdown}, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"Failed to fetch statistics: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticated])
+def get_all_jobs(request):
+    """GET: All jobs as a flat list with optional status filter."""
+    try:
+        jobs = Job.objects.all().order_by("-created_at")
+        status_filter = request.query_params.get("status", None)
+        if status_filter:
+            jobs = jobs.filter(status=status_filter)
+        serializer = JobListSerializer(jobs, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({"error": f"Failed to retrieve jobs: {str(e)}"}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
 # ============================================================================

@@ -29,8 +29,8 @@ export default function ManageJobs({ onBack }) {
         setError('');
         try {
             const url = statusFilter
-                ? `/submit-jobs/list/?status=${statusFilter}`
-                : `/submit-jobs/list/`;
+                ? `/job-queue/list/?status=${statusFilter}`
+                : `/job-queue/list/`;
             const response = await fetch(url, {
                 headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
             });
@@ -46,7 +46,7 @@ export default function ManageJobs({ onBack }) {
 
     const fetchStatistics = async () => {
         try {
-            const response = await fetch('/submit-jobs/statistics/', {
+            const response = await fetch('/job-queue/statistics/', {
                 headers: { 'Authorization': `Token ${localStorage.getItem('token')}` },
             });
             if (!response.ok) return;
