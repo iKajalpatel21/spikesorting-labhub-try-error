@@ -143,7 +143,7 @@ def browse_data_files(request):
                         size_mb = round(entry.stat().st_size / (1024 * 1024), 2)
                     except OSError:
                         size_mb = None
-                    files.append({"name": entry.name, "path": entry.path, "ext": ext, "size_mb": size_mb})
+                    files.append({"name": entry.name, "path": entry.path, "ext": filename_and_ext[1].lower(), "size_mb": size_mb})
     except PermissionError:
         return Response({"error": f"Permission denied reading {requested}"}, status=status.HTTP_403_FORBIDDEN)
 
