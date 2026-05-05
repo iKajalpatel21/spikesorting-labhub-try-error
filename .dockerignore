@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+.djangovenv/
+
+# Django runtime files — these come from bind mounts, not the image
+Django_database/
+NAS_Database/
+experiments/
+staticfiles/
+media/
+
+# Secrets — never bake certs or keys into the image
+secrets/
+
+# React source — only the compiled build/ is needed
+my-app/node_modules/
+my-app/src/
+my-app/public/
+
+# Git and IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Docker files themselves
+Dockerfile
+docker-compose.yml
+.dockerignore
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
