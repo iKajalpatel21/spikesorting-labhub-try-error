@@ -193,7 +193,8 @@ fi
 # =============================================================================
 print_status "Checking SSL certificates..."
 
-if [ ! -f "cert.crt" ] || [ ! -f "cert.key" ]; then
+mkdir -p secrets
+if [ ! -f "secrets/cert.crt" ] || [ ! -f "secrets/cert.key" ]; then
     print_status "Generating self-signed SSL certificate..."
     # Use the machine's actual IP/hostname as CN so clients can verify it.
     # SAN (subjectAltName) covers both the hostname and IP address.
@@ -201,15 +202,15 @@ if [ ! -f "cert.crt" ] || [ ! -f "cert.key" ]; then
     SERVER_IP=$(hostname -I 2>/dev/null | awk '{print $1}')
     print_status "Certificate CN: ${SERVER_HOST} (IP: ${SERVER_IP})"
 
-    openssl req -x509 -newkey rsa:4096 -keyout cert.key -out cert.crt -days 365 -nodes \
+    openssl req -x509 -newkey rsa:4096 -keyout secrets/cert.key -out secrets/cert.crt -days 365 -nodes \
         -subj "/CN=${SERVER_HOST}" \
         -addext "subjectAltName=DNS:${SERVER_HOST},IP:${SERVER_IP},DNS:localhost,IP:127.0.0.1" || {
         print_error "Failed to generate SSL certificates"
         exit 1
     }
-    print_success "SSL certificate generated: cert.crt / cert.key (CN=${SERVER_HOST})"
+    print_success "SSL certificate generated: secrets/cert.crt / secrets/cert.key (CN=${SERVER_HOST})"
 else
-    print_success "SSL certificates already exist (cert.crt / cert.key)."
+    print_success "SSL certificates already exist (secrets/cert.crt / secrets/cert.key)."
 fi
 
 # =============================================================================
@@ -228,9 +229,9 @@ print_success "Static files collected."
 print_success "Deployment complete! Choose how to run the server:"
 echo
 echo "Available options:"
-echo "1) Development server (HTTP on port 8000)"
-echo "2) Gunicorn server (HTTP on port 8000)"
-echo "3) Gunicorn server with HTTPS (port 8443)"
+echo "1) Development server (HTTP on port 9000)"
+echo "2) Gunicorn server (HTTP on port 9000)"
+echo "3) Gunicorn server with HTTPS (port 9443)"
 echo "4) Just setup - don't start server"
 echo "5) Start worker only"
 echo
@@ -241,26 +242,26 @@ echo
 case $REPLY in
     1)
         print_status "Starting Django development server..."
-        python manage.py runserver
+        python manage.py runserver 0.0.0.0:9000
         ;;
     2)
         print_status "Starting Gunicorn HTTP server..."
         gunicorn -c gunicorn.conf.py labhub.wsgi:application
         ;;
     3)
-        print_status "Starting Gunicorn HTTPS server (port 443)..."
+        print_status "Starting Gunicorn HTTPS server (port 9443)..."
         gunicorn -c gunicorn.conf.py \
-                 --certfile=cert.crt \
-                 --keyfile=cert.key \
-                 -b 0.0.0.0:443 \
+                 --certfile=secrets/cert.crt \
+                 --keyfile=secrets/cert.key \
+                 -b 0.0.0.0:9443 \
                  labhub.wsgi:application
         ;;
     4)
         print_success "Setup complete. You can manually start the server when ready."
         echo
-        echo "To start the development server: python manage.py runserver"
+        echo "To start the development server: python manage.py runserver 0.0.0.0:9000"
         echo "To start Gunicorn HTTP:  gunicorn -c gunicorn.conf.py labhub.wsgi:application"
-        echo "To start Gunicorn HTTPS: gunicorn -c gunicorn.conf.py --certfile=cert.crt --keyfile=cert.key -b 0.0.0.0:443 labhub.wsgi:application"
+        echo "To start Gunicorn HTTPS: gunicorn -c gunicorn.conf.py --certfile=secrets/cert.crt --keyfile=secrets/cert.key -b 0.0.0.0:9443 labhub.wsgi:application"
         echo "To start worker: python qmodel_worker.py"
         ;;
     5)
@@ -281,15 +282,15 @@ echo "Project: $PROJECT_DIR"
 echo "Branch: $BRANCH_NAME"
 echo "Virtual Environment: $VENV_NAME"
 echo "Database: SQLite (db.sqlite3)"
-echo "SSL Certificates: cert.pem, key.pem"
+echo "SSL Certificates: secrets/cert.crt, secrets/cert.key"
 echo
 echo "=== Usage Instructions ==="
-echo "• HTTP  — Django admin:  http://localhost:8000/admin/"
-echo "• HTTPS — Django admin:  https://localhost:443/admin/"
-echo "• HTTP  — Worker fetch:  http://localhost:8000/job-queue/next-job/"
-echo "• HTTPS — Worker fetch:  https://localhost:443/job-queue/next-job/"
+echo "• HTTP  — Django admin:  http://localhost:9000/admin/"
+echo "• HTTPS — Django admin:  https://localhost:9443/admin/"
+echo "• HTTP  — Worker fetch:  http://localhost:9000/job-queue/next-job/"
+echo "• HTTPS — Worker fetch:  https://localhost:9443/job-queue/next-job/"
 echo "• Worker (HTTP):  python qmodel_worker.py"
-echo "• Worker (HTTPS): LABHUB_BASE_URL=https://localhost LABHUB_SSL_VERIFY=false python qmodel_worker.py"
+echo "• Worker (HTTPS): LABHUB_BASE_URL=https://localhost:9443 LABHUB_SSL_VERIFY=false python qmodel_worker.py"
 echo
 echo "=== Multiple Terminal Setup ==="
 echo "Terminal 1 (Server): ./deploy.sh (choose option 2 or 3)"
