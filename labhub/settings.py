@@ -180,10 +180,10 @@ NAS_ROOT = os.environ.get("NAS_ROOT", str(BASE_DIR / "experiments"))
 # No separate React dev server (port 3000) is used. Add origins here only if
 # an external client needs to call the API.
 CORS_ALLOWED_ORIGINS = [
-    "http://localhost:8000",
-    "http://127.0.0.1:8000",
-    "https://localhost:8443",
-    "https://127.0.0.1:8443",
+    "http://localhost:9000",
+    "http://127.0.0.1:9000",
+    "https://localhost:9443",
+    "https://127.0.0.1:9443",
 ]
 
 # -----------------------------------------------------------------------------

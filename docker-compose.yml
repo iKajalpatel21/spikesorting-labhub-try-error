@@ -3,9 +3,11 @@
 #
 # Bind-mount layout (host path → container path):
 #
-#   trurnasdata   /mnt/root_data_storage/users/lhss/trurnasdata → /data          (read-only  — NAS database)
-#   persistentdata /mnt/root_data_storage/users/lhss/persistentdata → /django_db (read/write — Django DB + logs)
+#   trurnasdata   /mnt/root_data_storage/users/sslh/trurnasdata → /data          (read-only  — NAS database)
+#   persistentdata /mnt/root_data_storage/users/sslh/persistentdata → /django_db (read/write — Django DB + logs)
 #   experiments   /mnt/root_data_storage/experiments           → /experiments    (read-only  — binary recordings)
+#
+# Ports 8000, 8080, and 8443 are used by the NAS itself — avoid them.
 #
 # Usage:
 #   HTTP:   docker compose up
@@ -13,14 +15,14 @@
 # ============================================================
 
 services:
-  labhub:
+  spikesorting-labhub:
     build: .
-    image: labhub:latest
+    image: spikesorting-labhub:latest
     restart: unless-stopped
 
     ports:
-      - "8000:8000"   # HTTP
-      - "8443:8443"   # HTTPS (only active when cert/key are present)
+      - "9000:9000"   # HTTP
+      - "9443:9443"   # HTTPS (only active when cert/key are present)
 
     environment:
       # Django core
@@ -39,13 +41,13 @@ services:
     volumes:
       # trurnasdata — NAS database (read-only)
       - type: bind
-        source: /mnt/root_data_storage/users/lhss/trurnasdata
+        source: /mnt/root_data_storage/users/sslh/trurnasdata
         target: /data
         read_only: true
 
       # persistentdata — Django SQLite DB + logs (read/write)
       - type: bind
-        source: /mnt/root_data_storage/users/lhss/persistentdata
+        source: /mnt/root_data_storage/users/sslh/persistentdata
         target: /django_db
 
       # experiments — binary recording files (read-only)
