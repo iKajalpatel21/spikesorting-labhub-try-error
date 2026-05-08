@@ -4,11 +4,13 @@ A spike sorting job management system built with Django + React. Allows research
 
 ## Tech Stack
 
-- **Backend:** Django 4.2.7 + Django REST Framework
-- **Frontend:** React 18
-- **Database:** SQLite / PostgreSQL
+- **Backend:** Django 5.2 + Django REST Framework
+- **Frontend:** React 18 (built via `npm run build`, served by Django/WhiteNoise)
+- **Database:** SQLite (path configurable via `DATABASE_PATH` env var)
 - **Authentication:** Token-based (DRF)
-- **Worker:** Python polling consumer
+- **Worker:** Python polling consumer (`qmodel_worker.py`)
+- **Server:** Gunicorn with optional TLS (ports 9000 HTTP / 9443 HTTPS)
+- **Deployment:** Docker (Ubuntu 24.04 base image)
 
 ## Key Features
 
@@ -18,47 +20,144 @@ A spike sorting job management system built with Django + React. Allows research
 - Real-time status updates via React UI
 - Admin interface for manual control
 - FIFO queue with row-level database locking
+- WhiteNoise static file serving (no Nginx required)
+- Self-signed TLS via `deploy.sh`
 
-## Setup & Installation
+---
+
+## Deployment — Docker (Production)
 
 ### Prerequisites
 
-- Python 3.8+
-- Node.js 14+
-- PostgreSQL or SQLite
+- Docker + Docker Compose installed on the server
+- NAS mounted at `/mnt/root_data_storage/`
+- `DJANGO_SECRET_KEY` set in the shell environment
 
-### Install
+### Ports
+
+The NAS itself uses 8000, 8080, and 8443. This container uses:
+
+| Protocol | Host port | Container port |
+|----------|-----------|----------------|
+| HTTP     | 9000      | 9000           |
+| HTTPS    | 9443      | 9443           |
+
+### Bind-mount layout
+
+| Host path | Container path | Access |
+|-----------|---------------|--------|
+| `/mnt/root_data_storage/users/sslh/trurnasdata` | `/data` | read-only (NAS database) |
+| `/mnt/root_data_storage/users/sslh/persistentdata` | `/django_db` | read/write (Django DB + logs) |
+| `/mnt/root_data_storage/experiments` | `/experiments` | read-only (binary recordings) |
+| `./secrets` | `/app/secrets` | read-only (SSL certs) |
+
+### Build and run
 
 ```bash
-# Clone and enter project
-git clone <repo-url>
-cd spikesorting-labhub-try-error
+# Generate SSL certs into secrets/ (first time only)
+./deploy.sh   # choose option 4 (setup only) to generate certs without starting a server
 
+# Set the secret key
+export DJANGO_SECRET_KEY="your-secret-key-here"
+
+# Start the container
+docker compose up -d
+
+# View logs
+docker compose logs -f
+```
+
+### Run migrations inside the container (first deploy)
+
+```bash
+docker compose exec spikesorting-labhub python manage.py migrate
+docker compose exec spikesorting-labhub python manage.py createsuperuser
+```
+
+### Access
+
+- HTTP:  `http://<server-ip>:9000/`
+- HTTPS: `https://<server-ip>:9443/`
+- Admin: `https://<server-ip>:9443/admin/`
+
+---
+
+## Local Development (without Docker)
+
+### Prerequisites
+
+- Python 3.13+
+- Node.js 18+
+
+### Quick setup via deploy.sh
+
+```bash
+./deploy.sh
+# Follow prompts: creates venv, installs deps, runs migrations, generates certs, starts server
+```
+
+### Manual setup
+
+```bash
 # Backend
-python -m venv venv
-source venv/bin/activate
+python3 -m venv .djangovenv
+source .djangovenv/bin/activate
 pip install -r requirements.txt
 python manage.py migrate
 python manage.py createsuperuser
 
-# Frontend
+# Frontend (build React into Django's static root)
 cd my-app
 npm install
 npm run build
 cd ..
 
-# Run
-python manage.py runserver
+python manage.py collectstatic --noinput
+
+# Run (HTTP)
+gunicorn -c gunicorn.conf.py labhub.wsgi:application
+# or
+python manage.py runserver 0.0.0.0:9000
+
+# Run (HTTPS)
+gunicorn -c gunicorn.conf.py \
+         --certfile=secrets/cert.crt \
+         --keyfile=secrets/cert.key \
+         -b 0.0.0.0:9443 \
+         labhub.wsgi:application
 ```
 
 ### Environment Variables
 
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `DJANGO_SECRET_KEY` | insecure dev key | Must be set in production |
+| `DJANGO_DEBUG` | `True` | Set to `False` in production |
+| `DATABASE_PATH` | `Django_database/db.sqlite3` | Path to SQLite database file |
+| `NAS_ROOT` | `experiments/` | Host path that replaces `$NAS$` in DB |
+| `DATA_DIRS` | `experiments/,experiments/probes/` | Comma-separated dirs scanned for data files |
+
+---
+
+## Running the Worker
+
+The worker polls the server for pending jobs and must be run in a separate terminal.
+
 ```bash
-DEBUG=False
-SECRET_KEY=your-secret-key
-ALLOWED_HOSTS=yourdomain.com
-DATABASE_URL=postgresql://...
+# Terminal 1 — server
+source .djangovenv/bin/activate
+gunicorn -c gunicorn.conf.py labhub.wsgi:application
+
+# Terminal 2 — worker (HTTP)
+source .djangovenv/bin/activate
+python qmodel_worker.py
+
+# Terminal 2 — worker (HTTPS, self-signed cert)
+source .djangovenv/bin/activate
+LABHUB_BASE_URL=https://localhost:9443 LABHUB_SSL_VERIFY=false python qmodel_worker.py
 ```
+
+---
 
 ## API Reference
 
@@ -70,7 +169,7 @@ Authorization: Token YOUR_TOKEN_HERE
 
 **Get Token:**
 ```bash
-curl -X POST http://localhost:8000/api-token-auth/ \
+curl -X POST http://localhost:9000/api-token-auth/ \
   -H "Content-Type: application/json" \
   -d '{"username": "user", "password": "pass"}'
 ```
@@ -87,7 +186,7 @@ curl -X POST http://localhost:8000/api-token-auth/ \
 ### Create Job Example
 
 ```bash
-curl -X POST http://localhost:8000/jobs/create-sorting-job/ \
+curl -X POST http://localhost:9000/jobs/create-sorting-job/ \
   -H "Authorization: Token YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -104,6 +203,8 @@ curl -X POST http://localhost:8000/jobs/create-sorting-job/ \
   }'
 ```
 
+---
+
 ## Status Flow
 
 ```
@@ -114,59 +215,48 @@ Step: pending -> running -> completed
                           -> failed
 ```
 
+---
+
 ## Project Structure
 
 ```
-labhub/          # Django project settings
-qmodel/          # Core models, worker endpoints, admin
-  models.py      # Job, JobStep, StepConfig, pure functions
-  views.py       # Worker GET/POST endpoints
-  admin.py       # Admin actions for status management
-jobs/            # Job creation API
-  views.py       # create_sorting_job, list_jobs, statistics
-  serializers.py # CreateSortingJobSerializer
-my-app/          # React frontend
+labhub/              # Django project settings, URLs, backends
+job_queue/           # Job and step models, worker endpoints
+pipeline_factory/    # Pipeline and step-config models
+submit_jobs/         # Job creation API, serializers
+my-app/              # React frontend source (build/ is served by Django)
+  build/             # Compiled React app (committed or built on deploy)
+gunicorn.conf.py     # Gunicorn config (binds 0.0.0.0:9000)
+docker-compose.yml   # Production container with bind mounts
+Dockerfile           # Ubuntu 24.04 image, Python 3.13, collectstatic
+deploy.sh            # One-shot local setup + server start script
+secrets/             # SSL certs (git-ignored, generated by deploy.sh)
 ```
+
+---
 
 ## Running Tests
 
 ```bash
-python manage.py test qmodel -v 2
+python manage.py test -v 2
 ```
+
+---
 
 ## Admin Interface
 
-Access at `http://localhost:8000/admin/` to manually update job and step statuses.
+`https://<host>:9443/admin/` — manually update job and step statuses, manage tokens.
 
-## Web Interface
-
-Access at `http://localhost:8000/` to view jobs, track progress, and update statuses via the React UI.
-
-## Production Deployment
-
-```bash
-# Prepare
-python manage.py check
-python manage.py collectstatic --noinput
-
-# Required settings
-DEBUG = False
-SECURE_SSL_REDIRECT = True
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
-```
-
-Deploy with Gunicorn behind Nginx (recommended for SSL termination).
+---
 
 ## Common Issues
 
 | Issue | Fix |
 |-------|-----|
-| Token invalid | Create new token via admin or shell |
-| Job not processing | Check worker is running |
-| Step status not updating | Verify status choices in model (`completed`, not `finished`) |
-| Dependencies broken | Check `depends_on` contains real `config_block_hash` values |
-| Deduplication not working | Ensure `compute_fingerprint()` uses `sort_keys=True` |
-
-
-Just added something
+| Token invalid | Create new token via admin or `manage.py shell` |
+| Job not processing | Check worker is running in a separate terminal |
+| Step status not updating | Status choices are `completed` (steps) and `finished` (jobs) — not interchangeable |
+| Port conflict | NAS uses 8000, 8080, 8443 — this app uses 9000 / 9443 |
+| `collectstatic` fails at build | Ensure `my-app/build/` exists; run `npm run build` in `my-app/` first |
+| Container can't write DB | Check `/mnt/root_data_storage/users/sslh/persistentdata` exists and is writable |
+| `$NAS$` paths not resolving | Set `NAS_ROOT` env var to the worker's local mount path |
