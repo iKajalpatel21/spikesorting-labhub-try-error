@@ -10,8 +10,10 @@
 # Ports 8000, 8080, and 8443 are used by the NAS itself — avoid them.
 #
 # Usage:
-#   HTTP:   docker compose up
-#   HTTPS:  LABHUB_HTTPS=true docker compose up
+#   export DJANGO_SECRET_KEY="your-secret-key"
+#   ./deploy.sh          # generates secrets/cert.crt and cert.key if missing
+#   docker compose build
+#   docker compose up -d
 # ============================================================
 
 services:
@@ -20,9 +22,18 @@ services:
     image: spikesorting-labhub:latest
     restart: unless-stopped
 
+    command:
+      - gunicorn
+      - -c
+      - gunicorn.conf.py
+      - --certfile=/app/secrets/cert.crt
+      - --keyfile=/app/secrets/cert.key
+      - -b
+      - 0.0.0.0:9443
+      - labhub.wsgi:application
+
     ports:
-      - "9000:9000"   # HTTP
-      - "9443:9443"   # HTTPS (only active when cert/key are present)
+      - "9443:9443"   # HTTPS — Gunicorn binds here via command: override above
 
     environment:
       # Django core
