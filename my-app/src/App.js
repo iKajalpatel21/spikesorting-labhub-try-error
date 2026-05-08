@@ -109,8 +109,9 @@ function NewPipeline() {
 
       const token = window.localStorage.getItem('token');
 
-      // Use absolute API base since we're no longer using npm proxy
-      const API_BASE = 'http://localhost:8000/pipeline-factory';
+      // TODO: /pipeline-factory/recordings/ backend endpoint is not yet implemented.
+      // Replace this URL once the recording registration endpoint exists.
+      const API_BASE = `${window.location.origin}/pipeline-factory`;
       const resp = await fetch(`${API_BASE}/recordings/`, {
         method: 'POST',
         headers: token ? { 'Authorization': `Token ${token}` } : {},

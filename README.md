@@ -176,17 +176,23 @@ curl -X POST http://localhost:9000/api-token-auth/ \
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
-| POST | `/jobs/create-sorting-job/` | Create a new job |
-| GET | `/jobs/list/` | List all jobs (supports `status`, `limit`, `offset`) |
-| GET | `/jobs/status/<job_id>/` | Get job details and step statuses |
-| GET | `/jobs/statistics/` | Job count breakdown by status |
-| GET | `/qmodel/getthenextjob/` | Worker: fetch next pending job |
-| POST | `/qmodel/getthenextjob/` | Worker: update job or step status |
+| POST | `/submit-jobs/create-sorting-job/` | Create a new job |
+| GET | `/submit-jobs/browse/` | Browse server-side data files |
+| GET | `/job-queue/list/` | List all jobs (supports `status`, `limit`, `offset`) |
+| GET | `/job-queue/<job_id>/` | Get job details and step statuses |
+| GET | `/job-queue/statistics/` | Job count breakdown by status |
+| GET | `/job-queue/all/` | Get all jobs (unfiltered) |
+| POST | `/job-queue/cancel-job/` | Cancel a pending/running job |
+| POST | `/job-queue/resume-job/` | Resume a canceled job |
+| GET | `/job-queue/next-job/` | Worker: fetch next pending job |
+| POST | `/job-queue/update-status/` | Worker: update job or step status |
+| GET/POST | `/pipeline-factory/pipelines/` | List or create pipelines |
+| GET/POST | `/pipeline-factory/pipeline-steps/` | List or create pipeline steps |
 
 ### Create Job Example
 
 ```bash
-curl -X POST http://localhost:9000/jobs/create-sorting-job/ \
+curl -X POST http://localhost:9000/submit-jobs/create-sorting-job/ \
   -H "Authorization: Token YOUR_TOKEN" \
   -H "Content-Type: application/json" \
   -d '{
@@ -194,8 +200,8 @@ curl -X POST http://localhost:9000/jobs/create-sorting-job/ \
       "binfile": "/data/recording.bin",
       "sampling_rate": 30000,
       "num_channels": 32,
-      "gain": 0.195,
-      "offset": 0,
+      "gain_to_uV": 0.195,
+      "offset_to_uV": 0,
       "probe": "/data/probe.json"
     },
     "pipeline_id": 1,
@@ -208,8 +214,9 @@ curl -X POST http://localhost:9000/jobs/create-sorting-job/ \
 ## Status Flow
 
 ```
-Job:  pending -> fetched -> running -> finished
+Job:  pending -> fetched -> running -> completed
                                     -> failed
+                                    -> canceled
 
 Step: pending -> running -> completed
                           -> failed

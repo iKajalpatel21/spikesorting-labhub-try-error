@@ -72,14 +72,22 @@ RUN mkdir -p /data /django_db /experiments
 RUN mkdir -p /app/secrets
 
 # ------------------------------------------------------------
-# 8. Expose ports
-#    8000 — plain HTTP (Gunicorn default)
-#    8443 — HTTPS (Gunicorn with --certfile / --keyfile)
+# 8. Entrypoint — runs migrations automatically before Gunicorn
+#    starts on every container launch.
 # ------------------------------------------------------------
-EXPOSE 8000 8443
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+ENTRYPOINT ["/entrypoint.sh"]
 
 # ------------------------------------------------------------
-# 9. Default command — HTTP.  Override in docker-compose or
-#    on the CLI to enable HTTPS.
+# 9. Expose ports
+#    9000 — plain HTTP (Gunicorn default)
+#    9443 — HTTPS (Gunicorn with --certfile / --keyfile)
+# ------------------------------------------------------------
+EXPOSE 9000 9443
+
+# ------------------------------------------------------------
+# 10. Default command — passed to entrypoint, which runs
+#     migrations first then execs this.
 # ------------------------------------------------------------
 CMD ["gunicorn", "-c", "gunicorn.conf.py", "labhub.wsgi:application"]
