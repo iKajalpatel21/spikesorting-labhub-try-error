@@ -88,7 +88,7 @@ WSGI_APPLICATION = "labhub.wsgi.application"
 
 DATABASE_PATH = os.environ.get(
     "DATABASE_PATH",
-    str(BASE_DIR / "Django_database" / "db.sqlite3"),
+    str(BASE_DIR / "django_db" / "db.sqlite3"),
 )
 os.makedirs(os.path.dirname(DATABASE_PATH), exist_ok=True)
 

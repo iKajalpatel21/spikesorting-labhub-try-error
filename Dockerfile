@@ -65,7 +65,7 @@ RUN cd my-app && npm ci --omit=dev && npm run build
 #    /django_db   ← persistentdata (Django SQLite DB + logs)
 #    /experiments ← binary recording files (read-only)
 # ------------------------------------------------------------
-RUN mkdir -p /data /django_db /experiments /app/secrets
+RUN mkdir -p /data /app/django_db /app/experiments /app/secrets
 
 # ------------------------------------------------------------
 # 6. Entrypoint — already in the repo after download.
