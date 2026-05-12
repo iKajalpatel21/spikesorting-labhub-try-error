@@ -1,7 +1,7 @@
 # ============================================================
 # SpikesortingLabHub — Production Image
 #
-# Self-contained: clones the repo from GitHub so anyone can
+# Self-contained: downloads the repo from GitHub so anyone can
 # reproduce this image without needing the local source tree.
 # ============================================================
 
@@ -12,9 +12,10 @@ ENV DEBIAN_FRONTEND=noninteractive
 # ------------------------------------------------------------
 # 1. System packages
 # ------------------------------------------------------------
-RUN apt-get update && apt-get install -y --no-install-recommends \
-        python3.13 \
-        python3.13-venv \
+RUN apt-get update && apt-get upgrade -y --no-install-recommends
+RUN apt-get install -y --no-install-recommends \
+        python3 \
+        python3-venv \
         python3-pip \
         build-essential \
         libpq-dev \
@@ -24,22 +25,30 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         git \
         nodejs \
         npm \
+        wget \
+        unzip \
     && rm -rf /var/lib/apt/lists/*
 
-RUN update-alternatives --install /usr/bin/python3 python3 /usr/bin/python3.13 1 \
- && update-alternatives --install /usr/bin/python  python  /usr/bin/python3.13 1
-
 # ------------------------------------------------------------
-# 2. Clone repository and check out the docker branch
+# 2. Download repository (docker branch) and unpack
 # ------------------------------------------------------------
+RUN mkdir /app
 WORKDIR /app
-RUN git clone --branch docker https://github.com/iKajalpatel21/spikesorting-labhub-tryerror.git .
+RUN wget https://github.com/iKajalpatel21/spikesorting-labhub-try-error/archive/refs/heads/docker.zip
+RUN unzip docker.zip
+RUN mv spikesorting-labhub-try-error-docker/* .
 
 # ------------------------------------------------------------
 # 3. Set up Python virtual environment and install requirements
 # ------------------------------------------------------------
 RUN python3 -m venv /app/venv
 RUN /app/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Install SpikesortingLabHub-CLI (patch setup.py for Python 3.12)
+RUN wget https://github.com/UserFriendlySpikesorting/SpikesortingLabHub-CLI/archive/refs/heads/main.zip \
+    && unzip main.zip \
+    && sed -i 's|3.13|3.12|' SpikesortingLabHub-CLI-main/setup.py \
+    && /app/venv/bin/pip install --no-cache-dir SpikesortingLabHub-CLI-main/
 
 ENV PATH="/app/venv/bin:$PATH"
 
@@ -59,8 +68,8 @@ RUN cd my-app && npm ci --omit=dev && npm run build
 RUN mkdir -p /data /django_db /experiments /app/secrets
 
 # ------------------------------------------------------------
-# 6. Entrypoint — already in the repo after git clone.
-#    Runs collectstatic + migrate before handing off to Gunicorn.
+# 6. Entrypoint — already in the repo after download.
+#    Runs pre-flight checks, collectstatic, migrate, then Gunicorn.
 # ------------------------------------------------------------
 RUN chmod +x /app/entrypoint.sh
 ENTRYPOINT ["/app/entrypoint.sh"]
