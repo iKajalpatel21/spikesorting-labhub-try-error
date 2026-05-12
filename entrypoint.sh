@@ -15,7 +15,7 @@ warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 DB_PATH="${DATABASE_PATH:-/django_db/db.sqlite3}"
 DB_DIR="$(dirname "$DB_PATH")"
 
-mkdir -p "$DB_DIR"
+# mkdir -p "$DB_DIR"
 
 if [ -f "$DB_PATH" ]; then
     ok "SQLite database exists: $DB_PATH"
