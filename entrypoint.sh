@@ -33,7 +33,7 @@ fi
 # =============================================================================
 # 2. Generate SSL certificate if not already present
 # =============================================================================
-mkdir -p /app/secrets
+# mkdir -p /app/secrets
 
 if [ -f "/app/secrets/cert.crt" ] && [ -f "/app/secrets/cert.key" ]; then
     ok "SSL certificates already exist — leaving untouched."
