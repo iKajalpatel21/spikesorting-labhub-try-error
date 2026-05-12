@@ -12,12 +12,20 @@ warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 # =============================================================================
 # 1. Check the database directory (mounted from persistentdata on the host)
 # =============================================================================
-DB_DIR="/django_db"
+DB_PATH="${DATABASE_PATH:-/django_db/db.sqlite3}"
+DB_DIR="$(dirname "$DB_PATH")"
 
-if [ -d "$DB_DIR" ]; then
-    ok "Database directory exists: $DB_DIR"
+mkdir -p "$DB_DIR"
+
+if [ -f "$DB_PATH" ]; then
+    ok "SQLite database exists: $DB_PATH"
 else
-    warn "Database directory not found: $DB_DIR — container will start but db will be empty."
+    warn "SQLite database not found: $DB_PATH"
+    info "Creating SQLite DB via Django migrations..."
+
+    python manage.py migrate --noinput
+
+    ok "SQLite database created and migrations applied."
 fi
 
 # =============================================================================
