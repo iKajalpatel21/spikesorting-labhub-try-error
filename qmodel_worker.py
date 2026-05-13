@@ -17,7 +17,7 @@ logging.basicConfig(
 # -----------------------------------------------------------------------------
 # Set BASE_URL to https://localhost:8443 when running Gunicorn with SSL.
 # Defaults to plain HTTP for local development with manage.py runserver.
-BASE_URL = os.environ.get("LABHUB_BASE_URL", "http://localhost:8000")
+BASE_URL = os.environ.get("LABHUB_BASE_URL", "http://localhost:9000")
 
 # Separate endpoints: one for fetching the next job, one for updating status
 API_URL = f"{BASE_URL}/job-queue/next-job/"
@@ -38,7 +38,7 @@ else:
     SSL_VERIFY = _ssl_verify_env  # treat as file path to CA bundle
 
 # Security token from the user for API authentication
-TOKEN = "7043591ad29f88607f2b109bfba5044eac892785"
+TOKEN = "5fdc22585d81dd1d59617803f66dd7572d6ac7af"
 HEADERS = {"Authorization": f"Token {TOKEN}"}
 
 print(
