@@ -6,7 +6,7 @@ A spike sorting job management system built for neuroscience researchers. Submit
 
 ## Demo
 
-[![Spike Sorting Lab Hub Demo](https://img.youtube.com/vi/Ga0f3ElSdg4/maxresdefault.jpg)](https://www.youtube.com/watch?v=Ga0f3ElSdg4)
+https://github.com/user-attachments/assets/a04b2a0e-7ba0-4eca-8ef3-294b84a52cc3
 
 ---
 
