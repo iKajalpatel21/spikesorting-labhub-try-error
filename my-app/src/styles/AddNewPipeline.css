@@ -81,6 +81,27 @@
     line-height: 1.5;
 }
 
+.pipeline-description-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 14px;
+    border: 1px solid #e0dfd8;
+    border-radius: 6px;
+    font-size: 0.92em;
+    color: #333;
+    background: #faf9f6;
+    resize: vertical;
+    font-family: inherit;
+    line-height: 1.5;
+    margin-top: 8px;
+}
+
+.pipeline-description-input:focus {
+    outline: none;
+    border-color: #8a9a6a;
+    background: #fff;
+}
+
 /* JSON upload box */
 .json-upload-section {
     background: #fafaf8;

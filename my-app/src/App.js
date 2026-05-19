@@ -11,28 +11,6 @@ function DashboardLayout() {
 
   return (
     <div style={{ minHeight: '100vh', background: '#f0efe8' }}>
-      {/* Institutional banner */}
-      <div style={{
-        position: 'fixed',
-        top: 0,
-        left: 0,
-        right: 0,
-        height: '32px',
-        background: '#002147',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 56px',
-        zIndex: 1001,
-        boxSizing: 'border-box',
-      }}>
-        <span style={{ fontSize: '0.72em', fontWeight: '500', color: '#FFBE00', letterSpacing: '0.04em', textTransform: 'uppercase' }}>
-          George Washington University
-        </span>
-        <span style={{ fontSize: '0.72em', color: 'rgba(255,255,255,0.65)', letterSpacing: '0.02em' }}>
-          Department of Pharmacology &amp; Physiology
-        </span>
-      </div>
       {/* App nav bar */}
       <div style={{
         position: 'fixed',

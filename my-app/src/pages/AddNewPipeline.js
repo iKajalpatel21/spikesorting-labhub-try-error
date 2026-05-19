@@ -4,6 +4,7 @@ import '../styles/AddNewPipeline.css';
 export default function AddNewPipeline({ onBack }) {
     const [jsonFile, setJsonFile] = useState(null);
     const [fileContent, setFileContent] = useState(null);
+    const [description, setDescription] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState('');
     const [successData, setSuccessData] = useState(null); // { pipelineId, username }
@@ -47,6 +48,11 @@ export default function AddNewPipeline({ onBack }) {
             return;
         }
 
+        if (!description.trim()) {
+            setError('Please enter a description for the pipeline');
+            return;
+        }
+
         setIsSubmitting(true);
 
         try {
@@ -62,7 +68,7 @@ export default function AddNewPipeline({ onBack }) {
                     'Content-Type': 'application/json',
                     'Authorization': `Token ${token}`,
                 },
-                body: JSON.stringify(fileContent),
+                body: JSON.stringify({ ...fileContent, description: description.trim() }),
             });
 
             if (!response.ok) {
@@ -110,6 +116,18 @@ export default function AddNewPipeline({ onBack }) {
             </div>
 
             <form onSubmit={handleSubmit} className="pipeline-form">
+                {/* Description */}
+                <div className="form-section">
+                    <h3>Pipeline Description</h3>
+                    <textarea
+                        className="pipeline-description-input"
+                        placeholder="Enter a description for this pipeline..."
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        rows={3}
+                    />
+                </div>
+
                 {/* JSON File Upload */}
                 <div className="form-section json-upload-section">
                     <h3>Upload Pipeline JSON</h3>
