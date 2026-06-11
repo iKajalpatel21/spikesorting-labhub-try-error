@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     "job_queue.apps.JobQueueConfig",
     "pipeline_factory.apps.PipelineFactoryConfig",
     "submit_jobs.apps.SubmitJobsConfig",
+    "lab_notebook.apps.LabNotebookConfig",
 ]
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [

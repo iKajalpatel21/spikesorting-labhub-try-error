@@ -38,3 +38,6 @@ coverage/
 
 # Git internals
 .git/
+
+#claude folder
+claude/
