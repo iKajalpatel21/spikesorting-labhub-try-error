@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import CreateSortingJobWizard from './CreateSortingJobWizard';
 import AddNewPipeline from './AddNewPipeline';
 import ManageJobs from './ManageJobs';
+import LabNotebook from './LabNotebook';
 import '../styles/Dashboard.css';
 
 function getGreeting() {
@@ -26,6 +27,10 @@ export default function Dashboard() {
 
     if (activeSection === 'manageJobs') {
         return <ManageJobs onBack={() => setActiveSection('home')} />;
+    }
+
+    if (activeSection === 'labNotebook') {
+        return <LabNotebook onBack={() => setActiveSection('home')} />;
     }
 
     return (
@@ -99,6 +104,34 @@ export default function Dashboard() {
                         <span className="card-tag">History</span>
                         <span className="card-tag">Status</span>
                         <span className="card-tag">Progress</span>
+                    </div>
+                </div>
+            </div>
+
+            {/* Lab Tools */}
+            <p className="section-title">Lab Tools</p>
+            <div className="dashboard-actions" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))' }}>
+                <div
+                    className="action-card"
+                    style={{ background: '#7b9ea6' }}
+                    onClick={() => setActiveSection('labNotebook')}
+                >
+                    <div className="card-icon-label">
+                        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
+                            <rect x="2" y="1" width="12" height="14" rx="1.5"/>
+                            <line x1="5" y1="5" x2="11" y2="5"/>
+                            <line x1="5" y1="8" x2="11" y2="8"/>
+                            <line x1="5" y1="11" x2="8" y2="11"/>
+                            <circle cx="13" cy="13" r="2.5" fill="currentColor" stroke="none" opacity="0.5"/>
+                        </svg>
+                        Notes
+                    </div>
+                    <h3>Lab Notebook</h3>
+                    <p>Record, transcribe, and edit pre-experiment notes. Export as PDF or plain text for later review.</p>
+                    <div className="card-tags">
+                        <span className="card-tag">Record</span>
+                        <span className="card-tag">Rich Text</span>
+                        <span className="card-tag">PDF Export</span>
                     </div>
                 </div>
             </div>
