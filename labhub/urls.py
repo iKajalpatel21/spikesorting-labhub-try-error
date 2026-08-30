@@ -28,9 +28,10 @@ urlpatterns = [
     path("pipeline-factory/", include("pipeline_factory.urls")),
     path("submit-jobs/", include("submit_jobs.urls")),
     path("lab-notebook/", include("lab_notebook.urls")),
+    path("movement-analysis/", include("movement_analysis.urls")),
     # Serve React app for all non-API routes (must be last)
     re_path(
-        r"^(?!admin|job-queue|pipeline-factory|submit-jobs|lab-notebook|static).*$",
+        r"^(?!admin|job-queue|pipeline-factory|submit-jobs|lab-notebook|movement-analysis|static).*$",
         TemplateView.as_view(template_name="index.html"),
         name="react-app",
     ),
